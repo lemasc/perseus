@@ -5,7 +5,7 @@ The original respository has been archived as read-only since Jan 2018, so this 
 
 ## Live demo
 
-Currently, the demo is still refers to the old official repo. You can check it
+Currently, the demo still refers to the old official repo. You can check it
 [here](http://khan.github.io/perseus/). When this repo is stable, I will uploaded it later.
 
 ## Getting Started
