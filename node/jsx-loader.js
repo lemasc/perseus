@@ -1,7 +1,7 @@
 // Modified version of https://github.com/petehunt/jsx-loader
 
 const loaderUtils = require("loader-utils");
-const babel = require("babel-core");
+const babel = require("@babel/core");
 const _ = require("../lib/underscore.js");
 const UglifyJS = require("uglify-js");
 const path = require("path");
@@ -17,8 +17,7 @@ module.exports = function(source) {
 
     const sourceFilename = loaderUtils.getRemainingRequest(this);
     const current = loaderUtils.getCurrentRequest(this);
-
-    const query = loaderUtils.parseQuery(this.query);
+    const query = loaderUtils.getOptions(this);
     // For some reason, Babel doesn't use .babelrc here; maybe because we're
     // in a subfolder.
     const options = _.extend({}, babelrc, {
