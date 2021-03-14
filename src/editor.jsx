@@ -275,10 +275,7 @@ class WidgetEditor extends React.Component {
         );
     }
 
-    getSaveWarnings() {
-        if(this.refs === undefined) {
-            return []; //HACK-sz
-        }
+    getSaveWarnings = () => {
         var issuesFunc = this.refs.widget.getSaveWarnings;
         return issuesFunc ? issuesFunc() : [];
     }

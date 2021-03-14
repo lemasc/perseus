@@ -32,7 +32,7 @@ class StatefulEditorPage extends React.Component {
         });
     }
 
-    render = () => {
+    render() {
         return <this.props.componentClass {...this.state} />;
     }
 
