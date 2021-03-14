@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -11,36 +12,29 @@ var EditorJsonify = require("../mixins/editor-jsonify.jsx");
 var Editor = require("../editor.jsx");
 var TextInput = require("../components/text-input.jsx");
 
-var defaultExplanationProps = {
-    showPrompt: "Explain",
-    hidePrompt: "Hide explanation",
-    explanation: "explanation goes here\n\nmore explanation",
-    widgets: {},
-};
 
-var ExplanationEditor = React.createClass({
-    propTypes: {
+class ExplanationEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        showPrompt: React.PropTypes.string,
-        hidePrompt: React.PropTypes.string,
-        explanation: React.PropTypes.string,
-        widgets: React.PropTypes.object,
-        apiOptions: React.PropTypes.any,
-    },
+        showPrompt: PropTypes.string,
+        hidePrompt: PropTypes.string,
+        explanation: PropTypes.string,
+        widgets: PropTypes.object,
+        apiOptions: PropTypes.any,
+    }
 
-    getDefaultProps: function() {
-        return defaultExplanationProps;
-    },
-
-    getInitialState: function() {
-        return {};
-    },
+    static defaultProps = {
+        showPrompt: "Explain",
+        hidePrompt: "Hide explanation",
+        explanation: "explanation goes here\n\nmore explanation",
+        widgets: {}
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-widget-explanation-editor">
                 <div className="perseus-widget-row">
@@ -82,11 +76,11 @@ var ExplanationEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = ExplanationEditor;

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * This component renders "lint" nodes in a markdown parse tree. Lint nodes
  * are inserted into the tree by the Gorgon linter (see src/gorgon/gorgon.js).
@@ -31,52 +32,53 @@ const exclamationIcon = {
     width: 12,
 };
 
-const Lint = React.createClass({
-    propTypes: {
+class Lint extends React.Component {
+    static propTypes = {
         // The children are the linty content we're highlighting
-        children: React.PropTypes.node,
+        children: PropTypes.node,
         // Inline lint is highlighted differently than block lint.
-        inline: React.PropTypes.bool,
+        inline: PropTypes.bool,
         // This is the text that appears in the tooltip
-        message: React.PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
         // This is used as the fragment id (hash) in the URL of the link
-        ruleName: React.PropTypes.string.isRequired,
+        ruleName: PropTypes.string.isRequired,
         // Lint warnings inside tables are handled specially
-        insideTable: React.PropTypes.bool.isRequired,
+        insideTable: PropTypes.bool.isRequired,
         // How important this lint message is for the editor. Severity goes
         // from 1 (indicating an error) to 4 (offline reporting only)
-        severity: React.PropTypes.number,
-    },
+        severity: PropTypes.number,
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state =  {
             tooltipAbove: true,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._positionTimeout = window.setTimeout(this.getPosition);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         window.clearTimeout(this._positionTimeout);
-    },
+    }
 
     // We can't call setState in componentDidMount without risking a render
     // thrash, and we can't call getBoundingClientRect in render, so we
     // borrow a timeout approach from learnstorm-dashboard.jsx and set our
     // state once the component has mounted and we can get what we need.
-    getPosition: function() {
+    getPosition = () => {
         const rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
         // TODO(scottgrant): This is a magic number! We don't know the size
         // of the tooltip at this point, so we're arbitrarily choosing a
         // point at which to flip the tooltip's position.
         this.setState({tooltipAbove: rect.top > 100});
-    },
+    }
 
     // Render the <a> element that holds the indicator icon and the tooltip
     // We pass different styles for the inline and block cases
-    renderLink: function(style) {
+    renderLink(style) {
         const tooltipAbove = this.state.tooltipAbove;
 
         let severityStyle;
@@ -130,12 +132,12 @@ const Lint = React.createClass({
                 </div>
             </a>
         );
-    },
+    }
 
     // The main render method surrounds linty content with a block or
     // inline container and the link element that displays the indicator
     // and holds the tooltip.
-    render: function() {
+    render() {
         if (this.props.insideTable) {
             // If we're inside a table, then linty nodes just get
             // a simple wrapper that allows them to be highlighted
@@ -173,8 +175,8 @@ const Lint = React.createClass({
                 );
             }
         }
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     // This is the class of the outermost element.

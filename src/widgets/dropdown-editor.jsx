@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, max-len, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp, semi, space-before-function-paren */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -11,19 +12,18 @@ var InfoTip = require("../components/info-tip.jsx");
 var InlineIcon = require("../components/inline-icon.jsx");
 var EditorJsonify = require("../mixins/editor-jsonify.jsx");
 
-var DropdownEditor = React.createClass({
-    propTypes: {
-        choices: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                content: React.PropTypes.string,
-                correct: React.PropTypes.bool,
+class DropdownEditor extends React.Component {
+    static propTypes = {
+        choices: PropTypes.arrayOf(
+            PropTypes.shape({
+                content: PropTypes.string,
+                correct: PropTypes.bool,
             })
         ),
-        placeholder: React.PropTypes.string,
-    },
+        placeholder: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             placeholder: "",
             choices: [
                 {
@@ -32,9 +32,8 @@ var DropdownEditor = React.createClass({
                 },
             ],
         };
-    },
 
-    render: function() {
+    render() {
         var dropdownGroupName = _.uniqueId("perseus_dropdown_");
         return (
             <div className="perseus-widget-dropdown">
@@ -128,31 +127,31 @@ var DropdownEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    onPlaceholderChange: function(e) {
+    onPlaceholderChange = (e) => {
         var placeholder = e.target.value;
         this.props.onChange({placeholder: placeholder});
-    },
+    }
 
-    onCorrectChange: function(choiceIndex) {
+    onCorrectChange = choiceIndex =>{
         var choices = _.map(this.props.choices, function(choice, i) {
             return _.extend({}, choice, {
                 correct: i === choiceIndex,
             });
         });
         this.props.onChange({choices: choices});
-    },
+    }
 
-    onContentChange: function(choiceIndex, e) {
+    onContentChange = (choiceIndex, e) => {
         var choices = this.props.choices.slice();
         var choice = _.clone(choices[choiceIndex]);
         choice.content = e.target.value;
         choices[choiceIndex] = choice;
         this.props.onChange({choices: choices});
-    },
+    }
 
-    addChoice: function(e) {
+    addChoice = (e) => {
         e.preventDefault();
 
         var choices = this.props.choices;
@@ -163,25 +162,25 @@ var DropdownEditor = React.createClass({
             },
             this.focus.bind(this, choices.length)
         );
-    },
+    }
 
-    removeChoice: function(choiceIndex, e) {
+    removeChoice = (choiceIndex, e) => {
         e.preventDefault();
-        var choices = _(this.props.choices).clone();
+        var choices = _.clone(this.props.choices);
         choices.splice(choiceIndex, 1);
         this.props.onChange({
             choices: choices,
         });
-    },
+    }
 
-    focus: function(i) {
+    focus = i => {
         ReactDOM.findDOMNode(this.refs["editor" + i]).focus();
         return true;
-    },
+    }
 
-    serialize() {
+    serialize = () => {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = DropdownEditor;

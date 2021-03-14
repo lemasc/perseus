@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, object-curly-spacing, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -111,10 +112,10 @@ var UnitExample = React.createClass({
 const UnitInputEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        value: React.PropTypes.string,
-        acceptingUnits: React.PropTypes.arrayOf(React.PropTypes.string),
-        accepting: React.PropTypes.oneOf([ALL, SOME]),
-        sigfigs: React.PropTypes.number,
+        value: PropTypes.string,
+        acceptingUnits: PropTypes.arrayOf(PropTypes.string),
+        accepting: PropTypes.oneOf([ALL, SOME]),
+        sigfigs: PropTypes.number,
     },
 
     getDefaultProps: function() {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, indent, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -15,27 +16,26 @@ var defaultImage = {
     left: 0,
 };
 
-var Measurer = React.createClass({
-    propTypes: {
+class Measurer extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        box: React.PropTypes.arrayOf(React.PropTypes.number),
-        image: React.PropTypes.shape({
-            url: React.PropTypes.string,
-            top: React.PropTypes.number,
-            left: React.PropTypes.number,
+        box: PropTypes.arrayOf(PropTypes.number),
+        image: PropTypes.shape({
+            url: PropTypes.string,
+            top: PropTypes.number,
+            left: PropTypes.number,
         }),
-        showProtractor: React.PropTypes.bool,
-        protractorX: React.PropTypes.number,
-        protractorY: React.PropTypes.number,
-        showRuler: React.PropTypes.bool,
-        rulerLabel: React.PropTypes.string,
-        rulerTicks: React.PropTypes.number,
-        rulerPixels: React.PropTypes.number,
-        rulerLength: React.PropTypes.number,
-    },
+        showProtractor: PropTypes.bool,
+        protractorX: PropTypes.number,
+        protractorY: PropTypes.number,
+        showRuler: PropTypes.bool,
+        rulerLabel: PropTypes.string,
+        rulerTicks: PropTypes.number,
+        rulerPixels: PropTypes.number,
+        rulerLength: PropTypes.number,
+    }
 
-    getDefaultProps: function() {
-        return {
+   static defaultProps = {
             box: [480, 480],
             image: {},
             showProtractor: true,
@@ -46,14 +46,9 @@ var Measurer = React.createClass({
             rulerTicks: 10,
             rulerPixels: 40,
             rulerLength: 10,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {};
-    },
-
-    render: function() {
+    render() {
         var image = _.extend({}, defaultImage, this.props.image);
         return (
             <div
@@ -74,13 +69,13 @@ var Measurer = React.createClass({
                 <div className="graphie" ref="graphieDiv" />
             </div>
         );
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.setupGraphie();
-    },
+    }
 
-    componentDidUpdate: function(prevProps) {
+    componentDidUpdate(prevProps) {
         var shouldSetupGraphie = _.any(
             [
                 "box",
@@ -100,9 +95,9 @@ var Measurer = React.createClass({
         if (shouldSetupGraphie) {
             this.setupGraphie();
         }
-    },
+    }
 
-    setupGraphie: function() {
+    setupGraphie() {
         var graphieDiv = ReactDOM.findDOMNode(this.refs.graphieDiv);
         $(graphieDiv).empty();
         var graphie = (this.graphie = GraphUtils.createGraphie(graphieDiv));
@@ -149,19 +144,19 @@ var Measurer = React.createClass({
                 units: this.props.rulerLength,
             });
         }
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return {};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         // TODO(joel) - I don't understand how this is useful!
         return Measurer.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    focus: $.noop,
-});
+    focus = $.noop
+}
 
 _.extend(Measurer, {
     validate: function(state, rubric) {
@@ -176,8 +171,8 @@ _.extend(Measurer, {
 
 var propUpgrades = {
     1: v0props => {
-        var v1props = _(v0props)
-            .chain()
+        var v1props = _
+            .chain(v0props)
             .omit("imageUrl", "imageTop", "imageLeft")
             .extend({
                 image: {

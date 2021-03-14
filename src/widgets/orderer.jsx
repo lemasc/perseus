@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, max-len, no-console, no-unused-vars, no-var, one-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -16,13 +17,13 @@ const {
     linterContextDefault,
 } = require("../gorgon/proptypes.js");
 
-var PlaceholderCard = React.createClass({
-    propTypes: {
-        width: React.PropTypes.number.isRequired,
-        height: React.PropTypes.number.isRequired,
-    },
+class PlaceholderCard extends React.Component {
+    static propTypes = {
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+    }
 
-    render: function() {
+    render() {
         return (
             <div
                 className={"card-wrap " + ApiClassNames.INTERACTIVE}
@@ -34,54 +35,48 @@ var PlaceholderCard = React.createClass({
                 />
             </div>
         );
-    },
-});
+    }
+}
 
-var DragHintCard = React.createClass({
-    render: function() {
-        return (
+var DragHintCard = function() {
+    return (
             <div className={"card-wrap " + ApiClassNames.INTERACTIVE}>
                 <div className="card drag-hint" />
             </div>
-        );
-    },
-});
+    );
+}
 
-var PropTypes = {
-    position: React.PropTypes.shape({
-        left: React.PropTypes.number,
-        top: React.PropTypes.number,
-    }),
-};
+PropTypes.position = PropTypes.shape({
+        left: PropTypes.number,
+        top: PropTypes.number,
+    });
 
-var Card = React.createClass({
-    propTypes: {
-        floating: React.PropTypes.bool.isRequired,
-        animating: React.PropTypes.bool,
-        width: React.PropTypes.number,
-        stack: React.PropTypes.bool,
+class Card extends React.Component {
+    static propTypes = {
+        floating: PropTypes.bool.isRequired,
+        animating: PropTypes.bool,
+        width: PropTypes.number,
+        stack: PropTypes.bool,
 
-        onMouseDown: React.PropTypes.func,
-        onMouseMove: React.PropTypes.func,
-        onMouseUp: React.PropTypes.func,
+        onMouseDown: PropTypes.func,
+        onMouseMove: PropTypes.func,
+        onMouseUp: PropTypes.func,
 
         // Used only for floating/animating cards
         startMouse: PropTypes.position,
         startOffset: PropTypes.position,
         animateTo: PropTypes.position,
-        onAnimationEnd: React.PropTypes.func,
+        onAnimationEnd: PropTypes.func,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             stack: false,
             animating: false,
             linterContext: linterContextDefault,
         };
-    },
 
-    render: function() {
+    render() {
         var style = {};
 
         if (this.props.floating) {
@@ -129,9 +124,9 @@ var Card = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps, nextState) {
+    shouldComponentUpdate = (nextProps, nextState) => {
         // Cards in the bank or drag list don't usually change -- they only
         // reorder themselves -- so we want to skip the update to things a
         // little faster. We also need to re-render if the content changes,
@@ -144,13 +139,13 @@ var Card = React.createClass({
             // TODO(alpert): Remove ref here after fixing facebook/react#1392.
             this.props.fakeRef !== nextProps.fakeRef
         );
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount = () => {
         this.mouseMoveUpBound = false;
-    },
+    }
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdate = (prevProps, prevState) => {
         if (this.props.animating && !prevProps.animating) {
             // If we just were changed into animating, start the animation.
             // We pick the animation speed based on the distance that the card
@@ -178,9 +173,9 @@ var Card = React.createClass({
                 this.props.onAnimationEnd
             );
         }
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount = () => {
         // Event handlers should be unbound before component unmounting, but
         // just in case...
         if (this.mouseMoveUpBound) {
@@ -189,89 +184,88 @@ var Card = React.createClass({
             this.unbindMouseMoveUp();
             Util.resetTouchHandlers();
         }
-    },
+    }
 
-    bindMouseMoveUp: function() {
+    bindMouseMoveUp = () => {
         this.mouseMoveUpBound = true;
         $(document).on("mousemove", this.onMouseMove);
         $(document).on("mouseup", this.onMouseUp);
-    },
+    }
 
-    unbindMouseMoveUp: function() {
+    unbindMouseMoveUp = () => {
         this.mouseMoveUpBound = false;
         $(document).off("mousemove", this.onMouseMove);
         $(document).off("mouseup", this.onMouseUp);
-    },
+    }
 
-    onMouseDown: function(event) {
+    onMouseDown = (event) => {
         event.preventDefault();
         var loc = Util.extractPointerLocation(event);
         if (loc) {
             this.bindMouseMoveUp();
             this.props.onMouseDown && this.props.onMouseDown(loc, this);
         }
-    },
+    }
 
-    onMouseMove: function(event) {
+    onMouseMove = (event) => {
         event.preventDefault();
         var loc = Util.extractPointerLocation(event);
         if (loc) {
             this.props.onMouseMove && this.props.onMouseMove(loc);
         }
-    },
+    }
 
-    onMouseUp: function(event) {
+    onMouseUp = (event) => {
         event.preventDefault();
         var loc = Util.extractPointerLocation(event);
         if (loc) {
             this.unbindMouseMoveUp();
             this.props.onMouseUp && this.props.onMouseUp(loc);
         }
-    },
-});
+    }
+}
 
 var NORMAL = "normal",
     AUTO = "auto",
     HORIZONTAL = "horizontal",
     VERTICAL = "vertical";
 
-var Orderer = React.createClass({
-    propTypes: {
-        correctOptions: React.PropTypes.array,
-        current: React.PropTypes.array,
-        height: React.PropTypes.oneOf([NORMAL, AUTO]),
-        layout: React.PropTypes.oneOf([HORIZONTAL, VERTICAL]),
-        options: React.PropTypes.array,
-        trackInteraction: React.PropTypes.func.isRequired,
+class Orderer extends React.Component {
+    static propTypes = {
+        correctOptions: PropTypes.array,
+        current: PropTypes.array,
+        height: PropTypes.oneOf([NORMAL, AUTO]),
+        layout: PropTypes.oneOf([HORIZONTAL, VERTICAL]),
+        options: PropTypes.array,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             current: [],
             options: [],
             correctOptions: [],
             height: NORMAL,
             layout: HORIZONTAL,
             linterContext: linterContextDefault,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             current: [],
             dragging: false,
             placeholderIndex: null,
         };
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps = (nextProps) =>{
         if (!_.isEqual(this.props.current, nextProps.current)) {
             this.setState({current: nextProps.current});
         }
-    },
+    }
 
-    render: function() {
+    render() {
         // This is the card we are currently dragging
         var dragging =
             this.state.dragging &&
@@ -402,9 +396,9 @@ var Orderer = React.createClass({
                 {sortable}
             </div>
         );
-    },
+    }
 
-    onClick: function(type, index, loc, draggable) {
+    onClick = (type, index, loc, draggable) => {
         var $draggable = $(ReactDOM.findDOMNode(draggable));
         var list = this.state.current.slice();
 
@@ -433,9 +427,9 @@ var Orderer = React.createClass({
             mousePos: loc,
             offsetPos: $draggable.position(),
         });
-    },
+    }
 
-    onRelease: function(loc) {
+    onRelease = (loc) => {
         var draggable = this.refs.dragging;
         if (draggable == null) {
             return;
@@ -509,9 +503,9 @@ var Orderer = React.createClass({
                 dragging: false,
             });
         }
-    },
+    }
 
-    onMouseMove: function(loc) {
+    onMouseMove = (loc) => {
         var draggable = this.refs.dragging;
         if (draggable == null) {
             return;
@@ -528,9 +522,9 @@ var Orderer = React.createClass({
             mousePos: loc,
             placeholderIndex: index,
         });
-    },
+    }
 
-    findCorrectIndex: function(draggable, list) {
+    findCorrectIndex = (draggable, list) => {
         // Find the correct index for a card given the current cards.
         var isHorizontal = this.props.layout === HORIZONTAL,
             $dragList = $(ReactDOM.findDOMNode(this.refs.dragList)),
@@ -573,9 +567,9 @@ var Orderer = React.createClass({
         }
 
         return index;
-    },
+    }
 
-    isCardInBank: function(draggable) {
+    isCardInBank = (draggable) => {
         if (draggable == null) {
             return false;
         }
@@ -603,20 +597,20 @@ var Orderer = React.createClass({
                 bankOffset.left + bankWidth
             );
         }
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {
             current: _.map(this.props.current, function(v) {
                 return v.content;
             }),
         };
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Orderer.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Orderer, {
     validate: function(state, rubric) {

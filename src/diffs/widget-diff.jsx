@@ -1,4 +1,5 @@
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -14,17 +15,17 @@ const AFTER = "after";
 
 const UNCHANGED = "unchanged";
 
-const DiffSide = React.createClass({
-    propTypes: {
-        className: React.PropTypes.string.isRequired,
-        depth: React.PropTypes.number.isRequired,
-        propKey: React.PropTypes.string.isRequired,
-        showKey: React.PropTypes.bool.isRequired,
-        side: React.PropTypes.oneOf([BEFORE, AFTER]).isRequired,
-        value: React.PropTypes.string,
-    },
+class DiffSide extends React.Component {
+    static propTypes = {
+        className: PropTypes.string.isRequired,
+        depth: PropTypes.number.isRequired,
+        propKey: PropTypes.string.isRequired,
+        showKey: PropTypes.bool.isRequired,
+        side: PropTypes.oneOf([BEFORE, AFTER]).isRequired,
+        value: PropTypes.string,
+    }
 
-    render: function() {
+    render() {
         const className = classNames(this.props.className, {
             "diff-row": true,
             before: this.props.side === BEFORE,
@@ -38,22 +39,22 @@ const DiffSide = React.createClass({
                 </span>
             </div>
         </div>;
-    },
-});
+    }
+}
 
-const CollapsedRow = React.createClass({
-    propTypes: {
-        depth: React.PropTypes.number,
-        onClick: React.PropTypes.func.isRequired,
-    },
+class CollapsedRow extends React.Component {
+    static propTypes = {
+        depth: PropTypes.number,
+        onClick: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             depth: 0,
         };
-    },
+    }
 
-    render: function() {
+    render() {
         const self = this;
         return <div onClick={self.props.onClick} style={{clear: "both"}}>
             {_.map([BEFORE, AFTER], function(side) {
@@ -71,39 +72,39 @@ const CollapsedRow = React.createClass({
                 </div>;
             })}
         </div>;
-    },
-});
+    }
+}
 
 // Component representing a single property that may be nested.
-const DiffEntry = React.createClass({
-    propTypes: {
-        depth: React.PropTypes.number,
-        entry: React.PropTypes.shape({
-            after: React.PropTypes.string,
-            before: React.PropTypes.string,
-            children: React.PropTypes.array,
-            key: React.PropTypes.string,
+class DiffEntry extends React.Component {
+    static propTypes = {
+        depth: PropTypes.number,
+        entry: PropTypes.shape({
+            after: PropTypes.string,
+            before: PropTypes.string,
+            children: PropTypes.array,
+            key: PropTypes.string,
         }),
-        expanded: React.PropTypes.bool,
-    },
+        expanded: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             depth: 0,
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             expanded: this.props.expanded,
         };
-    },
+    }
 
-    expand: function() {
+    expand() {
         this.setState({expanded: true});
-    },
+    }
 
-    render: function() {
+    render() {
         const entry = this.props.entry;
         const propertyDeleted = entry.status === "removed";
         const propertyAdded   = entry.status === "added";
@@ -127,7 +128,7 @@ const DiffEntry = React.createClass({
         if (this.state.expanded) {
             shownChildren = entry.children;
         } else {
-            shownChildren = _(entry.children).select(function(child) {
+            shownChildren = _.select(entry.children,function(child) {
                 return child.status !== UNCHANGED;
             });
         }
@@ -174,21 +175,21 @@ const DiffEntry = React.createClass({
                     onClick={this.expand}
                 />}
         </div>;
-    },
-});
+    }
+}
 
 // For image widgets, show the actual image
-const ImageWidgetDiff = React.createClass({
-    propTypes: {
-        after: React.PropTypes.shape({
-            options: React.PropTypes.object,
+class ImageWidgetDiff extends React.Component {
+    static propTypes = {
+        after: PropTypes.shape({
+            options: PropTypes.object,
         }).isRequired,
-        before: React.PropTypes.shape({
-            options: React.PropTypes.object,
+        before: PropTypes.shape({
+            options: PropTypes.object,
         }).isRequired,
-    },
+    }
 
-    render: function() {
+    render() {
         const {before, after} = this.props;
         const beforeSrc = (before.options && before.options.backgroundImage) ?
             before.options.backgroundImage.url : "";
@@ -220,30 +221,30 @@ const ImageWidgetDiff = React.createClass({
                 </div>}
             </div>
         </div>;
-    },
-});
+    }
+}
 
-const WidgetDiff = React.createClass({
-    propTypes: {
-        after: React.PropTypes.shape({
-            options: React.PropTypes.object,
+class WidgetDiff extends React.Component {
+    static propTypes = {
+        after: PropTypes.shape({
+            options: PropTypes.object,
         }),
-        before: React.PropTypes.shape({
-            options: React.PropTypes.object,
+        before: PropTypes.shape({
+            options: PropTypes.object,
         }),
-        title: React.PropTypes.string.isRequired,
-        type: React.PropTypes.string,
-    },
+        title: PropTypes.string.isRequired,
+        type: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             after: {},
             before: {},
             type: "",
         };
-    },
+    }
 
-    render: function() {
+    render() {
         const {after, before, title, type} = this.props;
         const diff = performDiff(before, after);
         return <div>
@@ -255,7 +256,7 @@ const WidgetDiff = React.createClass({
                 <DiffEntry entry={diff} />
             </div>
         </div>;
-    },
-});
+    }
+}
 
 module.exports = WidgetDiff;

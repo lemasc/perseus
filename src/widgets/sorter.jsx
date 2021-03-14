@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, one-var, react/forbid-prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -17,30 +18,28 @@ const {
 var HORIZONTAL = "horizontal",
     VERTICAL = "vertical";
 
-var Sorter = React.createClass({
-    propTypes: {
+class Sorter extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        correct: React.PropTypes.array,
-        layout: React.PropTypes.oneOf([HORIZONTAL, VERTICAL]),
-        onChange: React.PropTypes.func,
-        padding: React.PropTypes.bool,
-        problemNum: React.PropTypes.number,
-        trackInteraction: React.PropTypes.func.isRequired,
+        correct: PropTypes.array,
+        layout: PropTypes.oneOf([HORIZONTAL, VERTICAL]),
+        onChange: PropTypes.func,
+        padding: PropTypes.bool,
+        problemNum: PropTypes.number,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    };
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             correct: [],
             layout: HORIZONTAL,
             padding: true,
             problemNum: 0,
             onChange: function() {},
             linterContext: linterContextDefault,
-        };
-    },
+    };
 
-    render: function() {
+    render() {
         var options = shuffle(
             this.props.correct,
             this.props.problemNum,
@@ -62,21 +61,21 @@ var Sorter = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange = e => {
         this.props.onChange(e);
         this.props.trackInteraction();
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {options: this.refs.sortable.getOptions()};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = rubric =>{
         return Sorter.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Sorter, {
     validate: function(state, rubric) {

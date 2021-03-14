@@ -1,28 +1,29 @@
+const PropTypes = require('prop-types');
 /**
  * Displays a collapsable list of KaTeX rendering errors.
  */
 const React = require("react");
 const {css, StyleSheet} = require("aphrodite");
 
-const KatexErrorView = React.createClass({
-    propTypes: {
-        errorList: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                math: React.PropTypes.string.isRequired,
-                message: React.PropTypes.string.isRequired,
+class KatexErrorView extends React.Component {
+    static propTypes = {
+        errorList: PropTypes.arrayOf(
+            PropTypes.shape({
+                math: PropTypes.string.isRequired,
+                message: PropTypes.string.isRequired,
             })
         ).isRequired,
-    },
-
-    getInitialState() {
-        return {
+    }
+    constructor(props) {
+        super(props);
+        this.state = {
             showErrors: false,
         };
-    },
+    }
 
-    handleToggleKatexErrors(e) {
+    handleToggleKatexErrors = (e) => {
         this.setState({showErrors: !this.state.showErrors});
-    },
+    }
 
     render() {
         const {errorList} = this.props;
@@ -62,8 +63,8 @@ const KatexErrorView = React.createClass({
                     )}
             </div>
         );
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     title: {

@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 const {StyleSheet, css} = require("aphrodite");
+const PropTypes = require('prop-types');
 const React = require("react");
 const classNames = require("classnames");
 const Changeable = require("../mixins/changeable.jsx");
@@ -22,46 +23,45 @@ const {
     linterContextDefault,
 } = require("../gorgon/proptypes.js");
 
-const Categorizer = React.createClass({
-    propTypes: {
+class Categorizer extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
 
         // List of categories (across the top)
-        categories: React.PropTypes.arrayOf(React.PropTypes.string),
+        categories: PropTypes.arrayOf(PropTypes.string),
         // List of items that are being categorized (along the left side)
-        items: React.PropTypes.arrayOf(React.PropTypes.string),
-        trackInteraction: React.PropTypes.func.isRequired,
+        items: PropTypes.arrayOf(PropTypes.string),
+        trackInteraction: PropTypes.func.isRequired,
         // Ordered list of correct answers, mapping items to categories thusly:
         //   values[<items_index>] == <categories_index>
-        values: React.PropTypes.arrayOf(React.PropTypes.number),
+        values: PropTypes.arrayOf(PropTypes.number),
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             items: [],
             categories: [],
             values: [],
             linterContext: linterContextDefault,
         };
-    },
-
-    getInitialState: function() {
-        return {
+    
+    constructor(props) {
+        super(props);
+        this.state = {
             uniqueId: _.uniqueId("perseus_radio_"),
-        };
-    },
+        }
+    };
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return WidgetJsonifyDeprecated.getUserInput.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         const self = this;
 
         // In this context, isMobile is used to differentiate mobile from
@@ -201,19 +201,19 @@ const Categorizer = React.createClass({
                 {table}
             </div>
         );
-    },
+    }
 
-    onChange: function(itemNum, catNum) {
+    onChange = (itemNum, catNum) => {
         var values = _.clone(this.props.values);
         values[itemNum] = catNum;
         this.change("values", values);
         this.props.trackInteraction();
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Categorizer.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Categorizer, {
     validate: function(state, rubric) {

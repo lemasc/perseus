@@ -4,8 +4,8 @@
 
 var React = require("react");
 
-var QuestionParagraph = React.createClass({
-    render: function() {
+class QuestionParagraph extends React.Component {
+    render() { 
         var className = this.props.className
             ? "paragraph " + this.props.className
             : "paragraph";
@@ -20,7 +20,7 @@ var QuestionParagraph = React.createClass({
                 {this.props.children}
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = QuestionParagraph;

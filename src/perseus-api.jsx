@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -39,52 +40,52 @@ const StubTagEditor = require("./components/stub-tag-editor.jsx");
 
 module.exports = {
     Options: {
-        propTypes: React.PropTypes.shape({
-            isArticle: React.PropTypes.bool.isRequired,
+        propTypes: PropTypes.shape({
+            isArticle: PropTypes.bool.isRequired,
 
-            satStyling: React.PropTypes.bool.isRequired,
-            onInputError: React.PropTypes.func.isRequired,
-            onFocusChange: React.PropTypes.func.isRequired,
-            staticRender: React.PropTypes.bool.isRequired,
-            GroupMetadataEditor: React.PropTypes.func.isRequired,
-            showAlignmentOptions: React.PropTypes.bool.isRequired,
-            readOnly: React.PropTypes.bool.isRequired,
+            satStyling: PropTypes.bool.isRequired,
+            onInputError: PropTypes.func.isRequired,
+            onFocusChange: PropTypes.func.isRequired,
+            staticRender: PropTypes.bool.isRequired,
+            GroupMetadataEditor: PropTypes.func.isRequired,
+            showAlignmentOptions: PropTypes.bool.isRequired,
+            readOnly: PropTypes.bool.isRequired,
 
-            answerableCallback: React.PropTypes.func,
-            getAnotherHint: React.PropTypes.func,
-            interactionCallback: React.PropTypes.func,
+            answerableCallback: PropTypes.func,
+            getAnotherHint: PropTypes.func,
+            interactionCallback: PropTypes.func,
 
             // A function that takes in the relative problem number (starts at
             // 0 and is incremented for each group widget), and the ID of the
             // group widget, then returns a react component that will be added
             // immediately above the renderer in the group widget. If the
             // function returns null, no annotation will be added.
-            groupAnnotator: React.PropTypes.func.isRequired,
+            groupAnnotator: PropTypes.func.isRequired,
 
             // If imagePlaceholder or widgetPlaceholder are set, perseus will
             // render the placeholder instead of the image or widget node.
-            imagePlaceholder: React.PropTypes.node,
-            widgetPlaceholder: React.PropTypes.node,
+            imagePlaceholder: PropTypes.node,
+            widgetPlaceholder: PropTypes.node,
 
             // Base React elements that can be used in place of the standard DOM
             // DOM elements. For example, when provided, <Link /> will be used
             // in place of <a />. This allows clients to provide pre-styled
             // components or components with custom behavior.
-            baseElements: React.PropTypes.shape({
+            baseElements: PropTypes.shape({
                 // The <Link /> component provided here must adhere to the same
                 // interface as React's base <a /> component.
-                Link: React.PropTypes.func,
+                Link: PropTypes.func,
             }),
 
             // Function that takes dimensions and returns a React component
             // to display while an image is loading
-            imagePreloader: React.PropTypes.func,
+            imagePreloader: PropTypes.func,
 
             // Function that takes an object argument. The object should
             // include type and id, both strings, at least and can optionally
             // include a boolean "correct" value. This is used for keeping
             // track of widget interactions.
-            trackInteraction: React.PropTypes.func,
+            trackInteraction: PropTypes.func,
 
             // A boolean that indicates whether or not a custom keypad is
             // being used.  For mobile web this will be the ProvidedKeypad
@@ -95,18 +96,18 @@ module.exports = {
             // Internally, we defer to `customKeypad` over `staticRender`, but
             // they should really be represented as an enum or some other data
             // structure that forbids them both being enabled at once.
-            customKeypad: React.PropTypes.bool,
+            customKeypad: PropTypes.bool,
 
             // Indicates whether or not to use mobile styling.
-            isMobile: React.PropTypes.bool,
+            isMobile: PropTypes.bool,
 
             // A function, called with a bool indicating whether use of the
             // drawing area (scratchpad) should be allowed/disallowed.
             // Previously handled by `Khan.scratchpad.enable/disable`
-            setDrawingAreaAvailable: React.PropTypes.func,
+            setDrawingAreaAvailable: PropTypes.func,
 
             // Whether to use the Draft.js editor or the legacy textarea
-            useDraftEditor: React.PropTypes.bool,
+            useDraftEditor: PropTypes.bool,
 
             // Styling options that control the visual behavior of Perseus
             // items.
@@ -115,7 +116,7 @@ module.exports = {
             //     how to set their default values without overwriting provided
             //     values. For now, though, you must either specify all fields
             //     of `styling`, or omit the `styling` option entirely.
-            styling: React.PropTypes.shape({
+            styling: PropTypes.shape({
                 // Which version of radio widget styles to use in non-SAT
                 // contexts.
                 //
@@ -147,14 +148,14 @@ module.exports = {
                 // TODO(emily): Remove this by Aug 1, 2017, at which point all
                 //   callsites should have been switched to using the "final"
                 //   designs.
-                radioStyleVersion: React.PropTypes.oneOf([
+                radioStyleVersion: PropTypes.oneOf([
                     "intermediate",
                     "final",
                 ]),
             }),
 
             // The color used for the hint progress indicator (eg. 1 / 3)
-            hintProgressColor: React.PropTypes.string,
+            hintProgressColor: PropTypes.string,
         }).isRequired,
 
         defaults: {

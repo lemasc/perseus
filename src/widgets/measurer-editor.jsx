@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -19,27 +20,26 @@ const defaultImage = {
     left: 0,
 };
 
-const MeasurerEditor = React.createClass({
-    className: "perseus-widget-measurer",
+class MeasurerEditor extends React.Component {
+    className = "perseus-widget-measurer"
 
-    propTypes: {
+    static propTypes = {
         ...Changeable.propTypes,
-        box: React.PropTypes.arrayOf(React.PropTypes.number),
-        image: React.PropTypes.shape({
-            url: React.PropTypes.string,
-            top: React.PropTypes.number,
-            left: React.PropTypes.number,
+        box: PropTypes.arrayOf(PropTypes.number),
+        image: PropTypes.shape({
+            url: PropTypes.string,
+            top: PropTypes.number,
+            left: PropTypes.number,
         }),
-        showProtractor: React.PropTypes.bool,
-        showRuler: React.PropTypes.bool,
-        rulerLabel: React.PropTypes.string,
-        rulerTicks: React.PropTypes.number,
-        rulerPixels: React.PropTypes.number,
-        rulerLength: React.PropTypes.number,
-    },
+        showProtractor: PropTypes.bool,
+        showRuler: PropTypes.bool,
+        rulerLabel: PropTypes.string,
+        rulerTicks: PropTypes.number,
+        rulerPixels: PropTypes.number,
+        rulerLength: PropTypes.number,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             box: [480, 480],
             image: {},
             showProtractor: true,
@@ -48,10 +48,9 @@ const MeasurerEditor = React.createClass({
             rulerTicks: 10,
             rulerPixels: 40,
             rulerLength: 10,
-        };
-    },
+    };
 
-    render: function() {
+    render() {
         var image = _.extend({}, defaultImage, this.props.image);
 
         return (
@@ -197,31 +196,31 @@ const MeasurerEditor = React.createClass({
                     </div>}
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    _changeUrl: function(e) {
+    _changeUrl = (e) => {
         this._changeImage("url", e.target.value);
-    },
+    }
 
-    _changeTop: function(newTop) {
+    _changeTop = (newTop) => {
         this._changeImage("top", newTop);
-    },
+    }
 
-    _changeLeft: function(newLeft) {
+    _changeLeft = (newLeft) => {
         this._changeImage("left", newLeft);
-    },
+    }
 
-    _changeImage: function(subProp, newValue) {
+    _changeImage = (subProp, newValue) => {
         var image = _.clone(this.props.image);
         image[subProp] = newValue;
         this.change("image", image);
-    },
+    }
 
-    renderLabelChoices: function(choices) {
+    renderLabelChoices = (choices) => {
         return _.map(choices, function(nameAndValue) {
             var [name, value] = nameAndValue;
             return (
@@ -230,11 +229,11 @@ const MeasurerEditor = React.createClass({
                 </option>
             );
         });
-    },
+    }
 
-    serialize() {
+    serialize = () => {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = MeasurerEditor;

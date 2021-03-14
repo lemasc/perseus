@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Zooms child to fit with tap-to-zoom behavior.
  */
@@ -7,10 +8,10 @@ const ReactDOM = require("react-dom");
 
 const Deferred = require("../deferred.js");
 
-const Zoomable = React.createClass({
-    propTypes: {
-        animateHeight: React.PropTypes.bool,
-        children: React.PropTypes.element.isRequired,
+class Zoomable extends React.Component {
+    static propTypes = {
+        animateHeight: PropTypes.bool,
+        children: PropTypes.element.isRequired,
 
         /**
          * Optional function that allows customizations in zooming.
@@ -20,17 +21,17 @@ const Zoomable = React.createClass({
          *
          * @return {Object} bounds object with `width` and `height` properties
          */
-        computeChildBounds: React.PropTypes.func,
+        computeChildBounds: PropTypes.func,
 
         // If this prop is specified, we wait until the deferred is resolved
         // before measuring the child element.  This is necessary in cases
         // where the child size depends on whether or not resources, such as
         // fonts, have been loaded.
-        readyToMeasureDeferred: React.PropTypes.shape({
-            then: React.PropTypes.func.isRequired,
-            reject: React.PropTypes.func.isRequired,
+        readyToMeasureDeferred: PropTypes.shape({
+            then: PropTypes.func.isRequired,
+            reject: PropTypes.func.isRequired,
         }).isRequired,
-    },
+    }
 
     getDefaultProps() {
         const deferred = new Deferred();
@@ -48,9 +49,9 @@ const Zoomable = React.createClass({
                     width: firstChild.offsetWidth + 1,
                     height: firstChild.offsetHeight + 1,
                 };
-            },
+            }
         };
-    },
+    }
 
     getInitialState() {
         return {
@@ -58,7 +59,7 @@ const Zoomable = React.createClass({
             marginBottomPx: 0,
             zoomed: true,
         };
-    },
+    }
 
     componentDidMount() {
         this._node = ReactDOM.findDOMNode(this);
@@ -88,14 +89,14 @@ const Zoomable = React.createClass({
                 window.addEventListener("resize", this.reset);
             }
         });
-    },
+    }
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.reset);
         if (this._observer) {
             this._observer.disconnect();
         }
-    },
+    }
 
     reset() {
         if (!this.isMounted()) {
@@ -116,7 +117,7 @@ const Zoomable = React.createClass({
                 this.scaleChildToFit(false);
             }
         );
-    },
+    }
 
     stopPropagationIfZoomed(e) {
         if (!this.state.zoomed) {
@@ -124,7 +125,7 @@ const Zoomable = React.createClass({
             // to be propagated to children if we are already zoomed.
             e.stopPropagation();
         }
-    },
+    }
 
     // TODO(benkomalo): call this on viewport width changes?
     // https://github.com/Khan/math-input/blob/master/src/components/math-keypad.js#L43
@@ -168,20 +169,20 @@ const Zoomable = React.createClass({
                 visible: true,
             });
         }
-    },
+    }
 
     handleClickIfZoomed(e) {
         if (!this.state.zoomed) {
             e.stopPropagation();
             this.handleClick();
         }
-    },
+    }
 
     handleClick() {
         this.setState({
             zoomed: !this.state.zoomed,
         });
-    },
+    }
 
     render() {
         const {
@@ -218,7 +219,7 @@ const Zoomable = React.createClass({
         const translateOffset = visible ? "" : " translate(0, 8px)";
         const transform = zoomed
             ? `scale(1, 1) ${translateOffset}`
-            : `scale(${scale}, ${scale}) ${translateOffset}`;
+            : `scale(${scale} ${scale}) ${translateOffset}`;
 
         const style = {
             display: "block",
@@ -247,7 +248,7 @@ const Zoomable = React.createClass({
                 {this.props.children}
             </span>
         );
-    },
-});
+    }
+}
 
 module.exports = Zoomable;

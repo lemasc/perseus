@@ -12,11 +12,23 @@ module.exports = [
         __EDITOR__ && require("./widgets/input-number-editor.jsx"),
     ],
     [
+        require("./widgets/dropdown.jsx"),
+        __EDITOR__ && require("./widgets/dropdown-editor.jsx"),
+    ],
+    [
         require("./widgets/numeric-input.jsx"),
         __EDITOR__ && require("./widgets/numeric-input-editor.jsx"),
     ],
     [
+        require("./widgets/image.jsx"),
+        __EDITOR__ && require("./widgets/image-editor.jsx"),
+    ],
+    [
         require("./widgets/expression.jsx"),
         __EDITOR__ && require("./widgets/expression-editor.jsx"),
+    ],
+    [
+        require("./widgets/video.jsx"),
+        __EDITOR__ && require("./widgets/video-editor.jsx"),
     ],
 ];

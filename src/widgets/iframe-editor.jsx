@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -17,8 +18,8 @@ const PropCheckBox = require("../components/prop-check-box.jsx");
 const PairEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        name: React.PropTypes.string,
-        value: React.PropTypes.string,
+        name: PropTypes.string,
+        value: PropTypes.string,
     },
 
     getDefaultProps: function() {
@@ -64,10 +65,10 @@ const PairEditor = React.createClass({
 var PairsEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        pairs: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                name: React.PropTypes.string,
-                value: React.PropTypes.string,
+        pairs: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string,
+                value: PropTypes.string,
             })
         ).isRequired,
     },

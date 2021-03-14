@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A side by side diff view for Perseus renderers.
  */
@@ -9,10 +10,10 @@ const TextDiff = require("./text-diff.jsx");
 const WidgetDiff = require("./widget-diff.jsx");
 const Widgets = require("../widgets.js");
 
-const rendererProps = React.PropTypes.shape({
-    content: React.PropTypes.string,
-    images: React.PropTypes.object,
-    widgets: React.PropTypes.object,
+const rendererProps = PropTypes.shape({
+    content: PropTypes.string,
+    images: PropTypes.object,
+    widgets: PropTypes.object,
 });
 
 // In diffs, only show the widgetInfo props that can change
@@ -39,8 +40,8 @@ const filterWidgetInfo = function(widgetInfo, showAlignmentOptions) {
 };
 
 
-const RendererDiff = React.createClass({
-    propTypes: {
+class RendererDiff extends React.Component {
+    static propTypes = {
         // The "after" props of the renderer. Will be displayed on the right.
         after: rendererProps,
 
@@ -48,34 +49,34 @@ const RendererDiff = React.createClass({
         before: rendererProps,
 
         // If true, show widget alignment options in the diff.
-        showAlignmentOptions: React.PropTypes.bool,
+        showAlignmentOptions: PropTypes.bool,
 
         // If true, render a horizontal rule after this diff.
-        showSeparator: React.PropTypes.bool,
+        showSeparator: PropTypes.bool,
 
         // The heading to render above the side by side diff.
         // (In a code review tool this would be the filename.)
-        title: React.PropTypes.string.isRequired,
-    },
+        title: PropTypes.string.isRequired,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             after: {
                 content: "",
                 images: {},
-                widgets: {},
+                widgets: {}
             },
             before: {
                 content: "",
                 images: {},
-                widgets: {},
+                widgets: {}
             },
             showAlignmentOptions: false,
             showSeparator: false,
         };
-    },
+    }
 
-    render: function() {
+    render() {
         const {
             after,
             before,
@@ -121,7 +122,7 @@ const RendererDiff = React.createClass({
             {widgetsDiff}
             {showSeparator && <div className="diff-separator"/>}
         </div>;
-    },
-});
+    }
+}
 
 module.exports = RendererDiff;

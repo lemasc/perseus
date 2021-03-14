@@ -10,7 +10,7 @@ const Plot = Graphie.Plot;
 const kpoint = require("kmath").point;
 
 const DEFAULT_BACKGROUND_IMAGE = {
-    url: null,
+    url: "",
 };
 
 // TODO(charlie): These really need to go into a utility file as they're being

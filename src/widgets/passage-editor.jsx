@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, object-curly-spacing, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -12,29 +13,27 @@ const Editor = require("../editor.jsx");
 const InfoTip = require("../components/info-tip.jsx");
 const PropCheckBox = require("../components/prop-check-box.jsx");
 
-const PassageEditor = React.createClass({
-    propTypes: {
+class PassageEditor extends React.Component {
+    static propTypes= {
         ...Changeable.propTypes,
-        passageTitle: React.PropTypes.string,
-        passageText: React.PropTypes.string,
-        footnotes: React.PropTypes.string,
-        showLineNumbers: React.PropTypes.bool,
-    },
+        passageTitle: PropTypes.string,
+        passageText: PropTypes.string,
+        footnotes: PropTypes.string,
+        showLineNumbers: PropTypes.bool,
+    };
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             passageTitle: "",
             passageText: "",
             footnotes: "",
             showLineNumbers: true,
-        };
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         var passageEditor = (
             <Editor
                 ref="passage-editor"
@@ -105,11 +104,11 @@ const PassageEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = PassageEditor;

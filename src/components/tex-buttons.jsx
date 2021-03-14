@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/prop-types, react/sort-comp */
 
 const React = require("react");
@@ -161,17 +162,17 @@ const buttonSets = {
     ],
 };
 
-const buttonSetsType = React.PropTypes.arrayOf(
-    React.PropTypes.oneOf(_(buttonSets).keys())
+const buttonSetsType = PropTypes.arrayOf(
+    PropTypes.oneOf(_.keys(buttonSets))
 );
 
-const TexButtons = React.createClass({
-    propTypes: {
+class TexButtons extends React.Component {
+    static propTypes = {
         sets: buttonSetsType.isRequired,
-        onInsert: React.PropTypes.func.isRequired,
-    },
-
-    render: function() {
+        onInsert: PropTypes.func.isRequired,
+    }
+    
+    render() {
         // Always show buttonSets in the same order. Note: Technically it's ok
         // for _.keys() to return the keys in an arbitrary order, but in
         // practice, they will be ordered as listed above.
@@ -179,9 +180,9 @@ const TexButtons = React.createClass({
             _.keys(buttonSets).indexOf(setName)
         );
 
-        const buttons = _(sortedButtonSets).map(setName => buttonSets[setName]);
+        const buttons = _.map(sortedButtonSets,setName => buttonSets[setName]);
 
-        const buttonRows = _(buttons).map(row =>
+        const buttonRows = _.map(buttons,row =>
             row.map(symbGen => {
                 // create a (component, thing we should send to mathquill) pair
                 const symbol = symbGen(this.props);
@@ -199,7 +200,7 @@ const TexButtons = React.createClass({
             })
         );
 
-        const buttonPopup = _(buttonRows).map((row, i) => {
+        const buttonPopup = _.map(buttonRows,(row, i) => {
             return (
                 <div
                     className="clearfix tex-button-row"
@@ -215,12 +216,11 @@ const TexButtons = React.createClass({
                 {buttonPopup}
             </div>
         );
-    },
+    }
+}
 
-    statics: {
-        buttonSets,
-        buttonSetsType,
-    },
-});
-
-module.exports = TexButtons;
+module.exports = {
+    TexButtons,
+    buttonSets,
+    buttonSetsType
+};

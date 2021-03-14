@@ -4,6 +4,8 @@
 
 const {interactiveSizes} = require("../styles/constants.js");
 
+const PropTypes = require('prop-types');
+
 // Note: these size cutoffs represent content-width cutoffs as
 // specified in http://zpl.io/1mVmvU
 // TODO(benkomalo): these values aren't used in JS outside of this file, but
@@ -23,7 +25,7 @@ const containerSizeClass = {
 
 module.exports = {
     containerSizeClass: containerSizeClass,
-    containerSizeClassPropType: React.PropTypes.oneOf(
+    containerSizeClassPropType: PropTypes.oneOf(
         Object.values(containerSizeClass)
     ),
 

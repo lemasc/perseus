@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, comma-dangle, max-len, no-var, object-curly-spacing, one-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,25 +14,23 @@ var NORMAL = "normal",
     HORIZONTAL = "horizontal",
     VERTICAL = "vertical";
 
-const OrdererEditor = React.createClass({
-    propTypes: {
-        correctOptions: React.PropTypes.array,
-        otherOptions: React.PropTypes.array,
-        height: React.PropTypes.oneOf([NORMAL, AUTO]),
-        layout: React.PropTypes.oneOf([HORIZONTAL, VERTICAL]),
-        onChange: React.PropTypes.func.isRequired,
-    },
+class OrdererEditor extends React.Component {
+    static propTypes = {
+        correctOptions: PropTypes.array,
+        otherOptions: PropTypes.array,
+        height: PropTypes.oneOf([NORMAL, AUTO]),
+        layout: PropTypes.oneOf([HORIZONTAL, VERTICAL]),
+        onChange: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+   static defaultProps =  {
             correctOptions: [{content: "$x$"}],
             otherOptions: [{content: "$y$"}],
             height: NORMAL,
             layout: HORIZONTAL,
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-widget-orderer">
                 <div>
@@ -99,25 +98,25 @@ const OrdererEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    onOptionsChange: function(whichOptions, options, cb) {
+    onOptionsChange = (whichOptions, options, cb) => {
         var props = {};
         props[whichOptions] = _.map(options, function(option) {
             return {content: option};
         });
         this.props.onChange(props, cb);
-    },
+    }
 
-    onLayoutChange: function(e) {
+    onLayoutChange = (e) => {
         this.props.onChange({layout: e.target.value});
-    },
+    }
 
-    onHeightChange: function(e) {
+    onHeightChange = (e) => {
         this.props.onChange({height: e.target.value});
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         // We combine the correct answer and the other cards by merging them,
         // removing duplicates and empty cards, and sorting them into
         // categories based on their content
@@ -149,7 +148,7 @@ const OrdererEditor = React.createClass({
             height: this.props.height,
             layout: this.props.layout,
         };
-    },
-});
+    }
+}
 
 module.exports = OrdererEditor;

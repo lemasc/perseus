@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable object-curly-spacing */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -17,18 +18,18 @@
 const React = require("react");
 const ReactDOM = require("react-dom");
 
-const { Keypad } = require("../../math-input").components;
+//const { Keypad } = require("../../math-input").components;
 
 const ProvideKeypad = {
     propTypes: {
-        apiOptions: React.PropTypes.shape({
-            customKeypad: React.PropTypes.bool,
+        apiOptions: PropTypes.shape({
+            customKeypad: PropTypes.bool,
         }),
         // An Aphrodite style object, to be applied to the keypad container.
         // Note that, given our awkward structure of injecting the keypad, this
         // style won't be applied or updated dynamically. Rather, it will only
         // be applied in `componentDidMount`.
-        keypadStyle: React.PropTypes.any,
+        keypadStyle: PropTypes.any,
     },
 
     getInitialState() {
@@ -44,7 +45,7 @@ const ProvideKeypad = {
             // on-demand in the future.
             this._keypadContainer = document.createElement('div');
             document.body.appendChild(this._keypadContainer);
-
+/*
             ReactDOM.render(
                 <Keypad
                     onElementMounted={(element) => {
@@ -58,7 +59,12 @@ const ProvideKeypad = {
                     style={this.props.keypadStyle}
                 />,
                 this._keypadContainer
-            );
+            );*/
+            //TODO_sz
+            ReactDOM.render(
+                <div className="mock-keypad"
+                    style={this.props.keypadStyle}
+                />, this._keypadContainer);
         }
     },
 

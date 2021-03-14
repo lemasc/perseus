@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, object-curly-spacing */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -15,9 +16,9 @@ const borderSize = 30;
 
 const Molecule = React.createClass({
     propTypes: {
-        id: React.PropTypes.string.isRequired,
-        rotationAngle: React.PropTypes.number,
-        smiles: React.PropTypes.string,
+        id: PropTypes.string.isRequired,
+        rotationAngle: PropTypes.number,
+        smiles: PropTypes.string,
     },
 
     getInitialState: function() {
@@ -122,9 +123,9 @@ const Molecule = React.createClass({
 
 const MoleculeWidget = React.createClass({
     propTypes: {
-        rotationAngle: React.PropTypes.number,
-        smiles: React.PropTypes.string,
-        widgetId: React.PropTypes.string,
+        rotationAngle: PropTypes.number,
+        smiles: PropTypes.string,
+        widgetId: PropTypes.string,
     },
 
     getDefaultProps: function() {

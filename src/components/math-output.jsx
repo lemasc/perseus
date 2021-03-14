@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/sort-comp */
 
 const React = require("react");
@@ -7,34 +8,34 @@ const TeX = require("react-components/tex.jsx");
 const ApiClassNames = require("../perseus-api.jsx").ClassNames;
 const ModifyTex = require("../tex-wrangler.js").modifyTex;
 
-const MathOutput = React.createClass({
-    propTypes: {
-        value: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.number,
+class MathOutput extends React.Component {
+    static propTypes = {
+        value: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
         ]),
-        className: React.PropTypes.string,
-        labelText: React.PropTypes.string,
-        onFocus: React.PropTypes.func,
-        onBlur: React.PropTypes.func,
-    },
+        className: PropTypes.string,
+        labelText: PropTypes.string,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             value: "",
-            onFocus: function() {},
-            onBlur: function() {},
+            onFocus() {},
+            onBlur() {}
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             focused: false,
             selectorNamespace: _.uniqueId("math-output"),
         };
-    },
+    }
 
-    _getInputClassName: function() {
+    _getInputClassName() {
         let className =
             "math-output " +
             ApiClassNames.INPUT +
@@ -47,9 +48,9 @@ const MathOutput = React.createClass({
             className += " " + this.props.className;
         }
         return className;
-    },
+    }
 
-    _getDisplayValue: function(value) {
+    _getDisplayValue(value) {
         // Cast from (potentially a) number to string
         let displayText;
         if (value != null) {
@@ -58,9 +59,9 @@ const MathOutput = React.createClass({
             displayText = "";
         }
         return ModifyTex(displayText);
-    },
+    }
 
-    render: function() {
+    render() {
         const divStyle = {
             textAlign: "center",
         };
@@ -80,13 +81,13 @@ const MathOutput = React.createClass({
                 </div>
             </span>
         );
-    },
+    }
 
-    getValue: function() {
+    getValue() {
         return this.props.value;
-    },
+    }
 
-    focus: function() {
+    focus() {
         if (!this.state.focused) {
             this.props.onFocus();
             this._bindBlurHandler();
@@ -94,9 +95,9 @@ const MathOutput = React.createClass({
                 focused: true,
             });
         }
-    },
+    }
 
-    blur: function() {
+    blur() {
         if (this.state.focused) {
             this.props.onBlur();
             this._unbindBlurHandler();
@@ -104,9 +105,9 @@ const MathOutput = React.createClass({
                 focused: false,
             });
         }
-    },
+    }
 
-    _bindBlurHandler: function() {
+    _bindBlurHandler() {
         $(document).bind("vclick." + this.state.selectorNamespace, e => {
             // Detect whether the target has our React DOM node as a parent
             const $closestWidget = $(e.target).closest(
@@ -116,15 +117,15 @@ const MathOutput = React.createClass({
                 this.blur();
             }
         });
-    },
+    }
 
-    _unbindBlurHandler: function() {
+    _unbindBlurHandler() {
         $(document).unbind("." + this.state.selectorNamespace);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this._unbindBlurHandler();
-    },
-});
+    }
+}
 
 module.exports = MathOutput;

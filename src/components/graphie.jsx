@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 const _ = require("underscore");
@@ -14,46 +15,44 @@ const assert = require("../interactive2/interactive-util.js").assert;
 const GraphUtils = require("../util/graph-utils.js");
 const createGraphie = GraphUtils.createGraphie;
 
-const Graphie = React.createClass({
-    propTypes: {
-        addMouseLayer: React.PropTypes.bool,
-        box: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-        children: React.PropTypes.node,
-        isMobile: React.PropTypes.bool,
-        onClick: React.PropTypes.func,
-        onMouseDown: React.PropTypes.func,
-        onMouseMove: React.PropTypes.func,
-        onMouseUp: React.PropTypes.func,
-        options: React.PropTypes.shape({
-            snapStep: React.PropTypes.arrayOf(React.PropTypes.number),
+class Graphie extends React.Component {
+    static propTypes = {
+        addMouseLayer: PropTypes.bool,
+        box: PropTypes.arrayOf(PropTypes.number).isRequired,
+        children: PropTypes.node,
+        isMobile: PropTypes.bool,
+        onClick: PropTypes.func,
+        onMouseDown: PropTypes.func,
+        onMouseMove: PropTypes.func,
+        onMouseUp: PropTypes.func,
+        options: PropTypes.shape({
+            snapStep: PropTypes.arrayOf(PropTypes.number),
         }),
-        range: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.number)
+        range: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.number)
         ),
-        responsive: React.PropTypes.bool,
-        setDrawingAreaAvailable: React.PropTypes.func,
-        setup: React.PropTypes.func.isRequired,
-    },
+        responsive: PropTypes.bool,
+        setDrawingAreaAvailable: PropTypes.func,
+        setup: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             range: [[-10, 10], [-10, 10]],
             options: {},
             responsive: false,
-            addMouseLayer: true,
-        };
-    },
+            addMouseLayer: true
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._setupGraphie();
         this._updateMovables();
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps) {
+    shouldComponentUpdate(nextProps) {
         return !deepEq(this.props, nextProps);
-    },
+    }
 
-    componentDidUpdate: function(prevProps) {
+    componentDidUpdate(prevProps) {
         // If someone changes the setup function passed in, we should
         // technically setup graphie again. But that's definitely an
         // anti-pattern, since it is most-likely caused by passing in an
@@ -81,7 +80,7 @@ const Graphie = React.createClass({
             this._setupGraphie();
         }
         this._updateMovables();
-    },
+    }
 
     /**
      * Allow parents of the <Graphie> component to grab a reference to the
@@ -91,12 +90,12 @@ const Graphie = React.createClass({
      * This shouldn't be necessary for 90% of cases, but the power is there.
      * Use it for good and not evil.
      */
-    getGraphie: function() {
+    getGraphie() {
         return this._graphie;
-    },
+    }
 
     // bounds-checked range
-    _range: function() {
+    _range() {
         return _.map(this.props.range, dimRange => {
             if (dimRange[0] >= dimRange[1]) {
                 return [-10, 10];
@@ -104,26 +103,26 @@ const Graphie = React.createClass({
                 return dimRange;
             }
         });
-    },
+    }
 
-    _box: function() {
+    _box() {
         return _.map(this.props.box, pixelDim => {
             // 340 = default size in the editor. exact value
             // is arbitrary; this is just a safety check.
             return pixelDim > 0 ? pixelDim : 340;
         });
-    },
+    }
 
-    _scale: function() {
+    _scale() {
         const box = this._box();
         const range = this._range();
         return _.map(box, (pixelDim, i) => {
             const unitDim = range[i][1] - range[i][0];
             return pixelDim / unitDim;
         });
-    },
+    }
 
-    _setupGraphie: function() {
+    _setupGraphie() {
         this._removeMovables();
 
         const graphieDiv = ReactDOM.findDOMNode(this.refs.graphieDiv);
@@ -168,15 +167,15 @@ const Graphie = React.createClass({
                 this.props.options
             )
         );
-    },
+    }
 
-    _removeMovables: function() {
+    _removeMovables() {
         // _.invoke works even when this._movables is undefined
         _.invoke(this._movables, "remove");
         this._movables = {};
-    },
+    }
 
-    _renderMovables: function(children, options) {
+    _renderMovables(children, options) {
         // Each leaf of `children` is a movable descriptor created by a call to
         // some `GraphieMovable`, such as `MovablePoint`.
         //
@@ -294,10 +293,10 @@ const Graphie = React.createClass({
 
             return newMovables[key];
         });
-    },
+    }
 
     // Sort of like react diffing, but for movables
-    _updateMovables: function() {
+    _updateMovables() {
         const graphie = this._graphie;
 
         const oldMovables = this._movables;
@@ -318,16 +317,16 @@ const Graphie = React.createClass({
                 oldMovable.remove();
             }
         });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graphie-container">
                 <div className="graphie" ref="graphieDiv" />
             </div>
         );
-    },
-});
+    }
+}
 
 // Attach Graphie.createClass and Graphie.createSimpleClass
 _.extend(Graphie, GraphieClasses);

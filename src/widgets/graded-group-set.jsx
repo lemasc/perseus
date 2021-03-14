@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -21,12 +22,13 @@ const {
     linterContextDefault,
 } = require("../gorgon/proptypes.js");
 
-const Indicators = React.createClass({
-    propTypes: {
-        currentGroup: React.PropTypes.number.isRequired,
-        numGroups: React.PropTypes.number.isRequired,
-        onChangeCurrentGroup: React.PropTypes.func.isRequired,
-    },
+class Indicators extends React.Component {
+    static propTypes ={
+        currentGroup: PropTypes.number.isRequired,
+        numGroups: PropTypes.number.isRequired,
+        onChangeCurrentGroup: PropTypes.func.isRequired,
+    }
+
     render() {
         const items = [];
         for (let i = 0; i < this.props.numGroups; i++) {
@@ -47,65 +49,64 @@ const Indicators = React.createClass({
                 {items}
             </div>
         );
-    },
-});
+    }
+}
 
 // TODO(jared): find a better name for this :) and for GradedGroup; the names
 // are currently a little confusing.
-const GradedGroupSet = React.createClass({
-    propTypes: {
+class GradedGroupSet extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        gradedGroups: React.PropTypes.array,
-        trackInteraction: React.PropTypes.func.isRequired,
+        gradedGroups: PropTypes.array,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             gradedGroups: [],
             linterContext: linterContextDefault,
         };
-    },
 
-    getInitialState() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             currentGroup: 0,
         };
-    },
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps !== this.props || nextState !== this.state;
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     // Mobile API
-    getInputPaths() {
+    getInputPaths = () => {
         return this._childGroup.getInputPaths();
-    },
+    }
 
-    setInputValue(path, newValue, cb) {
+    setInputValue = (path, newValue, cb) => {
         return this._childGroup.setInputValue(path, newValue, cb);
-    },
+    }
 
-    getAcceptableFormatsForInputPath(path) {
+    getAcceptableFormatsForInputPath = (path) => {
         return this._childGroup.getAcceptableFormatsForInputPath(path);
-    },
+    }
 
-    focus() {
+    focus = () => {
         return this._childGroup.focus();
-    },
+    }
 
-    focusInputPath(path) {
+    focusInputPath = (path) => {
         this._childGroup.focusInputPath(path);
-    },
+    }
 
-    blurInputPath(path) {
+    blurInputPath = (path) => {
         this._childGroup.blurInputPath(path);
-    },
+    }
 
     handleNextQuestion() {
         const {currentGroup} = this.state;
@@ -114,7 +115,7 @@ const GradedGroupSet = React.createClass({
         if (currentGroup < numGroups - 1) {
             this.setState({currentGroup: currentGroup + 1});
         }
-    },
+    }
 
     render() {
         const currentGroup = this.props.gradedGroups[this.state.currentGroup];
@@ -144,7 +145,7 @@ const GradedGroupSet = React.createClass({
                 </div>
                 <GradedGroup
                     key={this.state.currentGroup}
-                    ref={comp => (this._childGroup = comp)}
+                    ref={comp => this._childGroup = comp}
                     {...this.props}
                     {...currentGroup}
                     inGradedGroupSet={true}
@@ -154,8 +155,8 @@ const GradedGroupSet = React.createClass({
                 />
             </div>
         );
-    },
-});
+    }
+}
 
 const traverseChildWidgets = function(props, traverseRenderer) {
     // NOTE(jared): I have no idea how this works

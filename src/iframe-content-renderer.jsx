@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Displays the given content in an iframe, isolating it from the parent page
  *
@@ -47,23 +48,27 @@ window.addEventListener("message", event => {
     }
 });
 
-const IframeContentRenderer = React.createClass({
-    propTypes: {
+class IframeContentRenderer extends React.Component {
+    static propTypes = {
         // The HTML content to render to the iframe
-        content: React.PropTypes.string.isRequired,
+        content: PropTypes.string.isRequired,
 
         // The data-* suffix for passing information to the iframe's JS
-        datasetKey: React.PropTypes.any,
+        datasetKey: PropTypes.any,
 
         // The value of the data-* attribute
-        datasetValue: React.PropTypes.any,
+        datasetValue: PropTypes.any,
 
         // Whether to make the iframe's height match its content's height,
         // used to prevent scrolling inside the iframe.
-        seamless: React.PropTypes.bool,
-    },
-
-    componentDidMount: function() {
+        seamless: PropTypes.bool,
+    }
+    constructor(props) {
+        super(props);
+        this.container = React.createRef();
+    }
+    componentDidMount() {
+        this._isMounted = true;
         this.iframeID = nextIframeID;
         nextIframeID++;
 
@@ -74,25 +79,24 @@ const IframeContentRenderer = React.createClass({
 
         updateIframeHeight[this.iframeID] = height => {
             this._lastHeight = height;
-            if (this.isMounted() && this.props.seamless) {
-                this.refs.container.style.height = height + "px";
+            if (this._isMounted && this.props.seamless) {
+                this.container.current.style.height = height + "px";
             }
         };
-    },
-
-    shouldComponentUpdate: function(nextProps) {
+    }
+    shouldComponentUpdate(nextProps) {
         return (
             nextProps.content !== this.props.content ||
             nextProps.datasetValue !== this.props.datasetValue ||
             nextProps.seamless !== this.props.seamless
         );
-    },
+    }
 
-    componentDidUpdate: function(prevProps) {
+    componentDidUpdate(prevProps) {
         if (!this.props.seamless) {
-            this.refs.container.style.height = "100%";
+            this.container.current.style.height = "100%";
         } else {
-            this.refs.container.style.height = this._lastHeight + "px";
+            this.container.current.style.height = this._lastHeight + "px";
         }
 
         if (
@@ -102,17 +106,18 @@ const IframeContentRenderer = React.createClass({
             // Not just a change in seamless
             this._prepareFrame();
         }
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
+        this._isMounted = false;
         requestIframeData[this.iframeID] = null;
         updateIframeHeight[this.iframeID] = null;
-    },
+    }
 
-    _prepareFrame: function() {
+    _prepareFrame() {
         // Don't initialize the iframe until the page has loaded
         if (this._frame) {
-            this.refs.container.removeChild(this._frame);
+            this.container.current.removeChild(this._frame);
         }
 
         this._frame = document.createElement("iframe");
@@ -158,11 +163,11 @@ const IframeContentRenderer = React.createClass({
             });
         };
 
-        this.refs.container.appendChild(this._frame);
-    },
+        this.container.current.appendChild(this._frame);
+    }
 
-    sendNewData: function(data) {
-        if (this.isMounted() && data) {
+    sendNewData(data) {
+        if (this._isMounted && data) {
             this._lastData = data;
 
             // We can't use JSON.stringify/parse for this because the apiOptions
@@ -171,11 +176,11 @@ const IframeContentRenderer = React.createClass({
             window.iframeDataStore[this.iframeID] = data;
             this._frame.contentWindow.postMessage(this.iframeID, "*");
         }
-    },
+    }
 
-    render: function() {
-        return <div ref="container" style={{width: "100%", height: "100%"}} />;
-    },
-});
+    render() {
+        return <div ref={this.container} style={{width: "100%", height: "100%"}} />;
+    }
+}
 
 module.exports = IframeContentRenderer;

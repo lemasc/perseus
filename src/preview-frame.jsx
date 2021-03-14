@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
   * Demonstrates the rendered result of a Perseus question within an iframe.
   *
@@ -14,16 +15,16 @@ const HintRenderer = require("./hint-renderer.jsx");
 const ArticleRenderer = require("./article-renderer.jsx");
 const TouchEmulator = require("../lib/touch-emulator.js");
 
-const PreviewFrame = React.createClass({
-    propTypes: {
-        isMobile: React.PropTypes.bool.isRequired,
-    },
+class PreviewFrame extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { data: null }
+    }
+    static propTypes = {
+        isMobile: PropTypes.bool.isRequired,
+    }
 
-    getInitialState: function() {
-        return {};
-    },
-
-    componentDidMount: function() {
+    componentDidMount() {
         window.addEventListener("message", event => {
             const data = window.parent.iframeDataStore[event.data];
 
@@ -71,7 +72,7 @@ const PreviewFrame = React.createClass({
         } else {
             document.body.style.overflow = "hidden";
         }
-    },
+    }
 
     componentDidUpdate() {
         if (this.state.type === "article-all") {
@@ -79,15 +80,15 @@ const PreviewFrame = React.createClass({
         } else {
             document.body.style.overflow = "hidden";
         }
-    },
+    }
 
     componentWillUnmount() {
         if (this._observer) {
             this._observer.disconnect();
         }
-    },
+    }
 
-    _updateParentWithHeight: function() {
+    _updateParentWithHeight() {
         let lowest = 0;
         ["#content-container", ".preview-measure"].forEach(selector => {
             Array.from(document.querySelectorAll(selector)).forEach(element => {
@@ -107,9 +108,9 @@ const PreviewFrame = React.createClass({
             },
             "*"
         );
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.state.data) {
             const makeUpdatedData = (data) => ({
                 ...data,
@@ -118,7 +119,7 @@ const PreviewFrame = React.createClass({
                 apiOptions: {
                     ...data.apiOptions,
                     isMobile: this.props.isMobile,
-                },
+                }
             });
 
             const isExercise =
@@ -194,7 +195,7 @@ const PreviewFrame = React.createClass({
         } else {
             return <div />;
         }
-    },
-});
+    }
+}
 
 module.exports = PreviewFrame;

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/prop-types, react/sort-comp */
 
 const React = require("react");
@@ -7,26 +8,29 @@ const _ = require("underscore");
  * renderer's onChange method, and gets the prop name
  * dynamically from its props list
  */
-const PropCheckBox = React.createClass({
-    propTypes: {
-        labelAlignment: React.PropTypes.oneOf(["left", "right"]),
-    },
+class PropCheckBox extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    static propTypes = {
+        labelAlignment: PropTypes.oneOf(["left", "right"]),
+    }
 
-    DEFAULT_PROPS: {
+    static defaultProps = {
         label: null,
         onChange: null,
         labelAlignment: "left",
-    },
-
-    getDefaultProps: function() {
-        return this.DEFAULT_PROPS;
-    },
-
-    propName: function() {
+    }
+    _defaults = {
+        label: null,
+        onChange: null,
+        labelAlignment: "left",
+    }
+    propName = () => {
         const propName = _.find(
             _.keys(this.props),
-            function(localPropName) {
-                return !_.has(this.DEFAULT_PROPS, localPropName);
+            (localPropName) => {
+                return !_.has(this._defaults, localPropName);
             },
             this
         );
@@ -38,13 +42,13 @@ const PropCheckBox = React.createClass({
         }
 
         return propName;
-    },
+    }
 
-    _labelAlignLeft: function() {
+    _labelAlignLeft = () => {
         return this.props.labelAlignment === "left";
-    },
+    }
 
-    render: function() {
+    render() {
         const propName = this.propName();
         return (
             <label>
@@ -57,14 +61,14 @@ const PropCheckBox = React.createClass({
                 {!this._labelAlignLeft() && this.props.label}
             </label>
         );
-    },
+    }
 
-    toggle: function() {
+    toggle = () => {
         const propName = this.propName();
         const changes = {};
         changes[propName] = !this.props[propName];
         this.props.onChange(changes);
-    },
-});
+    }
+}
 
 module.exports = PropCheckBox;

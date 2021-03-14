@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 /* globals i18n */
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -64,31 +65,30 @@ const DEFAULT_INVALID_MESSAGE =
     "It looks like you left something blank or " +
     "entered in an invalid answer.";
 
-const GradedGroup = React.createClass({
-    propTypes: {
+class GradedGroup extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        content: React.PropTypes.string,
-        hasHint: React.PropTypes.bool,
-        hint: React.PropTypes.object,
-        images: React.PropTypes.object,
-        inGradedGroupSet: React.PropTypes.bool,
-        onBlur: React.PropTypes.func,
-        onFocus: React.PropTypes.func,
+        content: PropTypes.string,
+        hasHint: PropTypes.bool,
+        hint: PropTypes.object,
+        images: PropTypes.object,
+        inGradedGroupSet: PropTypes.bool,
+        onBlur: PropTypes.func,
+        onFocus: PropTypes.func,
 
         // The function to call when clicking "Next question" after correctly
         // answering one graded group out of a set. If this is null, the
         // "Next question" button will not appear.
-        onNextQuestion: React.PropTypes.func,
+        onNextQuestion: PropTypes.func,
 
-        title: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func.isRequired,
-        widgets: React.PropTypes.object,
+        title: PropTypes.string,
+        trackInteraction: PropTypes.func.isRequired,
+        widgets: PropTypes.object,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             title: "",
             content: "",
             widgets: {},
@@ -97,31 +97,31 @@ const GradedGroup = React.createClass({
             hasHint: false,
             linterContext: linterContextDefault,
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             status: GRADING_STATUSES.ungraded,
             showHint: false,
             message: "",
             answerBarState: ANSWER_BAR_STATES.HIDDEN,
         };
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps, nextState) {
+    shouldComponentUpdate = (nextProps, nextState) => {
         return nextProps !== this.props || nextState !== this.state;
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     // This is a little strange because the id of the widget that actually
     // changed is going to be lost in favor of the group widget's id. The
     // widgets prop also wasn't actually changed, and this only serves to
     // alert our renderer (our parent) of the fact that some interaction
     // has occurred.
-    _onInteractWithWidget: function(id) {
+    _onInteractWithWidget = (id) => {
         // Reset grading display when user changes answer
         this.setState({
             status: GRADING_STATUSES.ungraded,
@@ -137,9 +137,9 @@ const GradedGroup = React.createClass({
                 answerBarState: getNextState(answerBarState, answerable),
             });
         }
-    },
+    }
 
-    _checkAnswer: function() {
+    _checkAnswer = () => {
         this.refs.renderer.showRationalesForCurrentlySelectedChoices();
         const score = this.refs.renderer.score();
 
@@ -172,34 +172,34 @@ const GradedGroup = React.createClass({
         this.props.trackInteraction({
             status: status,
         });
-    },
+    }
 
     // Mobile API
-    getInputPaths: function() {
+    getInputPaths = () => {
         return this.refs.renderer.getInputPaths();
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue = (path, newValue, cb) => {
         return this.refs.renderer.setInputValue(path, newValue, cb);
-    },
+    }
 
-    getAcceptableFormatsForInputPath: function(path) {
+    getAcceptableFormatsForInputPath = (path) => {
         return this.refs.renderer.getAcceptableFormatsForInputPath(path);
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         return this.refs.renderer.focus();
-    },
+    }
 
-    focusInputPath: function(path) {
+    focusInputPath = (path) => {
         this.refs.renderer.focusPath(path);
-    },
+    }
 
-    blurInputPath: function(path) {
+    blurInputPath = (path) => {
         this.refs.renderer.blurPath(path);
-    },
+    }
 
-    render: function() {
+    render() {
         const apiOptions = _.extend(
             {},
             ApiOptions.defaults,
@@ -326,8 +326,8 @@ const GradedGroup = React.createClass({
                     />}
             </div>
         );
-    },
-});
+    }
+}
 
 const traverseChildWidgets = function(props, traverseRenderer) {
     return _.extend({}, props, traverseRenderer(props));

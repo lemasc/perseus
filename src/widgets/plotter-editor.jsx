@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, max-len, no-var, one-var, react/jsx-closing-bracket-location, react/sort-comp, space-before-function-paren */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -10,7 +11,7 @@ const BlurInput = require("react-components/blur-input.jsx");
 const InfoTip = require("../components/info-tip.jsx");
 const NumberInput = require("../components/number-input.jsx");
 const RangeInput = require("../components/range-input.jsx");
-const SvgImage = require("../components/svg-image.jsx");
+const {getRealImageUrl} = require("../components/svg-image.jsx");
 const TextListEditor = require("../components/text-list-editor.jsx");
 
 const Plotter = require("./plotter.jsx").widget;
@@ -39,39 +40,37 @@ const editorDefaults = {
     snapsPerLine: 2,
 };
 
-const widgetPropTypes = {
-    type: React.PropTypes.oneOf([BAR, LINE, PIC, HISTOGRAM, DOTPLOT]),
-    labels: React.PropTypes.arrayOf(React.PropTypes.string),
-    categories: React.PropTypes.arrayOf(
-        React.PropTypes.oneOfType([
-            React.PropTypes.number,
-            React.PropTypes.string,
-        ])
-    ),
-
-    scaleY: React.PropTypes.number,
-    maxY: React.PropTypes.number,
-    snapsPerLine: React.PropTypes.number,
-
-    picSize: React.PropTypes.number,
-    pixBoxHeight: React.PropTypes.number,
-    picUrl: React.PropTypes.string,
-
-    plotDimensions: React.PropTypes.arrayOf(React.PropTypes.number),
-    labelInterval: React.PropTypes.number,
-    starting: React.PropTypes.arrayOf(React.PropTypes.number),
-    correct: React.PropTypes.arrayOf(React.PropTypes.number),
-    static: React.PropTypes.bool,
-    onChange: React.PropTypes.func,
-};
 
 var formatNumber = num => "$" + knumber.round(num, 2) + "$";
 
-const PlotterEditor = React.createClass({
-    propTypes: widgetPropTypes,
+class PlotterEditor extends React.Component {
+    static propTypes = {
+        type: PropTypes.oneOf([BAR, LINE, PIC, HISTOGRAM, DOTPLOT]),
+        labels: PropTypes.arrayOf(PropTypes.string),
+        categories: PropTypes.arrayOf(
+            PropTypes.oneOfType([
+                PropTypes.number,
+                PropTypes.string,
+            ])
+        ),
+    
+        scaleY: PropTypes.number,
+        maxY: PropTypes.number,
+        snapsPerLine: PropTypes.number,
+    
+        picSize: PropTypes.number,
+        pixBoxHeight: PropTypes.number,
+        picUrl: PropTypes.string,
+    
+        plotDimensions: PropTypes.arrayOf(PropTypes.number),
+        labelInterval: PropTypes.number,
+        starting: PropTypes.arrayOf(PropTypes.number),
+        correct: PropTypes.arrayOf(PropTypes.number),
+        static: PropTypes.bool,
+        onChange: PropTypes.func,
+    };
 
-    getDefaultProps: function() {
-        return _.extend({}, editorDefaults, {
+   static defaultProps = _.extend({}, editorDefaults, {
             correct: [1],
             starting: [1],
 
@@ -85,11 +84,11 @@ const PlotterEditor = React.createClass({
 
             plotDimensions: [275, 200],
             labelInterval: 1,
-        });
-    },
+    });
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             editing: "correct",
             pic: null,
             loadedUrl: null,
@@ -97,17 +96,17 @@ const PlotterEditor = React.createClass({
             maxX: null,
             tickStep: null,
         };
-    },
+    }
 
-    componentWillMount: function() {
+    componentWillMount() {
         this.fetchPic(this.props.picUrl);
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.fetchPic(nextProps.picUrl);
-    },
+    }
 
-    fetchPic: function(url) {
+    fetchPic = (url) => {
         if (this.state.loadedUrl !== url) {
             var pic = new Image();
             pic.src = url;
@@ -118,9 +117,9 @@ const PlotterEditor = React.createClass({
                 });
             };
         }
-    },
+    }
 
-    render: function() {
+    render() {
         var setFromScale = _.contains(
             [LINE, HISTOGRAM, DOTPLOT],
             this.props.type
@@ -352,34 +351,34 @@ const PlotterEditor = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    handleChangeTickStep: function(value) {
+    handleChangeTickStep = (value) => {
         this.setState({
             tickStep: value,
         });
-    },
+    }
 
-    handleChangeRange: function(newValue) {
+    handleChangeRange = (newValue) => {
         this.setState({
             minX: newValue[0],
             maxX: newValue[1],
         });
-    },
+    }
 
-    changeLabelInterval: function(value) {
+    changeLabelInterval = (value) => {
         this.props.onChange({
             labelInterval: value,
         });
-    },
+    }
 
-    handlePlotterChange: function(newProps) {
+    handlePlotterChange = (newProps) => {
         var props = {};
         props[this.state.editing] = newProps.values;
         this.props.onChange(props);
-    },
+    }
 
-    changeType: function(type) {
+    changeType = (type) => {
         var categories;
         if (type === HISTOGRAM) {
             // Switching to histogram, add a label (0) to the left
@@ -398,24 +397,24 @@ const PlotterEditor = React.createClass({
                 ", "
             );
         }
-    },
+    }
 
-    changeLabel: function(i, e) {
+    changeLabel = (i, e) => {
         var labels = _.clone(this.props.labels);
         labels[i] = e.target.value;
         this.props.onChange({labels: labels});
-    },
+    }
 
-    changePicUrl: function(value) {
+    changePicUrl = (value) => {
         // We don't need the labels and other data in the plotter, so just
         // extract the raw image and use that.
         // TODO(emily): Maybe indicate that such a change has happened?
-        var url = SvgImage.getRealImageUrl(value);
+        var url = getRealImageUrl(value);
 
         this.props.onChange({picUrl: url});
-    },
+    }
 
-    changeCategories: function(categories) {
+    changeCategories = (categories) => {
         var n = categories.length;
         if (this.props.type === HISTOGRAM) {
             // Histograms with n labels/categories have n - 1 buckets
@@ -428,9 +427,9 @@ const PlotterEditor = React.createClass({
             correct: padArray(this.props.correct, n, value),
             starting: padArray(this.props.starting, n, value),
         });
-    },
+    }
 
-    changeScale: function(e) {
+    changeScale = (e) => {
         var oldScale = this.props.scaleY;
         var newScale = +e.target.value || editorDefaults.scaleY;
 
@@ -448,25 +447,25 @@ const PlotterEditor = React.createClass({
         });
 
         ReactDOM.findDOMNode(this.refs.maxY).value = maxY;
-    },
+    }
 
-    changeMax: function(e) {
+    changeMax = (e) => {
         this.props.onChange({
             maxY: +e.target.value || editorDefaults.maxY,
         });
-    },
+    }
 
-    changeSnaps: function(e) {
+    changeSnaps = (e) => {
         this.props.onChange({
             snapsPerLine: +e.target.value || editorDefaults.snapsPerLine,
         });
-    },
+    }
 
-    changeEditing: function(editing) {
+    changeEditing = (editing) => {
         this.setState({editing: editing});
-    },
+    }
 
-    setCategoriesFromScale: function() {
+    setCategoriesFromScale = () => {
         var scale = this.state.tickStep || 1;
         var min = this.state.minX || 0;
         var max = this.state.maxX || 0;
@@ -488,9 +487,9 @@ const PlotterEditor = React.createClass({
         ReactDOM.findDOMNode(this.refs.categories).value = categories.join(
             ", "
         );
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         var json = _.pick(
             this.props,
             "correct",
@@ -509,7 +508,7 @@ const PlotterEditor = React.createClass({
         }
 
         return json;
-    },
-});
+    }
+}
 
 module.exports = PlotterEditor;

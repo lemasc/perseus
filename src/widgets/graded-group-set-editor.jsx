@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -8,39 +9,37 @@ const ApiOptions = require("../perseus-api.jsx").Options;
 const Changeable = require("../mixins/changeable.jsx");
 const GradedGroupEditor = require("./graded-group-editor.jsx");
 
-const GradedGroupSetEditor = React.createClass({
-    propTypes: {
+class GradedGroupSetEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        gradedGroups: React.PropTypes.array,
-        onChange: React.PropTypes.func.isRequired,
-    },
+        gradedGroups: PropTypes.array,
+        onChange: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             gradedGroups: [],
         };
-    },
 
     componentWillMount() {
         this._editors = [];
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     getSaveWarnings() {
         return [].concat(
             ...this._editors.map(editor => editor.getSaveWarnings())
         );
-    },
+    }
 
     serialize() {
         return {
             gradedGroups: this.props.gradedGroups,
         };
-    },
+    }
 
     renderGroups() {
         if (!this.props.gradedGroups) {
@@ -64,15 +63,17 @@ const GradedGroupSetEditor = React.createClass({
                     )}
             />
         );
-    },
+    }
 
-    addGroup() {
+    addGroup = () => {
         const groups = this.props.gradedGroups || [];
         this.change(
             "gradedGroups",
-            groups.concat([GradedGroupEditor.getDefaultProps()])
+            groups.concat([{
+                gradedGroups: [],
+            }])
         );
-    },
+    }
 
     render() {
         return (
@@ -81,8 +82,8 @@ const GradedGroupSetEditor = React.createClass({
                 <button onClick={this.addGroup}>Add group</button>
             </div>
         );
-    },
-});
+    }
+}
 
 const setArrayItem = (list, i, value) => [
     ...list.slice(0, i),

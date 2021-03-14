@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /*
 This is essentially a more advanced `textarea`, using Draft.js
 https://facebook.github.io/draft-js/
@@ -80,7 +81,7 @@ const styledBlock = (props, style) =>
     <span {...props} style={style}>
         {props.children}
     </span>;
-styledBlock.propTypes = {children: React.PropTypes.any};
+styledBlock.propTypes = {children: PropTypes.any};
 
 const highlightedBlock = (props, backgroundColor) =>
     styledBlock(props, {backgroundColor});
@@ -139,8 +140,8 @@ const headerComponent = props => {
     return React.createElement(`h${headerSize}`, {style}, props.children);
 };
 headerComponent.propTypes = {
-    decoratedText: React.PropTypes.string,
-    children: React.PropTypes.any,
+    decoratedText: PropTypes.string,
+    children: PropTypes.any,
 };
 
 const headerDecorator = {
@@ -190,23 +191,23 @@ const keyBindings = e => {
     state, however what it exposes through its `onChange` is a simple string
     as well as a list of the currently active widgets.
 */
-const PerseusEditor = React.createClass({
-    propTypes: {
-        onChange: React.PropTypes.func,
-        content: React.PropTypes.string,
-        initialWidgets: React.PropTypes.any,
-        placeholder: React.PropTypes.string,
-        imageUploader: React.PropTypes.func,
-        widgetEnabled: React.PropTypes.bool,
-    },
+class PerseusEditor extends React.Component {
+    static propTypes = {
+        onChange: PropTypes.func,
+        content: PropTypes.string,
+        initialWidgets: PropTypes.any,
+        placeholder: PropTypes.string,
+        imageUploader: PropTypes.func,
+        widgetEnabled: PropTypes.bool,
+    }
 
-    getDefaultProps: () => ({
+    getDefaultProps = () => ({
         onChange: () => {},
         content: "",
         initialWidgets: {},
         widgetEnabled: true,
         placeholder: "Type here",
-    }),
+    })
 
     getInitialState() {
         const {content, initialWidgets, widgetEnabled} = this.props;
@@ -228,7 +229,7 @@ const PerseusEditor = React.createClass({
             widgets: initialWidgets,
             fontSizePercentage: 100,
         };
-    },
+    }
 
     // The editor can have its content changed completely by changing the
     // content prop, however if the data this component sent to its parent
@@ -238,7 +239,7 @@ const PerseusEditor = React.createClass({
             this.lastContentUpdate = this.props.content;
             this.setState(this.getInitialState()); //eslint-disable-line
         }
-    },
+    }
 
     // By turning widgets into Entities, we allow for widgets to be considered
     // "IMMUTABLE", that is, backspacing a widget will delete the entire text
@@ -268,14 +269,14 @@ const PerseusEditor = React.createClass({
         });
 
         return withEntity;
-    },
+    }
 
     _getDraftData() {
         const editorState = this.state.editorState;
         const contentState = editorState.getCurrentContent();
         const selection = editorState.getSelection();
         return {editorState, contentState, selection};
-    },
+    }
 
     _getNextWidgetId(type) {
         const currWidgets = this.state.widgets;
@@ -283,7 +284,7 @@ const PerseusEditor = React.createClass({
             .filter(id => currWidgets[id].type === type)
             .map(id => +id.split(" ")[1]) //ids are (([a-z-]+) ([0-9]+))
             .reduce((maxId, currId) => Math.max(maxId, currId), 0);
-    },
+    }
 
     _createInitialWidget(widgetType) {
         // Since widgets are given IDs, adding a new widget must ensure that a
@@ -299,11 +300,11 @@ const PerseusEditor = React.createClass({
             version: Widgets.getVersion(widgetType),
         };
         return [id, widget];
-    },
+    }
 
     addWidget(type) {
         this.focus(() => this._handleChange(this._insertNewWidget(type)));
-    },
+    }
 
     _insertNewWidget(type, draftDataParams) {
         const draftData = {
@@ -319,7 +320,7 @@ const PerseusEditor = React.createClass({
             editorState: newDraftData.editorState,
             widgets: newWidgets,
         };
-    },
+    }
 
     _insertWidgetText(draftData, id) {
         // Text for the widget is inserted, and an entity is assigned
@@ -327,11 +328,11 @@ const PerseusEditor = React.createClass({
         const entity = Entity.create("WIDGET", "IMMUTABLE", {id});
 
         return DraftUtils.replaceSelection(draftData, text, entity);
-    },
+    }
 
     updateWidget(id, newProps) {
         this.setState({widgets: {...this.state.widgets, [id]: newProps}});
-    },
+    }
 
     // This function only removes the widget from the content, and then
     // handleChange handles removing widgets from the state, as widgets
@@ -350,13 +351,13 @@ const PerseusEditor = React.createClass({
 
             this._handleChange({editorState: newDraftData.editorState});
         });
-    },
+    }
 
     addTemplate(templateType) {
         this.focus(() => {
             this._addTemplate(templateType);
         });
-    },
+    }
 
     _addTemplate(templateType) {
         let {editorState, contentState, selection} = this._getDraftData();
@@ -437,7 +438,7 @@ const PerseusEditor = React.createClass({
             ).editorState;
         }
         this._handleChange({editorState, widgets});
-    },
+    }
 
     _handleCopy() {
         const {contentState, selection} = this._getDraftData();
@@ -451,7 +452,7 @@ const PerseusEditor = React.createClass({
 
         localStorage.perseusLastCopiedWidgets = JSON.stringify(copiedWidgets);
         return false;
-    },
+    }
 
     // Widgets cannot have ID conflicts, therefore this function exists
     // to return a mapping of { new id -> safe id }
@@ -473,7 +474,7 @@ const PerseusEditor = React.createClass({
         }, {});
 
         return safeWidgetMapping;
-    },
+    }
 
     // Pasting text from another Perseus editor instance should also copy over
     // the widgets.  To do this properly, we must parse the text, replace the
@@ -545,7 +546,7 @@ const PerseusEditor = React.createClass({
         );
         this._handleChange({editorState, widgets});
         return true; // True means draft doesn't run its default behavior
-    },
+    }
 
     _handleDrop(selection, dataTransfer) {
         // All insertions are done to the end of the current block
@@ -568,7 +569,7 @@ const PerseusEditor = React.createClass({
         }
 
         return true; // Disable default draft drop handler
-    },
+    }
 
     _handleDroppedFiles(selection, files) {
         const images = files.filter(file => file.type.match("image.*"));
@@ -619,7 +620,7 @@ const PerseusEditor = React.createClass({
         );
         this._handleChange({editorState});
         return true; // Disable default draft drop handler
-    },
+    }
 
     // This implements tab completion for widgets.  When the user
     // has typed [[d, then presses tab, we should replace [[d
@@ -660,7 +661,7 @@ const PerseusEditor = React.createClass({
             }
         }
         return true; // Say that we've handled the event, no other work needed
-    },
+    }
 
     _getDecorationForStyle(style) {
         switch (style) {
@@ -673,7 +674,7 @@ const PerseusEditor = React.createClass({
             default:
                 return null;
         }
-    },
+    }
 
     _handleKeyCommand(command) {
         // Check if the font size should be changed
@@ -699,9 +700,9 @@ const PerseusEditor = React.createClass({
         }
 
         return false;
-    },
+    }
 
-    lastContentUpdate: "",
+    lastContentUpdate = ""
     _updateParent(content, widgets) {
         // The parent component should know of only the active widgets,
         // however the widgets are not deleted from this.state because a
@@ -722,10 +723,10 @@ const PerseusEditor = React.createClass({
             content: this.lastContentUpdate,
             widgets: visibleWidgets,
         });
-    },
+    }
 
-    pastContentState: null,
-    lastIdleCallback: null,
+    pastContentState = null
+    lastIdleCallback = null
     _handleChange(newState) {
         const state = {...this.state, ...newState};
         const widgets = state.widgets;
@@ -757,7 +758,7 @@ const PerseusEditor = React.createClass({
 
         this.pastContentState = newContent;
         this.setState({editorState, widgets});
-    },
+    }
 
     // HACK: There are currently serious Draft.js bugs related to mutating the
     //       editorState when it is not in focus, then pressing undo.  This
@@ -772,7 +773,7 @@ const PerseusEditor = React.createClass({
             forceSelection: true,
         });
         this.setState({editorState}, callback);
-    },
+    }
 
     render() {
         return (
@@ -800,7 +801,7 @@ const PerseusEditor = React.createClass({
                 />
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = PerseusEditor;

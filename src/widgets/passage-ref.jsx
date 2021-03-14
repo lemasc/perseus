@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -9,44 +10,45 @@ var _ = require("underscore");
 var Changeable = require("../mixins/changeable.jsx");
 var PerseusMarkdown = require("../perseus-markdown.jsx");
 var WidgetJsonifyDeprecated = require("../mixins/widget-jsonify-deprecated.jsx");
+const { extend } = require('jquery');
 
 var EN_DASH = "\u2013";
 
-var PassageRef = React.createClass({
-    propTypes: {
+class PassageRef extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        passageNumber: React.PropTypes.number,
-        referenceNumber: React.PropTypes.number,
-        summaryText: React.PropTypes.string,
-    },
+        passageNumber: PropTypes.number,
+        referenceNumber: PropTypes.number,
+        summaryText: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             passageNumber: 1,
             referenceNumber: 1,
             summaryText: "",
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             lineRange: null,
             content: null,
         };
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState) {
         return (
             !_.isEqual(this.props, nextProps) ||
             !_.isEqual(this.state, nextState)
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return WidgetJsonifyDeprecated.getUserInput.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         var lineRange = this.state.lineRange;
         var lineRangeOutput;
         if (!lineRange) {
@@ -95,32 +97,32 @@ var PassageRef = React.createClass({
                     </div>}
             </span>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._deferredUpdateRange();
 
         this._throttledUpdateRange = _.throttle(this._deferredUpdateRange, 500);
         window.addEventListener("resize", this._throttledUpdateRange);
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         this._deferredUpdateRange();
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         window.removeEventListener("resize", this._throttledUpdateRange);
-    },
+    }
 
-    _deferredUpdateRange: function() {
+    _deferredUpdateRange() {
         _.defer(this._updateRange);
-    },
+    }
 
-    _updateRange: function() {
+    _updateRange() {
         var passage = this.props.findWidgets(
             "passage " + this.props.passageNumber
         )[0];
@@ -143,22 +145,22 @@ var PassageRef = React.createClass({
                 });
             }
         }
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate(rubric) {
         return PassageRef.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(PassageRef, {
-    validate: function(state, rubric) {
+    validate(state, rubric) {
         return {
             type: "points",
             earned: 0,
             total: 0,
             message: null,
         };
-    },
+    }
 });
 
 module.exports = {
@@ -174,5 +176,5 @@ module.exports = {
             "summaryText"
         );
     },
-    version: {major: 0, minor: 1},
+    version: {major: 0, minor: 1}
 };

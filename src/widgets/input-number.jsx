@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 var classNames = require("classnames");
+const PropTypes = require('prop-types');
 var React = require("react");
 var _ = require("underscore");
 
@@ -11,7 +12,8 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 var ParseTex = require("../tex-wrangler.js").parseTex;
 var PossibleAnswers = require("../components/possible-answers.jsx");
 const KhanAnswerTypes = require("../util/answer-types.js");
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//TODO_SZ: got math-input work
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 const {
     linterContextProps,
     linterContextDefault,
@@ -52,79 +54,77 @@ var answerTypes = {
     pi: {
         name: "Numbers with pi",
         forms: "pi",
-    },
+    }
 };
 
 var formExamples = {
-    integer: function(options) {
+    integer(options) {
         return i18n._("an integer, like $6$");
     },
-    proper: function(options) {
+    proper(options) {
         if (options.simplify === "optional") {
             return i18n._("a *proper* fraction, like $1/2$ or $6/10$");
         } else {
             return i18n._("a *simplified proper* fraction, like $3/5$");
         }
     },
-    improper: function(options) {
+    improper(options) {
         if (options.simplify === "optional") {
             return i18n._("an *improper* fraction, like $10/7$ or $14/8$");
         } else {
             return i18n._("a *simplified improper* fraction, like $7/4$");
         }
     },
-    mixed: function(options) {
+    mixed(options) {
         return i18n._("a mixed number, like $1\\ 3/4$");
     },
-    decimal: function(options) {
+    decimal(options) {
         return i18n._("an *exact* decimal, like $0.75$");
     },
-    percent: function(options) {
+    percent(options) {
         return i18n._("a percent, like $12.34\\%$");
     },
-    pi: function(options) {
+    pi(options) {
         return i18n._(
             "a multiple of pi, like $12\\ \\text{pi}$ or " +
                 "$2/3\\ \\text{pi}$"
         );
-    },
+    }
 };
 
-var InputNumber = React.createClass({
-    propTypes: {
-        answerType: React.PropTypes.oneOf(Object.keys(answerTypes)),
-        currentValue: React.PropTypes.string,
-        keypadElement: keypadElementPropType,
-        reviewModeRubric: React.PropTypes.object,
-        widgetId: React.PropTypes.string.isRequired,
+class InputNumber extends React.Component {
+    static propTypes = {
+        answerType: PropTypes.oneOf(Object.keys(answerTypes)),
+        currentValue: PropTypes.string,
+        //keypadElement: keypadElementPropType,
+        reviewModeRubric: PropTypes.object,
+        widgetId: PropTypes.string.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             currentValue: "",
             size: "normal",
             answerType: "number",
             apiOptions: ApiOptions.defaults,
-            linterContext: linterContextDefault,
-        };
-    },
+            linterContext: linterContextDefault
+    }
 
-    shouldShowExamples: function() {
+    shouldShowExamples() {
         return (
             this.props.answerType !== "number" &&
             !this.props.apiOptions.staticRender
         );
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.props.apiOptions.customKeypad) {
             // TODO(charlie): Support "Review Mode".
             return (
                 <SimpleKeypadInput
                     ref="input"
                     value={this.props.currentValue}
-                    keypadElement={this.props.keypadElement}
+                    //keypadElement={this.props.keypadElement}
                     onChange={this.handleChange}
                     onFocus={this._handleFocus}
                     onBlur={this._handleBlur}
@@ -190,21 +190,21 @@ var InputNumber = React.createClass({
                 return input;
             }
         }
-    },
+    }
 
-    handleChange: function(newValue, cb) {
+    handleChange = (newValue, cb) => {
         this.props.onChange({currentValue: newValue}, cb);
-    },
+    }
 
-    _getInputType: function() {
+    _getInputType = () => {
         if (this.props.apiOptions.staticRender) {
             return "tex";
         } else {
             return "text";
         }
-    },
+    }
 
-    _handleFocus: function() {
+    _handleFocus = () => {
         this.props.onFocus([]);
         // HACK(kevinb): We want to dismiss the feedback popover that webapp
         // displays as soon as a user clicks in in the input field so we call
@@ -213,56 +213,56 @@ var InputNumber = React.createClass({
         if (interactionCallback) {
             interactionCallback();
         }
-    },
+    }
 
-    _handleBlur: function() {
+    _handleBlur = () => {
         this.props.onBlur([]);
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         this.refs.input.focus();
         return true;
-    },
+    }
 
-    focusInputPath: function(inputPath) {
+    focusInputPath = (inputPath) => {
         this.refs.input.focus();
-    },
+    }
 
-    blurInputPath: function(inputPath) {
+    blurInputPath = (inputPath) => {
         this.refs.input.blur();
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         // The widget itself is an input, so we return a single empty list to
         // indicate this.
         return [[]];
-    },
+    }
 
-    getGrammarTypeForPath: function(path) {
+    getGrammarTypeForPath(path) {
         return "number";
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue(path, newValue, cb) {
         this.props.onChange(
             {
                 currentValue: newValue,
             },
             cb
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return {
             currentValue: this.props.currentValue,
         };
-    },
+    }
 
-    simpleValidate: function(rubric, onInputError) {
+    simpleValidate(rubric, onInputError) {
         onInputError = onInputError || function() {};
         return InputNumber.validate(this.getUserInput(), rubric, onInputError);
-    },
+    }
 
-    examples: function() {
+    examples() {
         var type = this.props.answerType;
         var forms = answerTypes[type].forms.split(/\s*,\s*/);
 
@@ -275,11 +275,11 @@ var InputNumber = React.createClass({
         );
 
         return [i18n._("**Your answer should be** ")].concat(examples);
-    },
-});
+    }
+}
 
 _.extend(InputNumber, {
-    validate: function(state, rubric, onInputError) {
+    validate(state, rubric, onInputError) {
         if (rubric.answerType == null) {
             rubric.answerType = "number";
         }
@@ -319,7 +319,7 @@ _.extend(InputNumber, {
                 message: result.message,
             };
         }
-    },
+    }
 });
 
 var propTransform = editorProps => {

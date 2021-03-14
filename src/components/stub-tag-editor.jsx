@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Stub Tag Editor.
  *
@@ -16,21 +17,19 @@ const React = require("react");
 const TextListEditor = require("./text-list-editor.jsx");
 const EMPTY_ARRAY = [];
 
-const StubTagEditor = React.createClass({
-    propTypes: {
-        value: React.PropTypes.arrayOf(React.PropTypes.string),
-        onChange: React.PropTypes.func.isRequired,
-        showTitle: React.PropTypes.bool.isRequired,
-    },
+class StubTagEditor extends React.Component {
+    static propTypes = {
+        value: PropTypes.arrayOf(PropTypes.string),
+        onChange: PropTypes.func.isRequired,
+        showTitle: PropTypes.bool.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             value: EMPTY_ARRAY,
             showTitle: true,
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div>
                 {this.props.showTitle &&
@@ -46,7 +45,7 @@ const StubTagEditor = React.createClass({
                 />
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = StubTagEditor;

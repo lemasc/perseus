@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-var, object-curly-spacing, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -31,31 +32,21 @@ const IframeContentRenderer = require("./iframe-content-renderer.jsx");
  *  ~ the "remove this hint" box
  *  ~ the move hint up/down arrows
  */
-var HintEditor = React.createClass({
-    propTypes: {
+class HintEditor extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        className: React.PropTypes.string,
-        imageUploader: React.PropTypes.func,
-        showMoveButtons: React.PropTypes.bool,
-        showRemoveButton: React.PropTypes.bool,
-        showTitle: React.PropTypes.bool,
-    },
+        className: PropTypes.string,
+        imageUploader: PropTypes.func,
+        showMoveButtons: PropTypes.bool,
+        showRemoveButton: PropTypes.bool,
+        showTitle: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
-            content: "",
-            replace: false,
-            showMoveButtons: true,
-            showTitle: true,
-            showRemoveButton: true,
-        };
-    },
-
-    handleChange: function(e) {
+    handleChange(e) {
         this.props.onChange({replace: e.target.checked});
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className={"perseus-hint-editor " + this.props.className}>
                 {this.props.showTitle && <div className="pod-title">Hint</div>}
@@ -112,38 +103,39 @@ var HintEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    focus: function() {
+    focus() {
         this.refs.editor.focus();
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function(options) {
+    serialize(options) {
         return this.refs.editor.serialize(options);
-    },
-});
+    }
+}
+HintEditor.defaultProps = {
+    content: "",
+    replace: false,
+    showMoveButtons: true,
+    showTitle: true,
+    showRemoveButton: true,
+};
 
 /* A single hint-row containing a hint editor and preview */
-var CombinedHintEditor = React.createClass({
-    propTypes: {
+class CombinedHintEditor extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        deviceType: React.PropTypes.string.isRequired,
-        frameSource: React.PropTypes.string.isRequired,
-        imageUploader: React.PropTypes.func,
-        highlightLint: React.PropTypes.bool,
-    },
+        deviceType: PropTypes.string.isRequired,
+        frameSource: PropTypes.string.isRequired,
+        imageUploader: PropTypes.func,
+        highlightLint: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
-            highlightLint: false,
-        };
-    },
-
-    updatePreview: function() {
+    updatePreview() {
         const shouldBold =
             this.props.isLast && !/\*\*/.test(this.props.hint.content);
 
@@ -158,20 +150,20 @@ var CombinedHintEditor = React.createClass({
                     contentType: "hint",
                     highlightLint: this.props.highlightLint,
                     paths: this.props.contentPaths,
-                },
-            },
+                }
+            }
         });
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.updatePreview();
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         this.updatePreview();
-    },
+    }
 
-    render: function() {
+    render() {
         const isMobile =
             this.props.deviceType === "phone" ||
             this.props.deviceType === "tablet";
@@ -213,20 +205,23 @@ var CombinedHintEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function(options) {
+    serialize(options) {
         return this.refs.editor.serialize(options);
-    },
+    }
 
-    focus: function() {
+    focus() {
         this.refs.editor.focus();
-    },
-});
+    }
+}
+CombinedHintEditor.defaultProps = {
+    highlightLint: false,
+};
 
 /* The entire hints editing/preview area
  *
@@ -235,28 +230,20 @@ var CombinedHintEditor = React.createClass({
  *  ~ All the hint previews
  *  ~ The "add a hint" button
  */
-var CombinedHintsEditor = React.createClass({
-    propTypes: {
+class CombinedHintsEditor extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        deviceType: React.PropTypes.string.isRequired,
-        frameSource: React.PropTypes.string.isRequired,
-        imageUploader: React.PropTypes.func,
-        highlightLint: React.PropTypes.bool,
-    },
+        deviceType: PropTypes.string.isRequired,
+        frameSource: PropTypes.string.isRequired,
+        imageUploader: PropTypes.func,
+        highlightLint: PropTypes.bool,
+    }
 
-    statics: {
+    statics = {
         HintEditor,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
-            onChange: () => {},
-            hints: [],
-            highlightLint: false,
-        };
-    },
-
-    render: function() {
+    render() {
         var hints = this.props.hints;
         var hintElems = _.map(
             hints,
@@ -301,11 +288,11 @@ var CombinedHintsEditor = React.createClass({
             </div>
         );
         /* eslint-enable max-len */
-    },
+    }
 
-    handleHintChange: function(i, newProps, cb, silent) {
+    handleHintChange(i, newProps, cb, silent) {
         // TODO(joel) - lens
-        var hints = _(this.props.hints).clone();
+        var hints = _.clone(this.props.hints);
         hints[i] = _.extend(
             {},
             this.serializeHint(i, {keepDeletedWidgets: true}),
@@ -313,32 +300,32 @@ var CombinedHintsEditor = React.createClass({
         );
 
         this.props.onChange({hints: hints}, cb, silent);
-    },
+    }
 
-    handleHintRemove: function(i) {
-        var hints = _(this.props.hints).clone();
+    handleHintRemove(i) {
+        var hints = _.clone(this.props.hints);
         hints.splice(i, 1);
         this.props.onChange({hints: hints});
-    },
+    }
 
-    handleHintMove: function(i, dir) {
-        var hints = _(this.props.hints).clone();
+    handleHintMove(i, dir) {
+        var hints = _.clone(this.props.hints);
         var hint = hints.splice(i, 1)[0];
         hints.splice(i + dir, 0, hint);
         this.props.onChange({hints: hints}, () => {
             this.refs["hintEditor" + (i + dir)].focus();
         });
-    },
+    }
 
-    addHint: function() {
-        var hints = _(this.props.hints).clone().concat([{content: ""}]);
+    addHint = () => {
+        var hints = _.clone(this.props.hints).concat([{content: ""}]);
         this.props.onChange({hints: hints}, () => {
             var i = hints.length - 1;
             this.refs["hintEditor" + i].focus();
         });
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return _.chain(this.props.hints)
             .map((hint, i) => {
                 return _.map(
@@ -348,17 +335,22 @@ var CombinedHintsEditor = React.createClass({
             })
             .flatten(true)
             .value();
-    },
+    }
 
-    serialize: function(options) {
+    serialize(options) {
         return this.props.hints.map((hint, i) => {
             return this.serializeHint(i, options);
         });
-    },
+    }
 
-    serializeHint: function(index, options) {
+    serializeHint(index, options) {
         return this.refs["hintEditor" + index].serialize(options);
-    },
-});
+    }
+}
 
+CombinedHintsEditor.defaultProps = {
+    onChange: () => {},
+    hints: [],
+    highlightLint: false,
+};
 module.exports = CombinedHintsEditor;

@@ -23,7 +23,7 @@ if (!window.Khan) {
 }
 
 const Perseus = (window.Perseus = require("./perseus.js"));
-const ReactDOM = (window.ReactDOM = React.__internalReactDOM);
+const ReactDOM = (window.ReactDOM = require("react-dom"));
 
 const PreviewFrame = require("./preview-frame.jsx");
 const constants = require("./components/constants.js");

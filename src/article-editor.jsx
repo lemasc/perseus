@@ -21,20 +21,21 @@ const JsonEditor = require("./json-editor.jsx");
 const DeviceFramer = require("./components/device-framer.jsx");
 const IframeContentRenderer = require("./iframe-content-renderer.jsx");
 const HUD = require("./components/hud.jsx");
+const PropTypes = require('prop-types');
 
-const rendererProps = React.PropTypes.shape({
-    content: React.PropTypes.string,
-    widgets: React.PropTypes.object,
-    images: React.PropTypes.object,
+const rendererProps = PropTypes.shape({
+    content: PropTypes.string,
+    widgets: PropTypes.object,
+    images: PropTypes.object,
 });
 
-const SectionControlButton = React.createClass({
-    propTypes: {
-        icon: React.PropTypes.shape(InlineIcon.propTypes).isRequired,
-        onClick: React.PropTypes.func.isRequired,
-        title: React.PropTypes.string.isRequired,
-    },
-    render: function() {
+class SectionControlButton extends React.Component {
+    static propTypes = {
+        icon: PropTypes.shape(InlineIcon.propTypes).isRequired,
+        onClick: PropTypes.func.isRequired,
+        title: PropTypes.string.isRequired,
+    }
+    render() {
         const {icon, onClick, title} = this.props;
         return (
             <a
@@ -54,52 +55,51 @@ const SectionControlButton = React.createClass({
                 <InlineIcon {...icon} />
             </a>
         );
-    },
-});
+    }
+}
 
-const ArticleEditor = React.createClass({
-    propTypes: {
-        apiOptions: React.PropTypes.shape({}),
-        contentPaths: React.PropTypes.arrayOf(React.PropTypes.string),
-        frameSource: React.PropTypes.string.isRequired,
-        imageUploader: React.PropTypes.func,
-        json: React.PropTypes.oneOfType([
+class ArticleEditor extends React.Component {
+    static propTypes = {
+        apiOptions: PropTypes.shape({}),
+        contentPaths: PropTypes.arrayOf(PropTypes.string),
+        frameSource: PropTypes.string.isRequired,
+        imageUploader: PropTypes.func,
+        json: PropTypes.oneOfType([
             rendererProps,
-            React.PropTypes.arrayOf(rendererProps),
+            PropTypes.arrayOf(rendererProps),
         ]),
-        mode: React.PropTypes.oneOf(["diff", "edit", "json", "preview"]),
-        onChange: React.PropTypes.func.isRequired,
-        screen: React.PropTypes.oneOf(["phone", "tablet", "desktop"]),
-        sectionImageUploadGenerator: React.PropTypes.func,
-        useNewStyles: React.PropTypes.bool,
-    },
+        mode: PropTypes.oneOf(["diff", "edit", "json", "preview"]),
+        onChange: PropTypes.func.isRequired,
+        screen: PropTypes.oneOf(["phone", "tablet", "desktop"]),
+        sectionImageUploadGenerator: PropTypes.func,
+        useNewStyles: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             contentPaths: [],
             json: [{}],
             mode: "edit",
             screen: "desktop",
             sectionImageUploadGenerator: () => <span />,
             useNewStyles: false,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             highlightLint: true,
-        };
-    },
+        };  
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._updatePreviewFrames();
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         this._updatePreviewFrames();
-    },
+    }
 
-    _updatePreviewFrames: function() {
+    _updatePreviewFrames() {
         if (this.props.mode === "preview") {
             this.refs["frame-all"].sendNewData({
                 type: "article-all",
@@ -115,9 +115,9 @@ const ArticleEditor = React.createClass({
                 });
             });
         }
-    },
+    }
 
-    _apiOptionsForSection: function(section, sectionIndex) {
+    _apiOptionsForSection(section, sectionIndex) {
         const editor = this.refs[`editor${sectionIndex}`];
         return {
             apiOptions: {
@@ -138,13 +138,13 @@ const ArticleEditor = React.createClass({
             },
             legacyPerseusLint: editor ? editor.getSaveWarnings() : [],
         };
-    },
+    }
 
-    _sections: function() {
+    _sections() {
         return _.isArray(this.props.json) ? this.props.json : [this.props.json];
-    },
+    }
 
-    _renderEditor: function() {
+    _renderEditor() {
         const {imageUploader, sectionImageUploadGenerator} = this.props;
 
         const apiOptions = {
@@ -247,9 +247,9 @@ const ArticleEditor = React.createClass({
             </div>
         );
         /* eslint-enable max-len */
-    },
+    }
 
-    _renderAddSection: function() {
+    _renderAddSection() {
         return (
             <div className="perseus-editor-row">
                 <div className="perseus-editor-left-cell">
@@ -267,9 +267,9 @@ const ArticleEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    _renderLinterHUD: function() {
+    _renderLinterHUD() {
         return (
             <HUD
                 message="Style warnings"
@@ -281,9 +281,9 @@ const ArticleEditor = React.createClass({
                 }}
             />
         );
-    },
+    }
 
-    _renderIframePreview: function(i, nochrome) {
+    _renderIframePreview(i, nochrome) {
         const isMobile =
             this.props.screen === "phone" || this.props.screen === "tablet";
 
@@ -299,27 +299,27 @@ const ArticleEditor = React.createClass({
                 />
             </DeviceFramer>
         );
-    },
+    }
 
-    _renderPreviewMode: function() {
+    _renderPreviewMode() {
         return (
             <div className="standalone-preview">
                 {this._renderIframePreview("all", false)}
             </div>
         );
-    },
+    }
 
-    _handleJsonChange: function(newJson) {
+    _handleJsonChange = (newJson) => {
         this.props.onChange({json: newJson});
-    },
+    }
 
-    _handleEditorChange: function(i, newProps) {
+    _handleEditorChange = (i, newProps) => {
         const sections = _.clone(this._sections());
         sections[i] = _.extend({}, sections[i], newProps);
         this.props.onChange({json: sections});
-    },
+    }
 
-    _handleMoveSectionEarlier: function(i) {
+    _handleMoveSectionEarlier(i) {
         if (i === 0) {
             return;
         }
@@ -330,9 +330,9 @@ const ArticleEditor = React.createClass({
         this.props.onChange({
             json: sections,
         });
-    },
+    }
 
-    _handleMoveSectionLater: function(i) {
+    _handleMoveSectionLater(i) {
         const sections = _.clone(this._sections());
         if (i + 1 === sections.length) {
             return;
@@ -343,9 +343,9 @@ const ArticleEditor = React.createClass({
         this.props.onChange({
             json: sections,
         });
-    },
+    }
 
-    _handleAddSectionAfter: function(i) {
+    _handleAddSectionAfter(i) {
         // We do a full serialization here because we
         // might be copying widgets:
         const sections = _.clone(this.serialize());
@@ -365,17 +365,17 @@ const ArticleEditor = React.createClass({
         this.props.onChange({
             json: sections,
         });
-    },
+    }
 
-    _handleRemoveSection: function(i) {
+    _handleRemoveSection(i) {
         const sections = _.clone(this._sections());
         sections.splice(i, 1);
         this.props.onChange({
             json: sections,
         });
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         if (this.props.mode === "edit") {
             return this._sections().map((section, i) => {
                 return this.refs["editor" + i].serialize();
@@ -390,7 +390,7 @@ const ArticleEditor = React.createClass({
                 "Could not serialize; mode " + this.props.mode + " not found"
             );
         }
-    },
+    }
 
     /**
      * Returns an array, with one element be section.
@@ -398,7 +398,7 @@ const ArticleEditor = React.createClass({
      *
      * This function can currently only be called in edit mode.
      */
-    getSaveWarnings: function(): Array<Array<string>> {
+    getSaveWarnings() {
         if (this.props.mode !== "edit") {
             // TODO(joshuan): We should be able to get save warnings in
             // preview mode.
@@ -408,9 +408,9 @@ const ArticleEditor = React.createClass({
         return this._sections().map((section, i) => {
             return this.refs["editor" + i].getSaveWarnings();
         });
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="framework-perseus perseus-article-editor">
                 {this.props.mode === "edit" && this._renderEditor()}
@@ -433,7 +433,7 @@ const ArticleEditor = React.createClass({
                     </div>}
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = ArticleEditor;

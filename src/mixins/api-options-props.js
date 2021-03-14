@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A mixin that accepts the `apiOptions` prop, and populates any missing values
  * with defaults.
@@ -9,7 +10,7 @@ const ApiOptions = require("../perseus-api.jsx").Options;
 const ApiOptionsProps = {
     propTypes: {
         // TODO(mdr): Should this actually be objectOf(any)?
-        apiOptions: React.PropTypes.any,
+        apiOptions: PropTypes.any,
     },
 
     getDefaultProps() {

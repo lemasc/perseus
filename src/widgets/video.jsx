@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -24,26 +25,26 @@ var IS_KA_SITE = /khanacademy\.org/;
 /**
  * Video renderer.
  */
-var Video = React.createClass({
-    propTypes: {
+class Video extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        alignment: React.PropTypes.string,
-        location: React.PropTypes.string,
-    },
+        alignment: PropTypes.string,
+        location: PropTypes.string,
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return null;
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate(rubric) {
         return Video.validate(null, rubric);
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         var location = this.props.location;
         if (!location) {
             return <div />;
@@ -81,8 +82,8 @@ var Video = React.createClass({
                 />
             </FixedToResponsive>
         );
-    },
-});
+    }
+}
 
 /**
  * This is the widget's grading function.
@@ -90,7 +91,7 @@ var Video = React.createClass({
  * of Khan Academy videos.
  */
 _.extend(Video, {
-    validate: function(state, rubric) {
+    validate(state, rubric) {
         return {
             type: "points",
             earned: 0,

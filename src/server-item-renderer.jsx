@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A copy of the ItemRenderer which renders its question renderer and hints
  * renderer normally instead of ReactDOM.render()ing them into elements in the
@@ -19,10 +20,10 @@ const Util = require("./util.js");
 
 const {mapObject} = require("./interactive2/objective_.js");
 
-const RP = React.PropTypes;
+const RP = PropTypes;
 
-const ItemRenderer = React.createClass({
-    propTypes: {
+class ItemRenderer extends React.Component {
+    static propTypes = {
         ...ProvideKeypad.propTypes,
         apiOptions: RP.any,
         hintsVisible: RP.number,
@@ -39,60 +40,60 @@ const ItemRenderer = React.createClass({
         }).isRequired,
         problemNum: RP.number,
         reviewMode: RP.bool,
-    },
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
-            apiOptions: {}, // a deep default is done in `this.update()`
+            apiOptions: {} // a deep default is done in `this.update()`
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             ...ProvideKeypad.getInitialState(),
             questionCompleted: false,
             questionHighlightedWidgets: [],
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         ProvideKeypad.componentDidMount.call(this);
         this._currentFocus = null;
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.setState({
             questionHighlightedWidgets: [],
         });
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         if (this.props.apiOptions.answerableCallback) {
             const isAnswerable =
                 this.questionRenderer.emptyWidgets().length === 0;
             this.props.apiOptions.answerableCallback(isAnswerable);
         }
-    },
+    }
 
     componentWillUnmount() {
         ProvideKeypad.componentWillUnmount.call(this);
-    },
+    }
 
     keypadElement() {
         return ProvideKeypad.keypadElement.call(this);
-    },
+    }
 
-    _handleFocusChange: function(newFocus, oldFocus) {
+    _handleFocusChange(newFocus, oldFocus) {
         if (newFocus != null) {
             this._setCurrentFocus(newFocus);
         } else {
             this._onRendererBlur(oldFocus);
         }
-    },
+    }
 
     // Sets the current focus path and element and
     // send an onChangeFocus event back to our parent.
-    _setCurrentFocus: function(newFocus) {
+    _setCurrentFocus(newFocus) {
         const keypadElement = this.keypadElement();
 
         // By the time this happens, newFocus cannot be a prefix of
@@ -128,9 +129,9 @@ const ItemRenderer = React.createClass({
                 keypadElement.dismiss();
             }
         }
-    },
+    }
 
-    _onRendererBlur: function(blurPath) {
+    _onRendererBlur(blurPath) {
         const blurringFocusPath = this._currentFocus;
 
         // Failsafe: abort if ID is different, because focus probably happened
@@ -149,51 +150,51 @@ const ItemRenderer = React.createClass({
                 this._setCurrentFocus(null);
             }
         });
-    },
+    }
 
     /**
      * Accepts a question area widgetId, or an answer area widgetId of
      * the form "answer-input-number 1", or the string "answer-area"
      * for the whole answer area (if the answer area is a single widget).
      */
-    _setWidgetProps: function(widgetId, newProps, callback) {
+    _setWidgetProps(widgetId, newProps, callback) {
         this.questionRenderer._setWidgetProps(widgetId, newProps, callback);
-    },
+    }
 
-    _handleAPICall: function(functionName, path) {
+    _handleAPICall(functionName, path) {
         // Get arguments to pass to function, including `path`
         const functionArgs = _.rest(arguments);
         const caller = this.questionRenderer;
 
         return caller[functionName](...functionArgs);
-    },
+    }
 
-    setInputValue: function(path, newValue, focus) {
+    setInputValue(path, newValue, focus) {
         return this._handleAPICall("setInputValue", path, newValue, focus);
-    },
+    }
 
-    focusPath: function(path) {
+    focusPath(path) {
         return this._handleAPICall("focusPath", path);
-    },
+    }
 
-    blurPath: function(path) {
+    blurPath(path) {
         return this._handleAPICall("blurPath", path);
-    },
+    }
 
-    getDOMNodeForPath: function(path) {
+    getDOMNodeForPath(path) {
         return this._handleAPICall("getDOMNodeForPath", path);
-    },
+    }
 
-    getGrammarTypeForPath: function(path) {
+    getGrammarTypeForPath(path) {
         return this._handleAPICall("getGrammarTypeForPath", path);
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         const questionAreaInputPaths = this.questionRenderer.getInputPaths();
         return questionAreaInputPaths;
-    },
+    }
 
-    handleInteractWithWidget: function(widgetId) {
+    handleInteractWithWidget(widgetId) {
         const withRemoved = _.difference(
             this.state.questionHighlightedWidgets,
             [widgetId]
@@ -206,21 +207,21 @@ const ItemRenderer = React.createClass({
         if (this.props.apiOptions.interactionCallback) {
             this.props.apiOptions.interactionCallback();
         }
-    },
+    }
 
-    focus: function() {
+    focus() {
         return this.questionRenderer.focus();
-    },
+    }
 
-    blur: function() {
+    blur() {
         if (this._currentFocus) {
             this.blurPath(this._currentFocus);
         }
-    },
+    }
 
-    getNumHints: function() {
+    getNumHints() {
         return this.props.item.hints.length;
-    },
+    }
 
     /**
      * Grades the item.
@@ -232,7 +233,7 @@ const ItemRenderer = React.createClass({
      *     guess: Array
      * }
      */
-    scoreInput: function() {
+    scoreInput() {
         const guessAndScore = this.questionRenderer.guessAndScore();
         const guess = guessAndScore[0];
         const score = guessAndScore[1];
@@ -256,41 +257,41 @@ const ItemRenderer = React.createClass({
         });
 
         return keScore;
-    },
+    }
 
     /**
      * Returns an array of all widget IDs in the order they occur in
      * the question content.
      */
-    getWidgetIds: function() {
+    getWidgetIds() {
         return this.questionRenderer.getWidgetIds();
-    },
+    }
 
     /**
      * Returns an object mapping from widget ID to KE-style score.
      * The keys of this object are the values of the array returned
      * from `getWidgetIds`.
      */
-    scoreWidgets: function() {
+    scoreWidgets() {
         const qScore = this.questionRenderer.scoreWidgets();
         const qGuess = this.questionRenderer.getUserInputForWidgets();
         const state = this.questionRenderer.getSerializedState();
         return mapObject(qScore, (score, id) => {
             return Util.keScoreFromPerseusScore(score, qGuess[id], state);
         });
-    },
+    }
 
     /**
      * Get a representation of the current state of the item.
      */
-    getSerializedState: function() {
+    getSerializedState() {
         return {
             question: this.questionRenderer.getSerializedState(),
             hints: this.hintsRenderer.getSerializedState(),
         };
-    },
+    }
 
-    restoreSerializedState: function(state, callback) {
+    restoreSerializedState(state, callback) {
         // We need to wait for both the question renderer and the hints
         // renderer to finish restoring their states.
         let numCallbacks = 2;
@@ -306,17 +307,17 @@ const ItemRenderer = React.createClass({
             fireCallback
         );
         this.hintsRenderer.restoreSerializedState(state.hints, fireCallback);
-    },
+    }
 
     showRationalesForCurrentlySelectedChoices() {
         this.questionRenderer.showRationalesForCurrentlySelectedChoices();
-    },
+    }
 
     deselectIncorrectSelectedChoices() {
         this.questionRenderer.deselectIncorrectSelectedChoices();
-    },
+    }
 
-    render: function() {
+    render() {
         const apiOptions = {
             ...ApiOptions.defaults,
             ...this.props.apiOptions,
@@ -364,13 +365,13 @@ const ItemRenderer = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     hintsContainer: {
         marginLeft: 50,
-    },
+    }
 });
 
 module.exports = ItemRenderer;

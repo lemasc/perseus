@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 
 const EditorJsonify = require("../mixins/editor-jsonify.jsx");
@@ -8,8 +9,8 @@ const TextInput = require("../components/text-input.jsx");
 const MoleculeWidgetEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        rotationAngle: React.PropTypes.number,
-        smiles: React.PropTypes.string,
+        rotationAngle: PropTypes.number,
+        smiles: PropTypes.string,
     },
 
     change(...args) {

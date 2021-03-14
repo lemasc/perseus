@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable max-lines, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -21,40 +22,26 @@ const TextInput = require("../components/text-input.jsx");
 
 const KhanColors = require("../util/colors.js");
 
-var defaultInteractionProps = {
-    graph: {
-        box: [400, 400],
-        labels: ["x", "y"],
-        range: [[-10, 10], [-10, 10]],
-        tickStep: [1, 1],
-        gridStep: [1, 1],
-        markings: "graph",
-    },
-    elements: [],
-};
-
 //
 // Editor for non-interactive points
 //
 // TODO(eater): Factor this out
 //
-const PointEditor = React.createClass({
-    propTypes: {
+class PointEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        coordX: React.PropTypes.string,
-        coordY: React.PropTypes.string,
-        color: React.PropTypes.string,
-    },
+        coordX: PropTypes.string,
+        coordY: PropTypes.string,
+        color: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             coordX: "0",
             coordY: "0",
             color: KhanColors.BLACK,
-        };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -82,37 +69,36 @@ const PointEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for non-interactive line segments
 //
 // TODO(eater): Factor this out
 //
-var LineEditor = React.createClass({
-    propTypes: {
+class LineEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        startX: React.PropTypes.string,
-        startY: React.PropTypes.string,
-        endX: React.PropTypes.string,
-        endY: React.PropTypes.string,
-        color: React.PropTypes.string,
-        strokeDasharray: React.PropTypes.string,
-        arrows: React.PropTypes.string,
-        strokeWidth: React.PropTypes.number,
-    },
+        startX: PropTypes.string,
+        startY: PropTypes.string,
+        endX: PropTypes.string,
+        endY: PropTypes.string,
+        color: PropTypes.string,
+        strokeDasharray: PropTypes.string,
+        arrows: PropTypes.string,
+        strokeWidth: PropTypes.number,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             startX: "-5",
             startY: "5",
             endX: "5",
@@ -121,10 +107,9 @@ var LineEditor = React.createClass({
             strokeDasharray: "",
             arrows: "",
             strokeWidth: 2,
-        };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -190,16 +175,16 @@ var LineEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for interactive movable points
@@ -207,18 +192,17 @@ var LineEditor = React.createClass({
 // TODO(eater): Factor this out
 // TODO(eater): Rethink how constraints are represented
 //
-var MovablePointEditor = React.createClass({
-    propTypes: {
+class MovablePointEditor extends React.Component {
+    static propTypes ={
         ...Changeable.propTypes,
-        startX: React.PropTypes.string,
-        startY: React.PropTypes.string,
-        constraint: React.PropTypes.string,
-        snap: React.PropTypes.number,
-        constraintFn: React.PropTypes.string,
-    },
+        startX: PropTypes.string,
+        startY: PropTypes.string,
+        constraint: PropTypes.string,
+        snap: PropTypes.number,
+        constraintFn: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             startX: "0",
             startY: "0",
             constraint: "none",
@@ -228,10 +212,9 @@ var MovablePointEditor = React.createClass({
             constraintXMax: "10",
             constraintYMin: "-10",
             constraintYMax: "10",
-        };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -262,16 +245,16 @@ var MovablePointEditor = React.createClass({
                 <ConstraintEditor {...this.props} />
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for interactive movable line segments
@@ -279,20 +262,19 @@ var MovablePointEditor = React.createClass({
 // TODO(eater): Factor this out
 // TODO(eater): Rethink how constraints are represented
 //
-var MovableLineEditor = React.createClass({
-    propTypes: {
+class MovableLineEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        startX: React.PropTypes.string,
-        startY: React.PropTypes.string,
-        endX: React.PropTypes.string,
-        endY: React.PropTypes.string,
-        constraint: React.PropTypes.string,
-        snap: React.PropTypes.number,
-        constraintFn: React.PropTypes.string,
-    },
+        startX: PropTypes.string,
+        startY: PropTypes.string,
+        endX: PropTypes.string,
+        endY: PropTypes.string,
+        constraint: PropTypes.string,
+        snap: PropTypes.number,
+        constraintFn: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             startX: "-5",
             startY: "5",
             endX: "5",
@@ -305,9 +287,8 @@ var MovableLineEditor = React.createClass({
             constraintYMin: "-10",
             constraintYMax: "10",
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 Initial position:
@@ -367,35 +348,34 @@ var MovableLineEditor = React.createClass({
                 <ConstraintEditor {...this.props} />
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for function plots
 //
 // TODO(eater): Factor this out
 //
-var FunctionEditor = React.createClass({
-    propTypes: {
+class FunctionEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        value: React.PropTypes.string,
-        rangeMin: React.PropTypes.string,
-        rangeMax: React.PropTypes.string,
-        color: React.PropTypes.string,
-        strokeDashArray: React.PropTypes.string,
-        strokeWidth: React.PropTypes.number,
-    },
+        value: PropTypes.string,
+        rangeMin: PropTypes.string,
+        rangeMax: PropTypes.string,
+        color: PropTypes.string,
+        strokeDashArray: PropTypes.string,
+        strokeWidth: PropTypes.number,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             value: "x",
             rangeMin: "-10",
             rangeMax: "10",
@@ -403,9 +383,8 @@ var FunctionEditor = React.createClass({
             strokeDasharray: "",
             strokeWidth: 2,
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -458,36 +437,35 @@ var FunctionEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for parametric plots
 //
 // TODO(eater): Factor this out
 //
-var ParametricEditor = React.createClass({
-    propTypes: {
+class ParametricEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        x: React.PropTypes.string,
-        y: React.PropTypes.string,
-        rangeMin: React.PropTypes.string,
-        rangeMax: React.PropTypes.string,
-        color: React.PropTypes.string,
-        strokeDashArray: React.PropTypes.string,
-        strokeWidth: React.PropTypes.number,
-    },
+        x: PropTypes.string,
+        y: PropTypes.string,
+        rangeMin: PropTypes.string,
+        rangeMax: PropTypes.string,
+        color: PropTypes.string,
+        strokeDashArray: PropTypes.string,
+        strokeWidth: PropTypes.number,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             x: "cos(t)",
             y: "sin(t)",
             rangeMin: "0",
@@ -495,10 +473,9 @@ var ParametricEditor = React.createClass({
             color: KhanColors.BLUE,
             strokeDasharray: "",
             strokeWidth: 2,
-        };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -560,16 +537,16 @@ var ParametricEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for labels
@@ -577,25 +554,23 @@ var ParametricEditor = React.createClass({
 // TODO(eater): Factor this out maybe?
 // TODO(eater): Add text direction
 //
-var LabelEditor = React.createClass({
-    propTypes: {
+class LabelEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        color: React.PropTypes.string,
-        coordX: React.PropTypes.string,
-        coordY: React.PropTypes.string,
-        label: React.PropTypes.string,
-    },
+        color: PropTypes.string,
+        coordX: PropTypes.string,
+        coordY: PropTypes.string,
+        label: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             coordX: "0",
             coordY: "0",
             color: KhanColors.BLACK,
             label: "\\phi",
-        };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -632,43 +607,41 @@ var LabelEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 //
 // Editor for rectangles
 //
 // TODO(eater): Factor this out maybe?
 //
-var RectangleEditor = React.createClass({
-    propTypes: {
+class RectangleEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        color: React.PropTypes.string,
-        coordX: React.PropTypes.string,
-        coordY: React.PropTypes.string,
-        height: React.PropTypes.string,
-        width: React.PropTypes.string,
-    },
+        color: PropTypes.string,
+        coordX: PropTypes.string,
+        coordY: PropTypes.string,
+        height: PropTypes.string,
+        width: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             coordX: "-5",
             coordY: "5",
             width: "2",
             height: "3",
-            color: KhanColors.LIGHT_BLUE,
-        };
-    },
+            color: KhanColors.LIGHT_BLUE
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="graph-settings">
                 <div className="perseus-widget-row">
@@ -718,44 +691,53 @@ var RectangleEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
-var InteractionEditor = React.createClass({
+class InteractionEditor extends React.Component {
     // TODO(eater): Make more better
-    propTypes: {
+    static propTypes = {
         ...Changeable.propTypes,
-        elements: React.PropTypes.arrayOf(React.PropTypes.object),
-        graph: React.PropTypes.objectOf(React.PropTypes.any),
-    },
+        elements: PropTypes.arrayOf(PropTypes.object),
+        graph: PropTypes.objectOf(PropTypes.any),
+    }
 
-    getDefaultProps: function() {
-        return defaultInteractionProps;
-    },
+    static defaultProps = {
+        graph: {
+            box: [400, 400],
+            labels: ["x", "y"],
+            range: [[-10, 10], [-10, 10]],
+            tickStep: [1, 1],
+            gridStep: [1, 1],
+            markings: "graph",
+        },
+        elements: [],
+    };
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             usedVarSubscripts: this._getAllVarSubscripts(this.props.elements),
             usedFunctionNames: this._getAllFunctionNames(this.props.elements),
         };
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.setState({
             usedVarSubscripts: this._getAllVarSubscripts(nextProps.elements),
             usedFunctionNames: this._getAllFunctionNames(nextProps.elements),
         });
-    },
+    }
 
-    _getAllVarSubscripts: function(elements) {
+    _getAllVarSubscripts(elements) {
         return _.map(
             _.where(elements, {type: "movable-point"}),
             element => element.options.varSubscript
@@ -772,16 +754,16 @@ var InteractionEditor = React.createClass({
                     element => element.options.endSubscript
                 )
             );
-    },
+    }
 
-    _getAllFunctionNames: function(elements) {
+    _getAllFunctionNames(elements) {
         return _.map(
             _.where(elements, {type: "function"}),
             element => element.options.funcName
         );
-    },
+    }
 
-    _updateGraphProps: function(newProps) {
+    _updateGraphProps(newProps) {
         // TODO(eater): GraphSettings should name this tickStep instead
         // of step. Grr..
         this.change({
@@ -789,9 +771,9 @@ var InteractionEditor = React.createClass({
                 tickStep: newProps.step,
             }),
         });
-    },
+    }
 
-    _addNewElement: function(e) {
+    _addNewElement(e) {
         var elementType = e.target.value;
         if (elementType === "") {
             return;
@@ -851,32 +833,32 @@ var InteractionEditor = React.createClass({
         this.change({
             elements: this.props.elements.concat(newElement),
         });
-    },
+    }
 
-    _deleteElement: function(index) {
+    _deleteElement(index) {
         var element = this.props.elements[index];
         this.change({elements: _.without(this.props.elements, element)});
-    },
+    }
 
-    _moveElementUp: function(index) {
+    _moveElementUp(index) {
         var element = this.props.elements[index];
         var newElements = _.without(this.props.elements, element);
         newElements.splice(index - 1, 0, element);
         this.change({elements: newElements});
-    },
+    }
 
-    _moveElementDown: function(index) {
+    _moveElementDown(index) {
         var element = this.props.elements[index];
         var newElements = _.without(this.props.elements, element);
         newElements.splice(index + 1, 0, element);
         this.change({elements: newElements});
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         /* eslint-disable max-len */
         return (
             <div className="perseus-widget-interaction-editor">
@@ -1319,11 +1301,11 @@ var InteractionEditor = React.createClass({
             </div>
         );
         /* eslint-enable max-len */
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = InteractionEditor;

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable max-lines, no-console, no-var, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -59,12 +60,12 @@ var makeStartWithAParagraphAlways = content => {
     return "\n\n".slice(0, 2 - newlines.length) + content;
 };
 
-var WidgetSelect = React.createClass({
-    shouldComponentUpdate: function() {
+class WidgetSelect extends React.Component {
+    shouldComponentUpdate() {
         return false;
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange = (e) => {
         var widgetType = e.target.value;
         if (widgetType === "") {
             // TODO(alpert): Not sure if change will trigger here
@@ -74,9 +75,9 @@ var WidgetSelect = React.createClass({
         if (this.props.onChange) {
             this.props.onChange(widgetType);
         }
-    },
+    }
 
-    render: function() {
+    render() {
         var widgets = Widgets.getPublicWidgets();
         var orderedWidgetNames = _.sortBy(_.keys(widgets), name => {
             return widgets[name].displayName;
@@ -97,48 +98,47 @@ var WidgetSelect = React.createClass({
                 })}
             </select>
         );
-    },
-});
+    }
+}
 
 // This component handles upgading widget editor props via prop
 // upgrade transforms. Widget editors will always be rendered
 // with all available transforms applied, but the results of those
 // transforms will not be propogated upwards until serialization.
-var WidgetEditor = React.createClass({
-    propTypes: {
+class WidgetEditor extends React.Component {
+    static propTypes = {
         // Unserialized props
-        id: React.PropTypes.string.isRequired,
-        onChange: React.PropTypes.func.isRequired,
-        onRemove: React.PropTypes.func.isRequired,
+        id: PropTypes.string.isRequired,
+        onChange: PropTypes.func.isRequired,
+        onRemove: PropTypes.func.isRequired,
         apiOptions: ApiOptions.propTypes,
 
         // Serialized props
-        type: React.PropTypes.string.isRequired,
-        alignment: React.PropTypes.string,
-        static: React.PropTypes.bool,
-        graded: React.PropTypes.bool,
-        options: React.PropTypes.any,
-        version: React.PropTypes.shape({
-            major: React.PropTypes.number.isRequired,
-            minor: React.PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
+        alignment: PropTypes.string,
+        static: PropTypes.bool,
+        graded: PropTypes.bool,
+        options: PropTypes.any,
+        version: PropTypes.shape({
+            major: PropTypes.number.isRequired,
+            minor: PropTypes.number.isRequired,
         }),
-    },
-
-    getInitialState: function() {
-        return {
+    }
+    constructor(props) {
+        super(props);
+        this.state = {
             showWidget: false,
         };
-    },
-
-    componentWillMount: function() {
+    }
+    componentWillMount = () => {
         this._upgradeWidgetInfo(this.props);
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps = (nextProps) => {
         this._upgradeWidgetInfo(nextProps);
-    },
+    }
 
-    _upgradeWidgetInfo: function(props) {
+    _upgradeWidgetInfo = (props) => {
         // We can't call serialize here because this.refs.widget
         // doesn't exist before this component is mounted.
         var filteredProps = _.omit(props, WIDGET_PROP_BLACKLIST);
@@ -146,40 +146,39 @@ var WidgetEditor = React.createClass({
         this.setState({
             widgetInfo: info,
         });
-    },
+    }
 
-    _toggleWidget: function(e) {
+    _toggleWidget = (e) => {
         e.preventDefault();
         this.setState({showWidget: !this.state.showWidget});
-    },
+    }
 
-    _handleWidgetChange: function(newProps, cb, silent) {
+    _handleWidgetChange = (newProps, cb, silent) => {
         var newWidgetInfo = _.clone(this.state.widgetInfo);
         newWidgetInfo.options = _.extend(
             this.refs.widget.serialize(),
             newProps
         );
         this.props.onChange(newWidgetInfo, cb, silent);
-    },
+    }
 
-    _toggleStatic: function(e) {
+    _toggleStatic = (e) => {
         e.preventDefault();
         var newWidgetInfo = _.extend({}, this.state.widgetInfo, {
             static: !this.state.widgetInfo.static,
         });
         this.props.onChange(newWidgetInfo);
-    },
+    }
 
-    _handleAlignmentChange: function(e) {
+    _handleAlignmentChange = (e) => {
         var newAlignment = e.target.value;
         var newWidgetInfo = _.clone(this.state.widgetInfo);
         newWidgetInfo.alignment = newAlignment;
         this.props.onChange(newWidgetInfo);
-    },
+    }
 
-    render: function() {
+    render() {
         var widgetInfo = this.state.widgetInfo;
-
         var Ed = Widgets.getEditor(widgetInfo.type);
         var supportedAlignments;
         if (this.props.apiOptions.showAlignmentOptions) {
@@ -274,14 +273,17 @@ var WidgetEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
+        if(this.refs === undefined) {
+            return []; //HACK-sz
+        }
         var issuesFunc = this.refs.widget.getSaveWarnings;
         return issuesFunc ? issuesFunc() : [];
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         // TODO(alex): Make this properly handle the case where we load json
         // with a more recent widget version than this instance of Perseus
         // knows how to handle.
@@ -294,8 +296,8 @@ var WidgetEditor = React.createClass({
             options: this.refs.widget.serialize(),
             version: widgetInfo.version,
         };
-    },
-});
+    }
+}
 
 // This is more general than the actual markdown image parsing regex,
 // which is fine for correctness since it should only mean we could
@@ -346,35 +348,23 @@ var imageUrlsFromContent = function(content) {
  * TODO: Clear out all the textarea code and replace with Draft.js once we are
  *       comfortable that it is working well consistently
  */
-var Editor = React.createClass({
-    propTypes: {
+class Editor extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        imageUploader: React.PropTypes.func,
-        onChange: React.PropTypes.func,
-    },
-
-    getDefaultProps: function() {
-        return {
-            content: "",
-            placeholder: "",
-            widgets: {},
-            images: {},
-            disabled: false,
-            widgetEnabled: true,
-            immutableWidgets: false,
-            showWordCount: false,
-            warnNoPrompt: false,
-            warnNoWidgets: false,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+        imageUploader: PropTypes.func,
+        onChange: PropTypes.func,
+    }
+    
+    constructor(props) {
+        super(props);
+        this.state = {
             showKatexErrors: false,
         };
-    },
+        this.textarea = React.createRef();
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-    getWidgetEditor: function(id, type) {
+    getWidgetEditor(id, type) {
         if (!Widgets.getEditor(type)) {
             return;
         }
@@ -389,32 +379,32 @@ var Editor = React.createClass({
                 {...this.props.widgets[id]}
             />
         );
-    },
+    }
 
-    _handleWidgetEditorChange: function(id, newProps, cb, silent) {
+    _handleWidgetEditorChange(id, newProps, cb, silent) {
         var widgets = _.clone(this.props.widgets);
         widgets[id] = _.extend({}, widgets[id], newProps);
         if (this.props.apiOptions.useDraftEditor) {
-            this.refs.textarea.updateWidget(id, newProps);
+            this.textarea.current.updateWidget(id, newProps);
         }
         this.props.onChange({widgets: widgets}, cb, silent);
-    },
+    }
 
-    _handleWidgetEditorRemove: function(id) {
-        const textarea = this.refs.textarea;
+    _handleWidgetEditorRemove(id) {
+        const textarea = this.textarea.current;
         if (this.props.apiOptions.useDraftEditor) {
             textarea.removeWidget(id);
         } else {
             const re = new RegExp(widgetRegExp.replace("{id}", id), "gm");
             this.props.onChange({content: textarea.value.replace(re, "")});
         }
-    },
+    }
 
     /**
      * Calculate the size of all the images in props.content, and send
      * those sizes to this.props.images using props.onChange.
      */
-    _sizeImages: function(props) {
+    _sizeImages(props) {
         var imageUrls = imageUrlsFromContent(props.content);
 
         // Discard any images in our dimension table that no
@@ -451,8 +441,9 @@ var Editor = React.createClass({
                 );
             });
         });
-    },
-    componentDidMount: function() {
+    }
+    
+    componentDidMount() {
         // This can't be in componentWillMount because that's happening during
         // the middle of our parent's render, so we can't call
         // this.props.onChange during that, since it calls our parent's
@@ -460,25 +451,27 @@ var Editor = React.createClass({
         this._sizeImages(this.props);
 
         if (!this.props.apiOptions.useDraftEditor) {
-            $(ReactDOM.findDOMNode(this.refs.textarea))
+            $(ReactDOM.findDOMNode(this.textarea.current))
                 .on("copy cut", this._maybeCopyWidgets)
                 .on("paste", this._maybePasteWidgets);
         }
-    },
+    }
 
-    componentDidUpdate: function(prevProps) {
-        // TODO(alpert): Maybe fix React so this isn't necessary
-        var textarea = ReactDOM.findDOMNode(this.refs.textarea);
-        textarea.value = this.props.content;
+    componentDidUpdate(prevProps) {
+        if(this.textarea.value) {   
+            // TODO(alpert): Maybe fix React so this isn't necessary
+            var textarea = ReactDOM.findDOMNode(this.textarea.current);
+            textarea.value = this.props.content;
+        }
 
         // This can't be in componentWillReceiveProps because that's happening
         // during the middle of our parent's render.
         if (this.props.content !== prevProps.content) {
             this._sizeImages(this.props);
         }
-    },
+    }
 
-    handleDrop: function(e) {
+    handleDrop(e) {
         if (this.props.apiOptions.useDraftEditor) {
             return;
         }
@@ -519,8 +512,8 @@ var Editor = React.createClass({
          * extended to recognize this sentinel and highlight it like for
          * widgets.
          */
-        _(files)
-            .chain()
+        _
+            .chain(files)
             .map(function(file) {
                 if (!file.type.match("image.*")) {
                     return null;
@@ -547,18 +540,18 @@ var Editor = React.createClass({
                     });
                 });
             });
-    },
+    }
 
-    handleChange: function() {
-        var textarea = ReactDOM.findDOMNode(this.refs.textarea);
+    handleChange(e) {
+        var textarea = ReactDOM.findDOMNode(this.textarea.current);
         this.props.onChange({content: textarea.value});
-    },
+    }
 
-    _handleKeyDown: function(e) {
+    _handleKeyDown(e) {
         // Tab-completion of widgets. For example, to insert an image:
         // type `[[im`, then tab.
         if (e.key === "Tab") {
-            var textarea = ReactDOM.findDOMNode(this.refs.textarea);
+            var textarea = ReactDOM.findDOMNode(this.textarea.current);
 
             var word = Util.textarea.getWordBeforeCursor(textarea);
             var matches = word.string.toLowerCase().match(shortcutRegexp);
@@ -583,9 +576,9 @@ var Editor = React.createClass({
                 e.preventDefault();
             }
         }
-    },
+    }
 
-    _maybeCopyWidgets: function(e) {
+    _maybeCopyWidgets(e) {
         // If there are widgets being cut/copied, put the widget JSON in
         // localStorage.perseusLastCopiedWidgets to allow copy-pasting of
         // widgets between Editors. Also store the text to be pasted in
@@ -607,9 +600,9 @@ var Editor = React.createClass({
         localStorage.perseusLastCopiedWidgets = JSON.stringify(widgetData);
 
         console.log(`Widgets copied: ${localStorage.perseusLastCopiedWidgets}`);
-    },
+    }
 
-    _maybePasteWidgets: function(e) {
+    _maybePasteWidgets(e) {
         // Use the data from localStorage to paste any widgets we copied
         // before. Avoid name conflicts by renumbering pasted widgets so that
         // their numbers are always higher than the highest numbered widget of
@@ -671,9 +664,9 @@ var Editor = React.createClass({
                 }
             );
         }
-    },
+    }
 
-    _safeWidgetNameMapping: function(widgetData) {
+    _safeWidgetNameMapping(widgetData) {
         // Helper function for _maybePasteWidgets.
         // For each widget about to be pasted, construct a mapping from
         // old widget name to a new widget name that doesn't have conflicts
@@ -717,11 +710,10 @@ var Editor = React.createClass({
         });
 
         return safeWidgetMapping;
-    },
+    }
 
-    _addWidgetToContent: function(oldContent, cursorRange, widgetType) {
-        var textarea = ReactDOM.findDOMNode(this.refs.textarea);
-
+    _addWidgetToContent = (oldContent, cursorRange, widgetType) => {
+        var textarea = ReactDOM.findDOMNode(this.textarea.current);
         // Note: we have to use _.map here instead of Array::map
         // because the results of a .match might be null if no
         // widgets were found.
@@ -731,7 +723,6 @@ var Editor = React.createClass({
             var num = +match[3];
             return [type, num];
         });
-
         var widgetNum = _.reduce(
             allWidgetIds,
             (currentNum, otherId) => {
@@ -741,13 +732,10 @@ var Editor = React.createClass({
                 } else {
                     return currentNum;
                 }
-            },
-            1
-        );
-
+            }
+        ,0);
         var id = widgetType + " " + widgetNum;
         var widgetContent = widgetPlaceholder.replace("{id}", id);
-
         // Add newlines before block-display widgets like graphs
         var isBlock = Widgets.getDefaultAlignment(widgetType) === "block";
 
@@ -787,11 +775,12 @@ var Editor = React.createClass({
                 );
             }
         );
-    },
+    }
 
-    _addWidget: function(widgetType) {
-        var textarea = this.refs.textarea;
+    _addWidget = (widgetType) => {
+        var textarea = this.textarea.current;
 
+        console.log(widgetType, this.props.content);
         if (this.props.apiOptions.useDraftEditor) {
             textarea.addWidget(widgetType);
         } else {
@@ -802,12 +791,12 @@ var Editor = React.createClass({
             );
             textarea.focus();
         }
-    },
+    }
 
     // NOTE: These templates are all duplicated verbatim in perseus-editor.jsx
     //        so any changes should also be done there, until this code is all
     //        deleted in favor of perseus-editor.jsx
-    addTemplate: function(e) {
+    addTemplate = (e) => {
         var templateType = e.target.value;
         if (templateType === "") {
             return;
@@ -815,7 +804,7 @@ var Editor = React.createClass({
         e.target.value = "";
 
         if (this.props.apiOptions.useDraftEditor) {
-            this.refs.textarea.addTemplate(templateType);
+            this.textarea.current.addTemplate(templateType);
             return;
         }
 
@@ -864,12 +853,12 @@ var Editor = React.createClass({
         var newContent = oldContent + template;
 
         this.props.onChange({content: newContent}, this.focusAndMoveToEnd);
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         var widgetIds = _.intersection(this.widgetIds, _.keys(this.refs));
-        var warnings = _(widgetIds)
-            .chain()
+        var warnings = _
+            .chain(widgetIds)
             .map(id => {
                 var issuesFunc = this.refs[id].getSaveWarnings;
                 var issues = issuesFunc ? issuesFunc() : [];
@@ -879,20 +868,20 @@ var Editor = React.createClass({
             .value();
 
         return warnings;
-    },
+    }
 
-    focus: function() {
-        ReactDOM.findDOMNode(this.refs.textarea).focus();
-    },
+    focus() {
+        this.textarea.current.focus();
+    }
 
-    focusAndMoveToEnd: function() {
+    focusAndMoveToEnd = () => {
         this.focus();
-        var textarea = ReactDOM.findDOMNode(this.refs.textarea);
+        var textarea = this.textarea.current;
         textarea.selectionStart = textarea.value.length;
         textarea.selectionEnd = textarea.value.length;
-    },
+    }
 
-    render: function() {
+    render() {
         var pieces;
         var widgets;
         var underlayPieces;
@@ -987,7 +976,7 @@ var Editor = React.createClass({
             //         // that you can undo the deletion of a widget
             //         delete this.props.widgets[id];
             //     }
-            // }, this);
+            // } this);
 
             this.widgetIds = _.keys(widgets);
             widgetsDropDown = (
@@ -1043,8 +1032,8 @@ var Editor = React.createClass({
                 {underlayPieces}
             </div>,
             <textarea
-                ref="textarea"
-                key="textarea"
+                ref={this.textarea}
+                key={this.textarea}
                 onChange={this.handleChange}
                 onKeyDown={this._handleKeyDown}
                 placeholder={this.props.placeholder}
@@ -1122,9 +1111,9 @@ var Editor = React.createClass({
                 {widgetsAndTemplates}
             </div>
         );
-    },
+    }
 
-    serialize: function(options) {
+    serialize(options) {
         // need to serialize the widgets since the state might not be
         // completely represented in props. ahem //transformer// (and
         // interactive-graph and plotter).
@@ -1156,7 +1145,19 @@ var Editor = React.createClass({
             images: this.props.images,
             widgets: widgets,
         };
-    },
-});
+    }
+}
 
+Editor.defaultProps = {
+    content: "",
+    placeholder: "",
+    widgets: {},
+    images: {},
+    disabled: false,
+    widgetEnabled: true,
+    immutableWidgets: false,
+    showWordCount: false,
+    warnNoPrompt: false,
+    warnNoWidgets: false,
+};
 module.exports = Editor;

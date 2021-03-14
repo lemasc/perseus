@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -6,27 +7,25 @@ var React = require("react");
 
 var InfoTip = require("./components/info-tip.jsx");
 
-var ItemExtrasEditor = React.createClass({
-    propTypes: {
-        calculator: React.PropTypes.bool,
-        chi2Table: React.PropTypes.bool,
-        onChange: React.PropTypes.func.isRequired,
-        periodicTable: React.PropTypes.bool,
-        tTable: React.PropTypes.bool,
-        zTable: React.PropTypes.bool,
-    },
+class ItemExtrasEditor extends React.Component {
+    static propTypes = {
+        calculator: PropTypes.bool,
+        chi2Table: PropTypes.bool,
+        onChange: PropTypes.func.isRequired,
+        periodicTable: PropTypes.bool,
+        tTable: PropTypes.bool,
+        zTable: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
-            calculator: false,
-            chi2Table: false,
-            periodicTable: false,
-            tTable: false,
-            zTable: false,
-        };
-    },
+    static defaultProps = {
+        calculator: false,
+        chi2Table: false,
+        periodicTable: false,
+        tTable: false,
+        zTable: false,
+    };
 
-    serialize: function() {
+    serialize() {
         return {
             calculator: this.props.calculator,
             chi2Table: this.props.chi2Table,
@@ -34,9 +33,9 @@ var ItemExtrasEditor = React.createClass({
             tTable: this.props.tTable,
             zTable: this.props.zTable,
         };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-answer-editor">
                 <div className="perseus-answer-options">
@@ -145,7 +144,7 @@ var ItemExtrasEditor = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = ItemExtrasEditor;

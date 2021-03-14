@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Demonstrates the rendered result of a Perseus article
  */
@@ -11,60 +12,59 @@ const defaultArticle = [
     {
         content: "",
         images: {},
-        widgets: {},
-    },
+        widgets: {}
+    }
 ];
 
-const ArticleDemo = React.createClass({
-    propTypes: {
-        content: React.PropTypes.any.isRequired,
-    },
+class ArticleDemo extends React.Component {
+    static propTypes = {
+        content: PropTypes.any.isRequired,
+    }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             content: defaultArticle,
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             isMobile: navigator.userAgent.indexOf("Mobile") !== -1,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         window.addEventListener("resize", this._handleResize);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         window.removeEventListener("resize", this._handleResize);
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         console.log(JSON.stringify(this.refs.editor.serialize(), null, 4)); // eslint-disable-line no-console
-    },
+    }
 
-    scorePreview: function() {
+    scorePreview = () => {
         console.log(this.refs.editor.scorePreview()); // eslint-disable-line no-console
-    },
+    }
 
-    _getContentHash: function() {
+    _getContentHash = () => {
         return Util.strongEncodeURIComponent(
             JSON.stringify(this.refs.editor.serialize())
         );
-    },
+    }
 
-    permalink: function(e) {
+    permalink = (e) => {
         window.location.hash = `content=${this._getContentHash()}`;
         e.preventDefault();
-    },
+    }
 
     _handleResize() {
         const isMobile = navigator.userAgent.indexOf("Mobile") !== -1;
         if (this.state.isMobile !== isMobile) {
             this.setState({isMobile});
         }
-    },
+    }
 
     getEditorProps() {
         const {isMobile} = this.state;
@@ -136,9 +136,9 @@ const ArticleDemo = React.createClass({
             </html>`,
             /* eslint-enable max-len */
         };
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div id="perseus-index">
                 <div id="extras">
@@ -154,7 +154,7 @@ const ArticleDemo = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = ArticleDemo;

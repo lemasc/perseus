@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/forbid-prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -19,22 +20,21 @@ const {
 
 const HACKY_CSS_CLASSNAME = "perseus-widget-matcher";
 
-const Matcher = React.createClass({
-    propTypes: {
+class Matcher extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        labels: React.PropTypes.array,
-        left: React.PropTypes.array,
-        onChange: React.PropTypes.func,
-        orderMatters: React.PropTypes.bool,
-        padding: React.PropTypes.bool,
-        problemNum: React.PropTypes.number,
-        right: React.PropTypes.array,
-        trackInteraction: React.PropTypes.func.isRequired,
+        labels: PropTypes.array,
+        left: PropTypes.array,
+        onChange: PropTypes.func,
+        orderMatters: PropTypes.bool,
+        padding: PropTypes.bool,
+        problemNum: PropTypes.number,
+        right: PropTypes.array,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             left: [],
             right: [],
             labels: ["", ""],
@@ -44,16 +44,16 @@ const Matcher = React.createClass({
             onChange: function() {},
             linterContext: linterContextDefault,
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             leftHeight: 0,
             rightHeight: 0,
         };
-    },
+    }
 
-    render: function() {
+    render() {
         // Use the same random() function to shuffle both columns sequentially
         var rng = seededRNG(this.props.problemNum);
 
@@ -135,34 +135,34 @@ const Matcher = React.createClass({
                 </tbody>
             </table>
         );
-    },
+    }
 
-    changeAndTrack: function(e) {
+    changeAndTrack = (e) => {
         this.props.onChange(e);
         this.props.trackInteraction();
-    },
+    }
 
-    onMeasureLeft: function(dimensions) {
+    onMeasureLeft = (dimensions) => {
         var height = _.max(dimensions.heights);
         this.setState({leftHeight: height});
-    },
+    }
 
-    onMeasureRight: function(dimensions) {
+    onMeasureRight = (dimensions) => {
         var height = _.max(dimensions.heights);
         this.setState({rightHeight: height});
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {
             left: this.refs.left.getOptions(),
             right: this.refs.right.getOptions(),
         };
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Matcher.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Matcher, {
     validate: function(state, rubric) {

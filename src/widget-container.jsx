@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 
@@ -18,22 +19,16 @@ const {
     linterContextDefault,
 } = require("./gorgon/proptypes.js");
 
-const WidgetContainer = React.createClass({
-    propTypes: {
-        shouldHighlight: React.PropTypes.bool.isRequired,
-        type: React.PropTypes.string,
-        initialProps: React.PropTypes.object.isRequired,
+class WidgetContainer extends React.Component {
+    static propTypes = {
+        shouldHighlight: PropTypes.bool.isRequired,
+        type: PropTypes.string,
+        initialProps: PropTypes.object.isRequired,
         linterContext: linterContextProps,
-    },
-
-    getDefaultProps() {
-        return {
-            linterContext: linterContextDefault,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+    }
+    constructor(props) {
+        super(props);
+        this.state = {
             // TODO(benkomalo): before we're mounted, we don't know how big
             // we're going to be, so just default to MEDIUM for now. :/ In the
             // future we can sniff with user-agents or something to get a
@@ -41,7 +36,10 @@ const WidgetContainer = React.createClass({
             sizeClass: containerSizeClass.MEDIUM,
             widgetProps: this.props.initialProps,
         };
-    },
+    }
+    static defaultProps = {
+            linterContext: linterContextDefault,
+    };
 
     componentDidMount() {
         // Only relay size class changes for mobile right now.  We may want to
@@ -60,9 +58,9 @@ const WidgetContainer = React.createClass({
             });
             /* eslint-enable react/no-did-mount-set-state */
         }
-    },
+    }
 
-    render: function() {
+    render() {
         let className = classNames({
             "perseus-widget-container": true,
             "widget-highlight": this.props.shouldHighlight,
@@ -75,7 +73,6 @@ const WidgetContainer = React.createClass({
             // Just give up on invalid widget types
             return <div className={className} />;
         }
-
         let alignment = this.state.widgetProps.alignment;
         if (alignment === "default") {
             alignment = Widgets.getDefaultAlignment(type);
@@ -134,33 +131,33 @@ const WidgetContainer = React.createClass({
                 {isStatic && <div style={staticOverlayStyles} />}
             </div>
         );
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (this.props.type !== nextProps.type) {
             throw new Error(
                 "WidgetContainer can't change widget type; set a different " +
                     "key instead to recreate the container."
             );
         }
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState) {
         return (
             this.props.shouldHighlight !== nextProps.shouldHighlight ||
             this.props.type !== nextProps.type ||
             this.state.widgetProps !== nextState.widgetProps ||
             this.state.sizeClass !== nextState.sizeClass
         );
-    },
+    }
 
-    getWidget: function() {
+    getWidget() {
         return this.refs.widget;
-    },
+    }
 
-    replaceWidgetProps: function(newWidgetProps) {
+    replaceWidgetProps(newWidgetProps) {
         this.setState({widgetProps: newWidgetProps});
-    },
-});
+    }
+}
 
 module.exports = WidgetContainer;

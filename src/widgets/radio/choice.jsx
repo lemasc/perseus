@@ -4,12 +4,13 @@
 
 /* global i18n */
 
-const {StyleSheet, css} = require("aphrodite");
+const { StyleSheet, css } = require("aphrodite");
 const _ = require("underscore");
+const PropTypes = require('prop-types');
 const React = require("react");
 const classNames = require("classnames");
 
-const {ClassNames} = require("../../perseus-api.jsx");
+const { ClassNames } = require("../../perseus-api.jsx");
 const sharedStyles = require("../../styles/shared.js");
 const styleConstants = require("../../styles/constants.js");
 const mediaQueries = require("../../styles/media-queries.js");
@@ -28,239 +29,238 @@ const focusedStyleMixin = {
 const intermediateCheckboxPadding = `16px 16px`;
 const intermediateCheckboxPaddingPhone = `12px 16px`;
 
-const Choice = React.createClass({
-    propTypes: {
+class Choice extends React.Component {
+    static propTypes = {
         // TODO(kevinb) use Options.propTypes from perseus-api.jsx
         // This change will also require make sure that item-renderer.jsx and
         // server-item-renderer.jsx have appropriate defaults for apiOptions
         // because many of the properties on Options.propTypes are required.
-        apiOptions: React.PropTypes.shape({
-            satStyling: React.PropTypes.bool,
-            isMobile: React.PropTypes.bool,
-            styling: React.PropTypes.shape({
-                radioStyleVersion: React.PropTypes.oneOf([
+        apiOptions: PropTypes.shape({
+            satStyling: PropTypes.bool,
+            isMobile: PropTypes.bool,
+            styling: PropTypes.shape({
+                radioStyleVersion: PropTypes.oneOf([
                     "intermediate",
                     "final",
                 ]),
-                primaryProductColor: React.PropTypes.string,
+                primaryProductColor: PropTypes.string,
             }),
-            readOnly: React.PropTypes.bool,
+            readOnly: PropTypes.bool,
         }),
-        checked: React.PropTypes.bool,
-        className: React.PropTypes.string,
-        rationale: React.PropTypes.node,
-        content: React.PropTypes.node,
-        correct: React.PropTypes.bool,
-        deselectEnabled: React.PropTypes.bool,
-        disabled: React.PropTypes.bool,
-        editMode: React.PropTypes.bool,
-        groupName: React.PropTypes.string,
-        isLastChoice: React.PropTypes.bool, // Needed for border styling
+        checked: PropTypes.bool,
+        className: PropTypes.string,
+        rationale: PropTypes.node,
+        content: PropTypes.node,
+        correct: PropTypes.bool,
+        deselectEnabled: PropTypes.bool,
+        disabled: PropTypes.bool,
+        editMode: PropTypes.bool,
+        groupName: PropTypes.string,
+        isLastChoice: PropTypes.bool, // Needed for border styling
         // This indicates the position of the choice relative to others
         // (so that we can display a nice little (A), (B), etc. next to it)
         // Also used to generate an id for each input.
-        pos: React.PropTypes.number,
-        reviewMode: React.PropTypes.bool,
-        showRationale: React.PropTypes.bool,
-        showCorrectness: React.PropTypes.bool,
-        type: React.PropTypes.string,
+        pos: PropTypes.number,
+        reviewMode: PropTypes.bool,
+        showRationale: PropTypes.bool,
+        showCorrectness: PropTypes.bool,
+        type: PropTypes.string,
 
         // Indicates whether the user has "crossed out" this choice, meaning
         // that they don't think it's correct. This value does not affect
         // scoring or other behavior; it's just a note for the user's
         // reference.
-        crossedOut: React.PropTypes.bool,
+        crossedOut: PropTypes.bool,
 
         // A callback indicating that this choice has changed. Its argument is
         // an object with two keys: `checked` and `crossedOut`. Each contains a
         // boolean value specifying the new checked and crossed-out value of
         // this choice.
-        onChange: React.PropTypes.func,
-    },
+        onChange: PropTypes.func,
+    }
 
-    statics: {
-        styles: StyleSheet.create({
-            pos: {
-                display: "none",
-            },
+    styles = StyleSheet.create({
+        pos: {
+            display: "none",
+        },
 
-            description: {
-                display: "inline-block",
-                width: "100%",
-            },
+        description: {
+            display: "inline-block",
+            width: "100%",
+        },
 
-            satDescription: {
-                display: "block",
-                position: "relative",
-                boxSizing: "border-box",
-                cursor: "pointer",
-                marginLeft: 0,
-                padding: "17px 14px",
-            },
+        satDescription: {
+            display: "block",
+            position: "relative",
+            boxSizing: "border-box",
+            cursor: "pointer",
+            marginLeft: 0,
+            padding: "17px 14px",
+        },
 
-            satDescriptionInputFocused: {
-                ...focusedStyleMixin,
-            },
+        satDescriptionInputFocused: {
+            ...focusedStyleMixin,
+        },
 
-            satDescriptionInputActive: {
-                ...focusedStyleMixin,
-                backgroundColor: styleConstants.satActiveBackgroundColor,
-            },
+        satDescriptionInputActive: {
+            ...focusedStyleMixin,
+            backgroundColor: styleConstants.satActiveBackgroundColor,
+        },
 
-            satDescriptionCorrect: {
-                color: styleConstants.satCorrectColor,
-            },
+        satDescriptionCorrect: {
+            color: styleConstants.satCorrectColor,
+        },
 
-            satDescriptionCorrectChecked: {
-                backgroundColor: styleConstants.satCorrectBackgroundColor,
-            },
+        satDescriptionCorrectChecked: {
+            backgroundColor: styleConstants.satCorrectBackgroundColor,
+        },
 
-            satDescriptionIncorrectChecked: {
-                color: styleConstants.satIncorrectColor,
-                backgroundColor: styleConstants.satIncorrectBackgroundColor,
-            },
+        satDescriptionIncorrectChecked: {
+            color: styleConstants.satIncorrectColor,
+            backgroundColor: styleConstants.satIncorrectBackgroundColor,
+        },
 
-            input: {
-                display: "inline-block",
-                width: 20,
-                margin: 3,
-                marginLeft: -20,
-                marginRight: 0,
-                float: "none",
-            },
+        input: {
+            display: "inline-block",
+            width: 20,
+            margin: 3,
+            marginLeft: -20,
+            marginRight: 0,
+            float: "none",
+        },
 
-            satReviewInput: {
-                pointerEvents: "none",
-            },
+        satReviewInput: {
+            pointerEvents: "none",
+        },
 
-            satRadioOptionContent: {
-                userSelect: "text",
-                display: "block",
-                marginLeft: 45,
-                // Overriding here, not sure why typically set
-                // to "cursor: default" in js
-                cursor: "inherit",
-            },
+        satRadioOptionContent: {
+            userSelect: "text",
+            display: "block",
+            marginLeft: 45,
+            // Overriding here, not sure why typically set
+            // to "cursor: default" in js
+            cursor: "inherit",
+        },
 
-            satReviewRadioOptionContent: {
-                fontWeight: "bold",
-            },
+        satReviewRadioOptionContent: {
+            fontWeight: "bold",
+        },
 
-            satCheckboxOptionContent: {
-                position: "absolute",
-                display: "block",
-                top: "50%",
-                margin: "-16px 0 0 0",
-                width: "auto",
-            },
+        satCheckboxOptionContent: {
+            position: "absolute",
+            display: "block",
+            top: "50%",
+            margin: "-16px 0 0 0",
+            width: "auto",
+        },
 
-            choiceIconWrapper: {
-                display: "flex",
-                marginRight: 12,
+        choiceIconWrapper: {
+            display: "flex",
+            marginRight: 12,
 
-                // NOTE(mdr): Without this style, the bubbles shrink on iOS
-                //     when answer text gets long.
-                flexShrink: 0,
-            },
+            // NOTE(mdr): Without this style, the bubbles shrink on iOS
+            //     when answer text gets long.
+            flexShrink: 0,
+        },
 
-            optionStatusContainer: {
-                display: "block",
-            },
+        optionStatusContainer: {
+            display: "block",
+        },
 
-            rationale: {
-                display: "block",
-            },
+        rationale: {
+            display: "block",
+        },
 
-            nonSatRationale: {
-                padding: intermediateCheckboxPadding,
+        nonSatRationale: {
+            padding: intermediateCheckboxPadding,
+            paddingTop: 0,
+            marginLeft: 44,
+            [mediaQueries.smOrSmaller]: {
+                padding: intermediateCheckboxPaddingPhone,
                 paddingTop: 0,
-                marginLeft: 44,
-                [mediaQueries.smOrSmaller]: {
-                    padding: intermediateCheckboxPaddingPhone,
-                    paddingTop: 0,
-                },
             },
+        },
 
-            satReviewRationale: {
-                marginTop: 13,
-                marginLeft: 45,
+        satReviewRationale: {
+            marginTop: 13,
+            marginLeft: 45,
+        },
+
+        label: {
+            display: "block",
+        },
+
+        responsiveLabel: {
+            WebkitTapHighlightColor: "transparent",
+            display: "flex",
+        },
+
+        satLabel: {
+            cursor: "pointer",
+        },
+
+        intermediateResponsiveCheckbox: {
+            display: "flex",
+            alignItems: "center",
+
+            padding: intermediateCheckboxPadding,
+            [mediaQueries.smOrSmaller]: {
+                padding: intermediateCheckboxPaddingPhone,
             },
+        },
+        intermediateResponsiveCheckboxReview: {
+            alignItems: 'flex-start',
+        },
 
-            label: {
-                display: "block",
-            },
+        crossOutLink: {
+            textAlign: "right",
+            alignSelf: "center",
+            width: 100,
+        },
+    })
 
-            responsiveLabel: {
-                WebkitTapHighlightColor: "transparent",
-                display: "flex",
-            },
+    static defaultProps = {
+        checked: false,
+        classSet: {},
+        disabled: false,
+        correct: false,
+        editMode: false,
+        showRationale: false,
+        type: "radio",
+        pos: 0
+    }
 
-            satLabel: {
-                cursor: "pointer",
-            },
-
-            intermediateResponsiveCheckbox: {
-                display: "flex",
-                alignItems: "center",
-
-                padding: intermediateCheckboxPadding,
-                [mediaQueries.smOrSmaller]: {
-                    padding: intermediateCheckboxPaddingPhone,
-                },
-            },
-            intermediateResponsiveCheckboxReview: {
-                alignItems: 'flex-start',
-            },
-
-            crossOutLink: {
-                textAlign: "right",
-                alignSelf: "center",
-                width: 100,
-            },
-        }),
-    },
-
-    getDefaultProps: function() {
-        return {
-            checked: false,
-            classSet: {},
-            disabled: false,
-            editMode: false,
-            showRationale: false,
-            type: "radio",
-            pos: 0,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             isInputFocused: false,
             isInputActive: false,
         };
-    },
+    }
 
-    componentWillUpdate(nextProps) {
-        if (this.state.isInputFocused && nextProps.disabled) {
-            this.setState({
+    static getDerivedStateFromProps(props, state) {
+        if (state.isInputFocused && props.disabled) {
+            return {
                 isInputFocused: false,
-            });
+            };
         }
-    },
+        return null;
+    }
 
-    onInputFocus: function() {
-        this.setState({isInputFocused: true});
-    },
+    onInputFocus = () => {
+        this.setState({ isInputFocused: true });
+    }
 
-    onInputBlur: function() {
-        this.setState({isInputFocused: false});
-    },
+    onInputBlur = () => {
+        this.setState({ isInputFocused: false });
+    }
 
-    onInputMouseDown: function(e) {
+    onInputMouseDown = (e) => {
         if (e.type === "mousedown" && this.justFinishedTouch) {
             return;
         }
 
-        this.setState({isInputActive: true});
+        this.setState({ isInputActive: true });
 
         // Simulate Chrome's radio button behavior in all browsers: when the
         // mouse goes down or up, the radio button should become focused.
@@ -268,9 +268,9 @@ const Choice = React.createClass({
         if (this.props.apiOptions.satStyling && this._input) {
             this._input.focus();
         }
-    },
+    }
 
-    onInputMouseUp: function(e) {
+    onInputMouseUp = (e) => {
         if (e.type === "mouseup" && this.justFinishedTouch) {
             return;
         }
@@ -290,13 +290,13 @@ const Choice = React.createClass({
             this.justFinishedTouch = true;
 
             setTimeout(() => {
-                this.setState({isInputActive: false});
+                this.setState({ isInputActive: false });
                 this.justFinishedTouch = false;
             }, 10);
             return;
         }
 
-        this.setState({isInputActive: false});
+        this.setState({ isInputActive: false });
 
         // Simulate Chrome's radio button behavior in all browsers: when the
         // mouse goes down or up, the radio button should become focused.
@@ -304,18 +304,18 @@ const Choice = React.createClass({
         if (this.props.apiOptions.satStyling && this._input) {
             this._input.focus();
         }
-    },
+    }
 
-    onInputMouseOut: function() {
-        this.setState({isInputActive: false});
-    },
+    onInputMouseOut = () => {
+        this.setState({ isInputActive: false });
+    }
 
-    inputRef: function(ref) {
+    inputRef(ref) {
         this._input = ref;
-    },
+    }
 
     renderOptionStatus() {
-        const {correct, checked, reviewMode} = this.props;
+        const { correct, checked, reviewMode } = this.props;
         // Option status is shown only in review mode, and excluded for SAT
         if (!reviewMode || this.props.apiOptions.satStyling) {
             return;
@@ -324,9 +324,9 @@ const Choice = React.createClass({
             checked={checked}
             correct={correct}
         />;
-    },
+    }
 
-    renderChoiceIcon() {
+    renderChoiceIcon = () => {
         const {
             radioStyleVersion,
             primaryProductColor,
@@ -353,20 +353,20 @@ const Choice = React.createClass({
                 primaryProductColor={primaryProductColor}
             />
         );
-    },
+    }
 
     // NOTE(mdr): This method expects to be auto-bound. If this component is
     //     converted to an ES6 class, take care to auto-bind this method!
-    _toggleCrossOut: function() {
+    _toggleCrossOut() {
         const willBeCrossedOut = !this.props.crossedOut;
 
         if (willBeCrossedOut) {
             // If we're crossing out a checked option, let's also uncheck it.
-            this._sendChange({checked: false, crossedOut: true});
+            this._sendChange({ checked: false, crossedOut: true });
         } else {
-            this._sendChange({crossedOut: false});
+            this._sendChange({ crossedOut: false });
         }
-    },
+    }
 
     // Call `this.props.onChange` with the given values. Any keys that are not
     // specified will be filled in with the current value. (For example, if
@@ -375,7 +375,7 @@ const Choice = React.createClass({
     //
     // This enables us to use shorthand inside this component, while
     // maintaining a consistent API for the parent.
-    _sendChange: function(newValues) {
+    _sendChange(newValues) {
         const checked = newValues.checked != null
             ? newValues.checked
             : this.props.checked;
@@ -384,15 +384,15 @@ const Choice = React.createClass({
             ? newValues.crossedOut
             : this.props.crossedOut;
 
-        this.props.onChange({checked, crossedOut});
-    },
+        this.props.onChange({ checked, crossedOut });
+    }
 
-    render: function() {
-        const styles = Choice.styles;
+    render() {
+        const styles = this.styles;
         const sat = this.props.apiOptions.satStyling;
         const isMobile = this.props.apiOptions.isMobile;
 
-        const {radioStyleVersion} = this.props.apiOptions.styling;
+        const { radioStyleVersion } = this.props.apiOptions.styling;
         const finalStyles =
             typeof radioStyleVersion === "undefined"
                 ? false
@@ -428,9 +428,9 @@ const Choice = React.createClass({
                 !finalStyles && sharedStyles.responsiveInput,
                 !finalStyles && !sat && sharedStyles.responsiveRadioInput,
                 !finalStyles &&
-                    !sat &&
-                    this.state.isInputActive &&
-                    sharedStyles.responsiveRadioInputActive,
+                !sat &&
+                this.state.isInputActive &&
+                sharedStyles.responsiveRadioInputActive,
                 finalStyles && sharedStyles.perseusSrOnly,
                 sat && sharedStyles.perseusSrOnly,
                 sat && this.props.reviewMode && styles.satReviewInput
@@ -444,7 +444,7 @@ const Choice = React.createClass({
             input = (
                 <ToggleableRadioButton
                     onChecked={willBeChecked => {
-                        this._sendChange({checked: willBeChecked});
+                        this._sendChange({ checked: willBeChecked });
                     }}
                     inputRef={this.inputRef}
                     {...commonInputProps}
@@ -454,7 +454,7 @@ const Choice = React.createClass({
             input = (
                 <input
                     onChange={event => {
-                        this._sendChange({checked: event.target.checked});
+                        this._sendChange({ checked: event.target.checked });
                     }}
                     ref={this.inputRef}
                     {...commonInputProps}
@@ -462,7 +462,7 @@ const Choice = React.createClass({
             );
         }
 
-        const {reviewMode, correct, checked, isLastChoice} = this.props;
+        const { reviewMode, correct, checked, isLastChoice } = this.props;
         // HACK: while most of the styling for rendering SAT items is handled
         // via aphrodite, we also need to assign normal CSS classnames here to
         // special-case the coloring of MathJax formulas (see .MathJax .math in
@@ -476,16 +476,16 @@ const Choice = React.createClass({
             css(
                 !sat && styles.description,
                 sat &&
-                    this.state.isInputFocused &&
-                    styles.satDescriptionInputFocused,
+                this.state.isInputFocused &&
+                styles.satDescriptionInputFocused,
                 sat &&
-                    this.state.isInputActive &&
-                    styles.satDescriptionInputActive,
+                this.state.isInputActive &&
+                styles.satDescriptionInputActive,
                 sat && styles.satDescription,
                 satCorrectChoice && styles.satDescriptionCorrect,
                 satCorrectChoice &&
-                    checked &&
-                    styles.satDescriptionCorrectChecked,
+                checked &&
+                styles.satDescriptionCorrectChecked,
                 satIncorrectChecked && styles.satDescriptionIncorrectChecked,
                 sat && isLastChoice && styles.satDescriptionLastChoice
             )
@@ -541,12 +541,12 @@ const Choice = React.createClass({
             //     at which point we'll remove this condition.
             //     https://app.asana.com/0/329800276300868/467694510751336
             (showCrossOut && this.props.crossedOut);
-
+        let htmlFor = !this.props.editMode ? commonInputProps.id : ""
         return (
             <LabelOrDiv
-                htmlFor={!this.props.editMode && commonInputProps.id}
+                htmlFor={htmlFor}
                 className={className}
-                style={{opacity: showDimmed ? 0.5 : 1.0}}
+                style={{ opacity: showDimmed ? 0.5 : 1.0 }}
             >
                 <div
                     className={descriptionClassName}
@@ -571,11 +571,11 @@ const Choice = React.createClass({
                                 css(
                                     sat && styles.satRadioOptionContent,
                                     sat &&
-                                        reviewMode &&
-                                        styles.satReviewRadioOptionContent
+                                    reviewMode &&
+                                    styles.satReviewRadioOptionContent
                                 )
                             )}
-                            style={{cursor: "default"}}
+                            style={{ cursor: "default" }}
                         >
                             <div className={css(styles.optionStatusContainer)}>
                                 {this.renderOptionStatus()}
@@ -601,7 +601,7 @@ const Choice = React.createClass({
                 </a>}
             </LabelOrDiv>
         );
-    },
-});
+    }
+}
 
 module.exports = Choice;

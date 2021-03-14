@@ -7,14 +7,10 @@ module.exports = [
         require("./widgets/categorizer.jsx"),
         __EDITOR__ && require("./widgets/categorizer-editor.jsx"),
     ],
-    [
+  /*  [
         require("./widgets/cs-program.jsx"),
         __EDITOR__ && require("./widgets/cs-program-editor.jsx"),
-    ],
-    [
-        require("./widgets/dropdown.jsx"),
-        __EDITOR__ && require("./widgets/dropdown-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/explanation.jsx"),
         __EDITOR__ && require("./widgets/explanation-editor.jsx"),
@@ -39,14 +35,10 @@ module.exports = [
         require("./widgets/group.jsx"),
         __EDITOR__ && require("./widgets/group-editor.jsx"),
     ],
-    [
+  /*  [
         require("./widgets/iframe.jsx"),
         __EDITOR__ && require("./widgets/iframe-editor.jsx"),
-    ],
-    [
-        require("./widgets/image.jsx"),
-        __EDITOR__ && require("./widgets/image-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/interaction.jsx"),
         __EDITOR__ && require("./widgets/interaction-editor.jsx"),
@@ -55,10 +47,10 @@ module.exports = [
         require("./widgets/interactive-graph.jsx"),
         __EDITOR__ && require("./widgets/interactive-graph-editor.jsx"),
     ],
-    [
+ /*   [
         require("./widgets/lights-puzzle.jsx"),
         __EDITOR__ && require("./widgets/lights-puzzle-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/matrix.jsx"),
         __EDITOR__ && require("./widgets/matrix-editor.jsx"),
@@ -71,10 +63,10 @@ module.exports = [
         require("./widgets/measurer.jsx"),
         __EDITOR__ && require("./widgets/measurer-editor.jsx"),
     ],
-    [
+   /* [//idk confusing
         require("./widgets/molecule.jsx"),
         __EDITOR__ && require("./widgets/molecule-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/number-line.jsx"),
         __EDITOR__ && require("./widgets/number-line-editor.jsx"),
@@ -87,30 +79,30 @@ module.exports = [
         require("./widgets/passage.jsx"),
         __EDITOR__ && require("./widgets/passage-editor.jsx"),
     ],
-    [
+  /*  [ confusing
         require("./widgets/passage-ref.jsx"),
         __EDITOR__ && require("./widgets/passage-ref-editor.jsx"),
     ],
     [
         require("./widgets/passage-ref-target.jsx"),
         __EDITOR__ && require("./widgets/passage-ref-target-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/plotter.jsx"),
         __EDITOR__ && require("./widgets/plotter-editor.jsx"),
     ],
-    [
-        require("./widgets/reaction-diagram.jsx"),
+   /* [
+    //?    require("./widgets/reaction-diagram.jsx"),
         __EDITOR__ && require("./widgets/reaction-diagram-editor.jsx"),
-    ],
-    [
+    ],*/
+   /* [
         require("./widgets/sequence.jsx"),
-        __EDITOR__ && require("./widgets/sequence-editor.jsx"),
-    ],
-    [
+       __EDITOR__ && require("./widgets/sequence-editor.jsx"),
+    ],*/
+  /*  [
         require("./widgets/simulator.jsx"),
         __EDITOR__ && require("./widgets/simulator-editor.jsx"),
-    ],
+    ],*/
     [
         require("./widgets/sorter.jsx"),
         __EDITOR__ && require("./widgets/sorter-editor.jsx"),
@@ -123,15 +115,11 @@ module.exports = [
         require("./widgets/transformer.jsx"),
         __EDITOR__ && require("./widgets/transformer-editor.jsx"),
     ],
-    [
+    /*[
         require("./widgets/unit.jsx"),
         __EDITOR__ && require("./widgets/unit-editor.jsx"),
-    ],
-    [
-        require("./widgets/video.jsx"),
-        __EDITOR__ && require("./widgets/video-editor.jsx"),
-    ],
-    // These widgets are only used when testing things, so remove them in the
+    ],*/
+  /*  // These widgets are only used when testing things, so remove them in the
     // non-editor bundle.
     __EDITOR__ && [
         require("./widgets/example-graphie-widget.jsx"),
@@ -144,5 +132,5 @@ module.exports = [
     __EDITOR__ && [
         require("./widgets/simple-markdown-tester.jsx"),
         require("./widgets/simple-markdown-tester-editor.jsx"),
-    ],
+    ],*/
 ];

@@ -14,44 +14,43 @@ const _ = require("underscore");
 
 const ArticleEditor = require("./article-editor.jsx");
 
-const StatefulArticleEditor = React.createClass({
-    getInitialState: function() {
-        return _({}).extend(this.props, {
+class StatefulArticleEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = _.extend(_.clone(props), {
             mode: "edit",
             onChange: this.handleChange,
             ref: "editor",
             screen: "phone",
         });
-    },
+    }
 
     // getInitialState isn't called if the react component is re-rendered
     // in-place on the dom, in which case this is called instead, so we
     // need to update the state here.
     // (This component is currently re-rendered by the "Add image" button.)
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         // be careful not to overwrite our onChange and ref
-        this.setState(_(nextProps).omit("onChange", "ref"));
-    },
+        this.setState(_.omit(nextProps,"onChange", "ref"));
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings = () => {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         return this.refs.editor.serialize();
-    },
+    }
 
-    handleChange: function(newState, cb) {
-        if (this.isMounted()) {
-            this.setState(newState, cb);
-        }
-    },
+    handleChange = (newState, cb) => {
+        this.setState(newState, cb);
+    }
 
-    scorePreview: function() {
+    scorePreview = () => {
         return this.refs.editor.scorePreview();
-    },
+    }
 
-    render: function() {
+    render() {
         const {mode, screen} = this.state;
         return (
             <div>
@@ -132,8 +131,8 @@ const StatefulArticleEditor = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 const styles = {
     controlBar: {
@@ -152,7 +151,7 @@ const styles = {
     },
     editor: {
         marginTop: -20,
-    },
+    }
 };
 
 module.exports = StatefulArticleEditor;

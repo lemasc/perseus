@@ -1,4 +1,5 @@
 const {StyleSheet, css} = require("aphrodite");
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -8,24 +9,23 @@ const Renderer = require("../renderer.jsx");
 const mediaQueries = require("../styles/media-queries.js");
 const styleConstants = require("../styles/constants.js");
 
-const Definition = React.createClass({
-    propTypes: {
+class Definition extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: PerseusApi.Options.propTypes,
-        definition: React.PropTypes.string,
-        togglePrompt: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func.isRequired,
-    },
+        definition: PropTypes.string,
+        togglePrompt: PropTypes.string,
+        trackInteraction: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             togglePrompt: "define me",
-            definition: "definition goes here",
-        };
-    },
+            definition: "definition goes here"
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             expanded: false,
             belowScreen: false,
             contentOffsetLeft: 0,
@@ -34,17 +34,17 @@ const Definition = React.createClass({
             contentWidthMobile: 0,
             contentMarginTop: arrowHeight,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         document.addEventListener("click", this.handleClick);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         document.removeEventListener("click", this.handleClick);
-    },
+    }
 
-    handleClick: function(event) {
+    handleClick = (event) => {
         let elem = event.target;
         let shouldClose = true;
         while (elem) {
@@ -60,38 +60,38 @@ const Definition = React.createClass({
         if (shouldClose) {
             this.close();
         }
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    close: function() {
+    close = () => {
         this.setState({
             expanded: false,
         });
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return {};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Definition.validate(this.getUserInput(), rubric);
-    },
+    }
 
     // check if the definition is fully visible on the bottom
-    _definitionBelowScreen: function() {
+    _definitionBelowScreen = () => {
         const windowBottom = window.innerHeight;
         const bottom = this.container.getBoundingClientRect().bottom;
         return bottom > windowBottom - this.content.offsetHeight;
-    },
+    }
 
     // TODO(audrey): think of a better way to have the definition always appear
     // on screen. Currently, the marginTop and absolute positions of the arrow
     // and the definition div are adjusted. Could also consider having
     // dynamic flipping.
-    _checkDefinitionPosition: function() {
+    _checkDefinitionPosition = () => {
         // need to wait for aphrodite styles to be rendered
         // so they can accessed for measurements in positionContent
         setTimeout(() => {
@@ -112,14 +112,14 @@ const Definition = React.createClass({
                 );
             }
         }, 0);
-    },
+    }
 
     /**
     * This function sets the definition boxes' vertical positions depending
     * on whether the definition should appear above or below. The positions
     * are affected by how long the definition is.
     */
-    _positionContentVertically: function() {
+    _positionContentVertically = () => {
         if (this.state.belowScreen) {
             const contentHeight = this.content.offsetHeight;
             // slight hack to better align the bottom of the arrow
@@ -133,9 +133,9 @@ const Definition = React.createClass({
                 contentMarginTop: arrowHeight,
             });
         }
-    },
+    }
 
-    _onClick: function() {
+    _onClick = () => {
         // close all other open definitions if opening definition
         if (!this.state.expanded) {
             const definitionWidgets = this.props.findWidgets("definition");
@@ -153,9 +153,9 @@ const Definition = React.createClass({
             this._checkDefinitionPosition
         );
         this.props.trackInteraction();
-    },
+    }
 
-    _onMouseOver: function() {
+    _onMouseOver = () => {
         this.setState(
             {
                 expanded: true,
@@ -163,21 +163,21 @@ const Definition = React.createClass({
             this._checkDefinitionPosition
         );
         this.props.trackInteraction();
-    },
+    }
 
-    _onMouseOut: function() {
+    _onMouseOut = () => {
         this.setState({
             expanded: false,
         });
         this.props.trackInteraction();
-    },
+    }
 
     /**
     * This function sets the definition boxes' widths so that the complete box
     * is visible on the screen and spans the entire width. It also makes sure
     * the content is centered correctly.
     */
-    _positionContentHorizontally: function() {
+    _positionContentHorizontally = () => {
         // container is the word to be defined
         // content is the actual definition
         const documentWidth = document.body.clientWidth;
@@ -194,9 +194,9 @@ const Definition = React.createClass({
             contentOffsetLeft: -contentOffsetLeft,
             contentOffsetLeftMobile: -contentOffsetLeftMobile,
         });
-    },
+    }
 
-    render: function() {
+    render() {
         const {readOnly, isMobile} = this.props.apiOptions;
 
         const linkAnchor = this.props.togglePrompt;
@@ -210,24 +210,24 @@ const Definition = React.createClass({
 
         if (isMobile) {
             link = (
-                <a
+                <button
                     className={css(styles.mobileDefinitionLink)}
-                    href={href}
+                    disabled={readOnly}
                     onClick={onClick}
                 >
                     {linkAnchor}
-                </a>
+                </button>
             );
         } else {
             link = (
-                <a
+                <button
                     className={css(styles.definitionLink)}
-                    href={href}
+                    disabled={readOnly}
                     onMouseOver={onMouseOver}
                     onMouseOut={onMouseOut}
                 >
                     {linkAnchor}
-                </a>
+                </button>
             );
         }
 
@@ -321,8 +321,8 @@ const Definition = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 const dropShadowXOffset = 0;
 const dropShadowYOffset = 1;
@@ -346,7 +346,11 @@ const styles = StyleSheet.create({
     definitionLink: {
         color: styleConstants.blue,
         borderBottom: `dashed 1px ${styleConstants.blue}`,
+        borderLeft: "none",
+        borderRight: "none",
+        borderTop: "none",
         textDecoration: "none",
+        backgroundColor: "transparent"
     },
 
     mobileDefinitionLink: {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A side by side diff view for Perseus articles.
  */
@@ -7,44 +8,44 @@ const _ = require("underscore");
 
 const RendererDiff = require("./renderer-diff.jsx");
 
-const rendererProps = React.PropTypes.shape({
-    content: React.PropTypes.string,
-    images: React.PropTypes.object,
-    widgets: React.PropTypes.object,
+const rendererProps = PropTypes.shape({
+    content: PropTypes.string,
+    images: PropTypes.object,
+    widgets: PropTypes.object,
 });
 
 
-const ArticleDiff = React.createClass({
-    propTypes: {
+class ArticleDiff extends React.Component {
+    static propTypes = {
         // TODO(alex): Check whether we still have any Perseus articles whose
         // top-level json is an object, not an array. If not, simplify here.
-        after: React.PropTypes.oneOfType([
+        after: PropTypes.oneOfType([
             rendererProps,
-            React.PropTypes.arrayOf(rendererProps),
+            PropTypes.arrayOf(rendererProps),
         ]).isRequired,
-        before: React.PropTypes.oneOfType([
+        before: PropTypes.oneOfType([
             rendererProps,
-            React.PropTypes.arrayOf(rendererProps),
+            PropTypes.arrayOf(rendererProps),
         ]).isRequired,
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return this._stateFromProps(this.props);
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.setState(this._stateFromProps(nextProps));
-    },
+    }
 
-    _stateFromProps: function(props) {
+    _stateFromProps(props) {
         const {before, after} = props;
         return {
             before: Array.isArray(before) ? before : [before],
             after: Array.isArray(after) ? after : [after],
         };
-    },
+    }
 
-    render: function() {
+    render() {
         const {before, after} = this.state;
 
         const sectionCount = Math.max(before.length, after.length);
@@ -61,7 +62,7 @@ const ArticleDiff = React.createClass({
         );
 
         return <div className="framework-perseus">{sections}</div>;
-    },
-});
+    }
+}
 
 module.exports = ArticleDiff;

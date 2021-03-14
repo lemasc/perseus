@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable brace-style, comma-dangle, no-unused-vars, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -27,17 +28,16 @@ var kpoint = require("kmath").point;
  * in the demo, and is what is visible to users, and where
  * users enter their answers.
  */
-var ExampleGraphieWidget = React.createClass({
-    propTypes: {
+class ExampleGraphieWidget extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
 
-        graph: React.PropTypes.object.isRequired,
-        coord: React.PropTypes.arrayOf(React.PropTypes.number),
-    },
+        graph: PropTypes.object.isRequired,
+        coord: PropTypes.arrayOf(PropTypes.number),
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             // We want to allow our coord to be null to test if the
             // user has interacted with this widget yet when grading it
             coord: null,
@@ -53,13 +53,12 @@ var ExampleGraphieWidget = React.createClass({
                 showProtractor: false,
             },
         };
-    },
 
-    getUserInput: function() {
+    getUserInput = () => {
         return WidgetJsonifyDeprecated.getUserInput.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <Graphie
                 ref="graphie"
@@ -82,19 +81,19 @@ var ExampleGraphieWidget = React.createClass({
                 />
             </Graphie>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    movePoint: function(newCoord) {
+    movePoint =(newCoord) => {
         this.change({
             coord: newCoord,
         });
-    },
+    }
 
-    _getGridConfig: function(options) {
+    _getGridConfig = (options) => {
         return _.map(options.step, function(step, i) {
             return Util.gridDimensionConfig(
                 step,
@@ -103,9 +102,9 @@ var ExampleGraphieWidget = React.createClass({
                 options.gridStep[i]
             );
         });
-    },
+    }
 
-    setupGraphie: function(graphie, options) {
+    setupGraphie = (graphie, options) => {
         var gridConfig = this._getGridConfig(options);
         graphie.graphInit({
             range: options.range,
@@ -120,12 +119,12 @@ var ExampleGraphieWidget = React.createClass({
             unityLabels: _.pluck(gridConfig, "unityLabel"),
         });
         graphie.label([0, options.range[1][1]], options.labels[1], "above");
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return ExampleGraphieWidget.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 /**
  * This is the widget's grading function

@@ -23,24 +23,22 @@ const {
     getInteractiveBoxFromSizeClass,
 } = require("../util/sizing-utils.js");
 
-const GrapherEditor = React.createClass({
-    propTypes: {
+class GrapherEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             correct: DEFAULT_GRAPHER_PROPS.plot,
             graph: DEFAULT_GRAPHER_PROPS.graph,
             availableTypes: DEFAULT_GRAPHER_PROPS.availableTypes,
-        };
-    },
+    };
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         const sizeClass = containerSizeClass.SMALL;
         let equationString;
         let graph;
@@ -120,9 +118,9 @@ const GrapherEditor = React.createClass({
                 {graph}
             </div>
         );
-    },
+    }
 
-    handleAvailableTypesChange: function(newAvailableTypes) {
+    handleAvailableTypesChange = (newAvailableTypes) => {
         var correct = this.props.correct;
 
         // If the currently 'correct' type is removed from the list of types,
@@ -136,14 +134,14 @@ const GrapherEditor = React.createClass({
             availableTypes: newAvailableTypes,
             correct: correct,
         });
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         return _.chain(this.props)
             .pick("correct", "availableTypes")
             .extend({graph: _.omit(this.props.graph, "box")})
             .value();
-    },
-});
+    }
+}
 
 module.exports = GrapherEditor;

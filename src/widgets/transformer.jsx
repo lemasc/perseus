@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable camelcase, comma-dangle, indent, max-lines, no-redeclare, no-undef, no-var, object-curly-spacing, prefer-spread, react/jsx-closing-bracket-location, react/jsx-indent-props, react/no-did-update-set-state, react/prop-types, react/sort-comp, space-before-function-paren, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -5,6 +6,7 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
+var createClass = require("create-react-class");
 
 var Graph = require("../components/graph.jsx");
 const InlineIcon = require("../components/inline-icon.jsx");
@@ -14,7 +16,8 @@ var TeX = require("react-components/tex.jsx");
 const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//todo_sz
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var ROTATE_SNAP_DEGREES = 15;
 var DEGREE_SIGN = "\u00B0";
@@ -41,7 +44,7 @@ var assert = require("../interactive2/interactive-util.js").assert;
 
 var defaultBoxSize = 400;
 var defaultBackgroundImage = {
-    url: null,
+    url: "",
 };
 
 /* Does a pluck on keys inside objects in an object
@@ -349,7 +352,7 @@ var TransformOps = {
     },
 
     /* A react representation of this transform object */
-    ListItem: React.createClass({
+    ListItem: createClass({
         render: function() {
             if (this.props.mode === "dynamic") {
                 return (
@@ -478,7 +481,7 @@ var Transformations = {
                 "Translation by %(vector)s"
             );
         },
-        Input: React.createClass({
+        Input: createClass({
             getInitialState: function() {
                 return {
                     vector: this.props.vector || [null, null],
@@ -612,7 +615,7 @@ var Transformations = {
                 "Rotation by %(degrees)s about %(point)s"
             );
         },
-        Input: React.createClass({
+        Input: createClass({
             getInitialState: function() {
                 return {
                     center: this.props.center || [null, null],
@@ -772,7 +775,7 @@ var Transformations = {
                 "Reflection over the line from %(point1)s to %(point2)s"
             );
         },
-        Input: React.createClass({
+        Input: createClass({
             getInitialState: function() {
                 return {
                     line: this.props.line || [[null, null], [null, null]],
@@ -937,7 +940,7 @@ var Transformations = {
                 "Dilation of scale %(scale)s about %(point)s"
             );
         },
-        Input: React.createClass({
+        Input: createClass({
             getInitialState: function() {
                 return {
                     center: this.props.center || [null, null],
@@ -1493,7 +1496,7 @@ var ShapeTypes = {
 
 var TransformationListItem = TransformOps.ListItem;
 
-var TransformationList = React.createClass({
+var TransformationList = createClass({
     render: function() {
         if (this.props.mode === "static") {
             return <span />; // don't render anything
@@ -1548,7 +1551,7 @@ var TransformationList = React.createClass({
     },
 });
 
-var ToolButton = React.createClass({
+var ToolButton = createClass({
     render: function() {
         var classes = this.props.toggled
             ? "simple-button exercise-orange toggled highlighted-tool-button"
@@ -1568,7 +1571,7 @@ var ToolButton = React.createClass({
     },
 });
 
-var ToolsBar = React.createClass({
+var ToolsBar = createClass({
     getInitialState: function() {
         return {
             selected: null,
@@ -1631,7 +1634,7 @@ var ToolsBar = React.createClass({
     },
 });
 
-var AddTransformBar = React.createClass({
+var AddTransformBar = createClass({
     render: function() {
         var tools = _.map(
             Transformations,
@@ -1677,11 +1680,11 @@ var AddTransformBar = React.createClass({
     },
 });
 
-var Transformer = React.createClass({
+var Transformer = createClass({
     propTypes: {
         apiOptions: ApiOptions.propTypes,
-        keypadElement: keypadElementPropType,
-        trackInteraction: React.PropTypes.func.isRequired,
+        //keypadElement: keypadElementPropType,
+        trackInteraction: PropTypes.func.isRequired,
     },
 
     getDefaultProps: function() {

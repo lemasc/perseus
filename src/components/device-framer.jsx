@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A component that displays its contents inside a device frame.
  */
@@ -21,22 +22,22 @@ const SCREEN_SIZES = {
         width: 688,
         height: 600,
         framedWidth: 688,
-    },
+    }
 };
 
-const DeviceFramer = React.createClass({
-    propTypes: {
-        children: React.PropTypes.element.isRequired,
-        deviceType: React.PropTypes.oneOf([
+class DeviceFramer extends React.Component {
+    static propTypes = {
+        children: PropTypes.element.isRequired,
+        deviceType: PropTypes.oneOf([
             constants.devices.PHONE,
             constants.devices.TABLET,
             constants.devices.DESKTOP,
         ]).isRequired,
         // TODO(kevinb) rename to variableHeight
-        nochrome: React.PropTypes.bool,
-    },
+        nochrome: PropTypes.bool,
+    }
 
-    render: function() {
+    render() {
         const deviceType = this.props.deviceType;
 
         if (this.props.nochrome) {
@@ -85,7 +86,7 @@ const DeviceFramer = React.createClass({
                 </div>
             );
         }
-    },
-});
+    }
+}
 
 module.exports = DeviceFramer;

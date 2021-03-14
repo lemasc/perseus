@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, indent, no-undef, no-var, object-curly-spacing, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -9,22 +10,22 @@ var ApiOptions = require("../../perseus-api.jsx").Options;
 var BaseRadio = require("./base-radio.jsx");
 var Changeable = require("../../mixins/changeable.jsx");
 var Editor = require("../../editor.jsx");
-var {iconPlus, iconTrash} = require("../../icon-paths.js");
+var { iconPlus, iconTrash } = require("../../icon-paths.js");
 var InlineIcon = require("../../components/inline-icon.jsx");
 var PropCheckBox = require("../../components/prop-check-box.jsx");
 
-var ChoiceEditor = React.createClass({
-    propTypes: {
+class ChoiceEditor extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
 
-        choice: React.PropTypes.object,
-        showDelete: React.PropTypes.bool,
-        onClueChange: React.PropTypes.func,
-        onContentChange: React.PropTypes.func,
-        onDelete: React.PropTypes.func,
-    },
+        choice: PropTypes.object,
+        showDelete: PropTypes.bool,
+        onClueChange: PropTypes.func,
+        onContentChange: PropTypes.func,
+        onDelete: PropTypes.func,
+    }
 
-    render: function() {
+    render() {
         var checkedClass = this.props.choice.correct ? "correct" : "incorrect";
         var placeholder = "Type a choice here...";
 
@@ -82,50 +83,51 @@ var ChoiceEditor = React.createClass({
                 {this.props.showDelete && deleteLink}
             </div>
         );
-    },
-});
+    }
+}
 
-var RadioEditor = React.createClass({
-    propTypes: {
+class RadioEditor extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        choices: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                content: React.PropTypes.string,
-                clue: React.PropTypes.string,
-                correct: React.PropTypes.bool,
+        choices: PropTypes.arrayOf(
+            PropTypes.shape({
+                content: PropTypes.string,
+                clue: PropTypes.string,
+                correct: PropTypes.bool,
             })
         ),
-        displayCount: React.PropTypes.number,
-        randomize: React.PropTypes.bool,
-        hasNoneOfTheAbove: React.PropTypes.bool,
-        multipleSelect: React.PropTypes.bool,
-        countChoices: React.PropTypes.bool,
+        displayCount: PropTypes.number,
+        randomize: PropTypes.bool,
+        hasNoneOfTheAbove: PropTypes.bool,
+        multipleSelect: PropTypes.bool,
+        countChoices: PropTypes.bool,
 
         // TODO(kevinb): DEPRECATED: This is be used to force deselectEnabled
         // behavior on mobile but not on desktop.  When enabled, the user can
         // deselect a radio input by tapping on it again.
-        deselectEnabled: React.PropTypes.bool,
+        deselectEnabled: PropTypes.bool,
 
-        static: React.PropTypes.bool,
-    },
+        static: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
-            choices: [{}, {}],
-            displayCount: null,
-            randomize: false,
-            hasNoneOfTheAbove: false,
-            multipleSelect: false,
-            countChoices: false,
-            deselectEnabled: false,
-        };
-    },
+    static defaultProps = {
+        choices: [{}, {}],
+        displayCount: null,
+        randomize: false,
+        hasNoneOfTheAbove: false,
+        multipleSelect: false,
+        countChoices: false,
+        deselectEnabled: false,
+    }
 
-    render: function() {
+    render() {
         var numCorrect = _.reduce(
             this.props.choices,
-            function(memo, choice) {
+            function (memo, choice) {
                 return choice.correct ? memo + 1 : memo;
             },
             0
@@ -175,7 +177,7 @@ var RadioEditor = React.createClass({
                     editMode={true}
                     labelWrap={false}
                     apiOptions={this.props.apiOptions}
-                    choices={this.props.choices.map(function(choice, i) {
+                    choices={this.props.choices.map(function (choice, i) {
                         return {
                             content: (
                                 <ChoiceEditor
@@ -229,25 +231,23 @@ var RadioEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    change(...args) {
+    change = (...args) => {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    onMultipleSelectChange: function(allowMultiple) {
+    onMultipleSelectChange = (allowMultiple) => {
         allowMultiple = allowMultiple.multipleSelect;
-
         var numCorrect = _.reduce(
             this.props.choices,
-            function(memo, choice) {
+            function (memo, choice) {
                 return choice.correct ? memo + 1 : memo;
             },
             0
         );
-
         if (!allowMultiple && numCorrect > 1) {
-            var choices = _.map(this.props.choices, function(choice) {
+            var choices = _.map(this.props.choices, function (choice) {
                 return _.defaults(
                     {
                         correct: false,
@@ -264,14 +264,14 @@ var RadioEditor = React.createClass({
                 multipleSelect: allowMultiple,
             });
         }
-    },
+    }
 
-    onCountChoicesChange: function(count) {
+    onCountChoicesChange = (count) => {
         count = count.countChoices;
-        this.props.onChange({countChoices: count});
-    },
+        this.props.onChange({ countChoices: count });
+    }
 
-    onChange: function({checked}) {
+    onChange = ({ checked }) => {
         var choices = _.map(this.props.choices, (choice, i) => {
             return _.extend({}, choice, {
                 correct: checked[i],
@@ -282,18 +282,18 @@ var RadioEditor = React.createClass({
             });
         });
 
-        this.props.onChange({choices: choices});
-    },
+        this.props.onChange({ choices: choices });
+    }
 
-    onContentChange: function(choiceIndex, newContent) {
+    onContentChange = (choiceIndex, newContent) => {
         var choices = this.props.choices.slice();
         choices[choiceIndex] = _.extend({}, choices[choiceIndex], {
             content: newContent,
         });
-        this.props.onChange({choices: choices});
-    },
+        this.props.onChange({ choices: choices });
+    }
 
-    onClueChange: function(choiceIndex, newClue) {
+    onClueChange = (choiceIndex, newClue) => {
         var choices = this.props.choices.slice();
         choices[choiceIndex] = _.extend({}, choices[choiceIndex], {
             clue: newClue,
@@ -301,10 +301,10 @@ var RadioEditor = React.createClass({
         if (newClue === "") {
             delete choices[choiceIndex].clue;
         }
-        this.props.onChange({choices: choices});
-    },
+        this.props.onChange({ choices: choices });
+    }
 
-    onDelete: function(choiceIndex, e) {
+    onDelete = (choiceIndex, e) => {
         e.preventDefault();
 
         var choices = this.props.choices.slice();
@@ -317,13 +317,13 @@ var RadioEditor = React.createClass({
             hasNoneOfTheAbove:
                 this.props.hasNoneOfTheAbove && !deleted.isNoneOfTheAbove,
         });
-    },
+    }
 
-    addChoice: function(noneOfTheAbove, e) {
+    addChoice = (noneOfTheAbove, e) => {
         e.preventDefault();
 
         var choices = this.props.choices.slice();
-        var newChoice = {isNoneOfTheAbove: noneOfTheAbove};
+        var newChoice = { isNoneOfTheAbove: noneOfTheAbove };
         var addIndex = choices.length - (this.props.hasNoneOfTheAbove ? 1 : 0);
 
         choices.splice(addIndex, 0, newChoice);
@@ -340,25 +340,25 @@ var RadioEditor = React.createClass({
                 ].focus();
             }
         );
-    },
+    }
 
-    setDisplayCount: function(num) {
-        this.props.onChange({displayCount: num});
-    },
+    setDisplayCount = (num) => {
+        this.props.onChange({ displayCount: num });
+    }
 
-    focus: function() {
+    focus = () => {
         this.refs["choice-editor0"].refs["content-editor"].focus();
         return true;
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings = () => {
         if (!_.some(_.pluck(this.props.choices, "correct"))) {
             return ["No choice is marked as correct."];
         }
         return [];
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         return _.pick(
             this.props,
             "choices",
@@ -369,7 +369,7 @@ var RadioEditor = React.createClass({
             "hasNoneOfTheAbove",
             "deselectEnabled"
         );
-    },
-});
+    }
+}
 
 module.exports = RadioEditor;

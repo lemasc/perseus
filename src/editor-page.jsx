@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-var, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -14,56 +15,10 @@ var JsonEditor = require("./json-editor.jsx");
 var ViewportResizer = require("./components/viewport-resizer.jsx");
 const HUD = require("./components/hud.jsx");
 
-var EditorPage = React.createClass({
-    propTypes: {
-        ...ApiOptionsProps.propTypes,
-
-        answerArea: React.PropTypes.any, // related to the question
-
-        developerMode: React.PropTypes.bool,
-
-        // Source HTML for the iframe to render
-        frameSource: React.PropTypes.string.isRequired,
-
-        hints: React.PropTypes.any, // related to the question
-
-        // A function which takes a file object (guaranteed to be an image) and
-        // a callback, then calls the callback with the url where the image
-        // will be hosted. Image drag and drop is disabled when imageUploader
-        // is null.
-        imageUploader: React.PropTypes.func,
-
-        // Part of the question
-        itemDataVersion: React.PropTypes.shape({
-            major: React.PropTypes.number,
-            minor: React.PropTypes.number,
-        }),
-
-        // Whether the question is displaying as JSON or if it is
-        // showing the editor itself with the rendering
-        jsonMode: React.PropTypes.bool,
-
-        // A function which is called with the new JSON blob of content
-        onChange: React.PropTypes.func,
-
-        onPreviewDeviceChange: React.PropTypes.func,
-        previewDevice: React.PropTypes.string,
-
-        // Initial value of the question being edited
-        question: React.PropTypes.any,
-    },
-
-    getDefaultProps: function() {
-        return {
-            developerMode: false,
-            jsonMode: false,
-            onChange: () => {},
-            ref: "",
-        };
-    },
-
-    getInitialState: function() {
-        return {
+class EditorPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             json: _.pick(
                 this.props,
                 "question",
@@ -75,17 +30,64 @@ var EditorPage = React.createClass({
             wasAnswered: false,
             highlightLint: true,
         };
-    },
+        this.handleChange = this.handleChange.bind(this);
+        this.itemEditor = React.createRef();
+        this.hintsEditor = React.createRef();
+    }
 
-    handleCheckAnswer: function() {
+    static propTypes = {
+        ...ApiOptionsProps.propTypes,
+
+        answerArea: PropTypes.any, // related to the question
+
+        developerMode: PropTypes.bool,
+
+        // Source HTML for the iframe to render
+        frameSource: PropTypes.string.isRequired,
+
+        hints: PropTypes.any, // related to the question
+
+        // A function which takes a file object (guaranteed to be an image) and
+        // a callback, then calls the callback with the url where the image
+        // will be hosted. Image drag and drop is disabled when imageUploader
+        // is null.
+        imageUploader: PropTypes.func,
+
+        // Part of the question
+        itemDataVersion: PropTypes.shape({
+            major: PropTypes.number,
+            minor: PropTypes.number,
+        }),
+
+        // Whether the question is displaying as JSON or if it is
+        // showing the editor itself with the rendering
+        jsonMode: PropTypes.bool,
+
+        // A function which is called with the new JSON blob of content
+        onChange: PropTypes.func,
+
+        onPreviewDeviceChange: PropTypes.func,
+        previewDevice: PropTypes.string,
+
+        // Initial value of the question being edited
+        question: PropTypes.any,
+    }
+    
+    static defaultProps = {
+        developerMode: false,
+        jsonMode: false,
+        onChange: () => {},
+    };
+
+    handleCheckAnswer = () => {
         var result = this.scorePreview();
         this.setState({
             gradeMessage: result.message,
             wasAnswered: result.correct,
         });
-    },
+    }
 
-    toggleJsonMode: function() {
+    toggleJsonMode = () => {
         this.setState(
             {
                 json: this.serialize({keepDeletedWidgets: true}),
@@ -96,23 +98,27 @@ var EditorPage = React.createClass({
                 });
             }
         );
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
+        this._isMounted = true;
         this.rendererMountNode = document.createElement("div");
         this.updateRenderer();
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         this.updateRenderer();
-    },
+    }
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
 
-    updateRenderer: function() {
+    updateRenderer = () => {
         // Some widgets (namely the image widget) like to call onChange before
         // anything has actually been mounted, which causes problems here. We
         // just ensure don't update until we've mounted
         const hasEditor = !this.props.developerMode || !this.props.jsonMode;
-        if (!this.isMounted() || !hasEditor) {
+        if (!this._isMounted || !hasEditor) {
             return;
         }
 
@@ -124,9 +130,10 @@ var EditorPage = React.createClass({
             isMobile: touch,
         });
 
-        this.refs.itemEditor.triggerPreviewUpdate({
+        this.itemEditor.current.triggerPreviewUpdate({
             type: "question",
-            data: _({
+            data: _.extend(
+                {
                 item: this.serialize(),
                 apiOptions: deviceBasedApiOptions,
                 initialHintsVisible: 0,
@@ -137,9 +144,9 @@ var EditorPage = React.createClass({
                     paths: this.props.contentPaths,
                 },
                 reviewMode: true,
-                legacyPerseusLint: this.refs.itemEditor.getSaveWarnings(),
-            }).extend(
-                _(this.props).pick(
+                legacyPerseusLint: this.itemEditor.current.getSaveWarnings(),
+            },
+                _.pick(this.props,
                     "workAreaSelector",
                     "solutionAreaSelector",
                     "hintsAreaSelector",
@@ -147,43 +154,43 @@ var EditorPage = React.createClass({
                 )
             ),
         });
-    },
+    }
 
     getApiOptions() {
         return ApiOptionsProps.getApiOptions.call(this);
-    },
+    }
 
-    handleChange: function(toChange, cb, silent) {
-        var newProps = _(this.props).pick("question", "hints", "answerArea");
-        _(newProps).extend(toChange);
+    handleChange = (toChange, cb, silent) => {
+        var newProps = _.pick(this.props,"question", "hints", "answerArea");
+        _.extend(newProps,toChange);
         this.props.onChange(newProps, cb, silent);
-    },
+    }
 
-    changeJSON: function(newJson) {
+    changeJSON = (newJson) => {
         this.setState({
             json: newJson,
         });
         this.props.onChange(newJson);
-    },
+    }
 
-    _fixPassageRefs: function() {
+    _fixPassageRefs = () => {
         var itemData = this.serialize();
         var newItemData = FixPassageRefs(itemData);
         this.setState({
             json: newItemData,
         });
         this.props.onChange(newItemData);
-    },
+    }
 
-    scorePreview: function() {
+    scorePreview = () => {
         if (this.renderer) {
             return this.renderer.scoreInput();
         } else {
             return null;
         }
-    },
+    }
 
-    render: function() {
+    render() {
         let className = "framework-perseus";
 
         const touch =
@@ -251,7 +258,7 @@ var EditorPage = React.createClass({
 
                 {(!this.props.developerMode || !this.props.jsonMode) &&
                     <ItemEditor
-                        ref="itemEditor"
+                        ref={this.itemEditor}
                         rendererOnly={this.props.jsonMode}
                         question={this.props.question}
                         answerArea={this.props.answerArea}
@@ -267,7 +274,7 @@ var EditorPage = React.createClass({
 
                 {(!this.props.developerMode || !this.props.jsonMode) &&
                     <CombinedHintsEditor
-                        ref="hintsEditor"
+                        ref={this.hintsEditor}
                         hints={this.props.hints}
                         imageUploader={this.props.imageUploader}
                         onChange={this.handleChange}
@@ -278,23 +285,23 @@ var EditorPage = React.createClass({
                     />}
             </div>
         );
-    },
+    }
 
-    getSaveWarnings: function() {
-        var issues1 = this.refs.itemEditor.getSaveWarnings();
-        var issues2 = this.refs.hintsEditor.getSaveWarnings();
+    getSaveWarnings = () => {
+        var issues1 = this.itemEditor.current.getSaveWarnings();
+        var issues2 = this.hintsEditor.current.getSaveWarnings();
         return issues1.concat(issues2);
-    },
+    }
 
-    serialize: function(options) {
+    serialize = (options) => {
         if (this.props.jsonMode) {
             return this.state.json;
         } else {
-            return _.extend(this.refs.itemEditor.serialize(options), {
-                hints: this.refs.hintsEditor.serialize(options),
+            return _.extend(this.itemEditor.current.serialize(options), {
+                hints: this.hintsEditor.current.serialize(options),
             });
         }
-    },
-});
+    }
+}
 
 module.exports = EditorPage;

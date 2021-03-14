@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -43,36 +44,34 @@ var answerTypes = {
     pi: {
         name: "Numbers with pi",
         forms: "pi",
-    },
+    }
 };
 
-const InputNumberEditor = React.createClass({
-    propTypes: {
-        value: React.PropTypes.number,
-        simplify: React.PropTypes.oneOf(["required", "optional", "enforced"]),
-        size: React.PropTypes.oneOf(["normal", "small"]),
-        inexact: React.PropTypes.bool,
-        maxError: React.PropTypes.number,
-        answerType: React.PropTypes.string,
-    },
+class InputNumberEditor extends React.Component {
+    static propTypes = {
+        value: PropTypes.number,
+        simplify: PropTypes.oneOf(["required", "optional", "enforced"]),
+        size: PropTypes.oneOf(["normal", "small"]),
+        inexact: PropTypes.bool,
+        maxError: PropTypes.number,
+        answerType: PropTypes.string,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             value: 0,
             simplify: "required",
             size: "normal",
             inexact: false,
             maxError: 0.1,
-            answerType: "number",
-        };
-    },
+            answerType: "number"
+    }
 
-    handleAnswerChange: function(str) {
+    handleAnswerChange = (str) => {
         var value = Util.firstNumericalParse(str) || 0;
         this.props.onChange({value: value});
-    },
+    }
 
-    render: function() {
+    render() {
         var answerTypeOptions = _.map(
             answerTypes,
             function(v, k) {
@@ -215,14 +214,14 @@ const InputNumberEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    focus: function() {
+    focus() {
         ReactDOM.findDOMNode(this.refs.input).focus();
         return true;
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         return _.pick(
             this.props,
             "value",
@@ -232,7 +231,7 @@ const InputNumberEditor = React.createClass({
             "maxError",
             "answerType"
         );
-    },
-});
+    }
+}
 
 module.exports = InputNumberEditor;

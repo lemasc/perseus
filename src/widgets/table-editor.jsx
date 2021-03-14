@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,36 +14,33 @@ const NumberInput = require("../components/number-input.jsx");
 const Editor = require("../editor.jsx");
 
 const Table = require("./table.jsx").widget;
+var defaultRows = 4;
+var defaultColumns = 1;
 
-const TableEditor = React.createClass({
-    propTypes: {
-        rows: React.PropTypes.number,
-        columns: React.PropTypes.number,
-        headers: React.PropTypes.arrayOf(React.PropTypes.string),
-        answers: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.string)
+class TableEditor extends React.Component {
+    static propTypes = {
+        rows: PropTypes.number,
+        columns: PropTypes.number,
+        headers: PropTypes.arrayOf(PropTypes.string),
+        answers: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.string)
         ),
-    },
-
-    getDefaultProps: function() {
-        var defaultRows = 4;
-        var defaultColumns = 1;
-        var blankAnswers = _(defaultRows).times(function() {
-            return Util.stringArrayOfSize(defaultColumns);
-        });
-        return {
+    }
+    
+    static defaultProps = {
             headers: [""],
             rows: defaultRows,
             columns: defaultColumns,
-            answers: blankAnswers,
+            answers: _.times(4,function() {
+                return Util.stringArrayOfSize(1);
+            })
         };
-    },
 
-    focus: function() {
+    focus() {
         ReactDOM.findDOMNode(this.refs.numberOfColumns).focus();
-    },
+    }
 
-    render: function() {
+    render() {
         var tableProps = _.pick(
             this.props,
             "headers",
@@ -105,9 +103,9 @@ const TableEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    onSizeInput: function(numRawRows, numRawColumns) {
+    onSizeInput = (numRawRows, numRawColumns) => {
         var rows = +numRawRows || 0;
         var columns = +numRawColumns || 0;
         rows = Math.min(Math.max(1, rows), 30);
@@ -120,7 +118,7 @@ const TableEditor = React.createClass({
         if (rows <= oldRows) {
             answers.length = rows;
         } else {
-            _(rows - oldRows).times(function() {
+            _.times(rows - oldRows,function() {
                 answers.push(Util.stringArrayOfSize(oldColumns));
             });
         }
@@ -130,7 +128,7 @@ const TableEditor = React.createClass({
             if (columns <= oldColumns) {
                 array.length = columns;
             } else {
-                _(columns - oldColumns).times(function() {
+                _.times(columns - oldColumns,function() {
                     array.push("");
                 });
             }
@@ -146,15 +144,15 @@ const TableEditor = React.createClass({
             answers: answers,
             headers: headers,
         });
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         var json = _.pick(this.props, "headers", "rows", "columns");
 
         return _.extend({}, json, {
             answers: _.map(this.props.answers, _.clone),
         });
-    },
-});
+    }
+}
 
 module.exports = TableEditor;

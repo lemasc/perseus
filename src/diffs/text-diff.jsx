@@ -1,4 +1,5 @@
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -27,13 +28,13 @@ const classFor = function(entry, ifAdded, ifRemoved) {
     }
 };
 
-const ImageDiffSide = React.createClass({
-    propTypes: {
-        images: React.PropTypes.arrayOf(React.PropTypes.shape({})).isRequired,
+class ImageDiffSide extends React.Component {
+    static propTypes = {
+        images: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 
-    },
+    }
 
-    render: function() {
+    render() {
         return <div>
 
 
@@ -51,40 +52,40 @@ const ImageDiffSide = React.createClass({
                 </div>;
             })}
         </div>;
-    },
-});
+    }
+}
 
-const TextDiff = React.createClass({
-    propTypes: {
-        after: React.PropTypes.string,
-        before: React.PropTypes.string,
-        title: React.PropTypes.string.isRequired,
-    },
+class TextDiff extends React.Component {
+    static propTypes = {
+        after: PropTypes.string,
+        before: PropTypes.string,
+        title: PropTypes.string.isRequired,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             after: "",
             before: "",
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             collapsed: this.props.before === this.props.after,
         };
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.setState({
             collapsed: nextProps.before === nextProps.after,
         });
-    },
+    }
 
-    handleExpand: function() {
+    handleExpand() {
         this.setState({collapsed: false});
-    },
+    }
 
-    render: function() {
+    render() {
         const diffed = diff.diffWords(this.props.before, this.props.after);
 
         const lines = splitDiff(diffed);
@@ -96,7 +97,7 @@ const TextDiff = React.createClass({
         const renderedLines = _.map(lines, (line) => {
             const contents = {};
 
-            contents.before = _(line).map(function(entry, i) {
+            contents.before = _.map(line,function(entry, i) {
                 return <span
                     key={i}
                     className={classFor(entry, "not-present", "removed dark")}
@@ -105,7 +106,7 @@ const TextDiff = React.createClass({
                 </span>;
             });
 
-            contents.after = _(line).map(function(entry, i) {
+            contents.after = _.map(line,function(entry, i) {
                 return <span
                     key={i}
                     className={classFor(entry, "added dark", "not-present")}
@@ -163,7 +164,7 @@ const TextDiff = React.createClass({
                 </div>;
             })}
         </div>;
-    },
-});
+    }
+}
 
 module.exports = TextDiff;

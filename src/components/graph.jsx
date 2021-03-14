@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types, react/prop-types, react/sort-comp */
 
 const React = require("react");
@@ -11,7 +12,7 @@ const {interactiveSizes} = require("../styles/constants.js");
 const SvgImage = require("../components/svg-image.jsx");
 
 const defaultBackgroundImage = {
-    url: null,
+    url: "",
 };
 
 /* Style objects */
@@ -39,33 +40,32 @@ function numSteps(range, step) {
     return Math.floor((range[1] - range[0]) / step);
 }
 
-const Graph = React.createClass({
-    propTypes: {
-        box: React.PropTypes.array.isRequired,
-        labels: React.PropTypes.arrayOf(React.PropTypes.string),
-        range: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.number)
+class Graph extends React.Component {
+    static propTypes = {
+        box: PropTypes.array.isRequired,
+        labels: PropTypes.arrayOf(PropTypes.string),
+        range: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.number)
         ),
-        step: React.PropTypes.arrayOf(React.PropTypes.number),
-        gridStep: React.PropTypes.arrayOf(React.PropTypes.number),
-        snapStep: React.PropTypes.arrayOf(React.PropTypes.number),
-        markings: React.PropTypes.string,
-        backgroundImage: React.PropTypes.shape({
-            url: React.PropTypes.string,
+        step: PropTypes.arrayOf(PropTypes.number),
+        gridStep: PropTypes.arrayOf(PropTypes.number),
+        snapStep: PropTypes.arrayOf(PropTypes.number),
+        markings: PropTypes.string,
+        backgroundImage: PropTypes.shape({
+            url: PropTypes.string,
         }),
-        showProtractor: React.PropTypes.bool,
-        showRuler: React.PropTypes.bool,
-        rulerLabel: React.PropTypes.string,
-        rulerTicks: React.PropTypes.number,
-        onGraphieUpdated: React.PropTypes.func,
-        instructions: React.PropTypes.string,
-        onClick: React.PropTypes.func,
-        setDrawingAreaAvailable: React.PropTypes.func,
-        isMobile: React.PropTypes.bool,
-    },
+        showProtractor: PropTypes.bool,
+        showRuler: PropTypes.bool,
+        rulerLabel: PropTypes.string,
+        rulerTicks: PropTypes.number,
+        onGraphieUpdated: PropTypes.func,
+        instructions: PropTypes.string,
+        onClick: PropTypes.func,
+        setDrawingAreaAvailable: PropTypes.func,
+        isMobile: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             labels: ["x", "y"],
             range: [[-10, 10], [-10, 10]],
             step: [1, 1],
@@ -83,9 +83,8 @@ const Graph = React.createClass({
             onMouseDown: null,
             isMobile: false,
         };
-    },
 
-    render: function() {
+    render() {
         let image;
         const imageData = this.props.backgroundImage;
         if (imageData.url) {
@@ -118,13 +117,13 @@ const Graph = React.createClass({
                 <div className="graphie" ref="graphieDiv" />
             </div>
         );
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this._setupGraphie(true);
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         // Only setupGraphie once per componentDidUpdate().
         // See explanation in setupGraphie().
         this._hasSetupGraphieThisUpdate = false;
@@ -132,9 +131,9 @@ const Graph = React.createClass({
             this._setupGraphie(false);
             this._shouldSetupGraphie = false;
         }
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         const potentialChanges = [
             "labels",
             "range",
@@ -153,22 +152,22 @@ const Graph = React.createClass({
                 self._shouldSetupGraphie = true;
             }
         });
-    },
+    }
 
     /* Reset the graphie canvas to its initial state
      *
      * Use when re-rendering the parent component and you need a blank
      * graphie.
      */
-    reset: function() {
+    reset = () => {
         this._setupGraphie(false);
-    },
+    }
 
-    graphie: function() {
+    graphie = () => {
         return this._graphie;
-    },
+    }
 
-    pointsFromNormalized: function(coordsList, noSnap) {
+    pointsFromNormalized = (coordsList, noSnap) => {
         const self = this;
         return _.map(coordsList, function(coords) {
             return _.map(coords, function(coord, i) {
@@ -183,9 +182,9 @@ const Graph = React.createClass({
                 }
             });
         });
-    },
+    }
 
-    _setupGraphie: function(initialMount) {
+    _setupGraphie = (initialMount) => {
         // Only setupGraphie once per componentDidUpdate().
         // This prevents this component from rendering graphie
         // and then immediately re-render graphie because its
@@ -323,9 +322,9 @@ const Graph = React.createClass({
             // query for the graphie object on initial mount
             this.props.onGraphieUpdated(graphie);
         }
-    },
+    }
 
-    _getGridConfig: function() {
+    _getGridConfig = () => {
         const self = this;
         return _.map(self.props.step, function(step, i) {
             return Util.gridDimensionConfig(
@@ -335,9 +334,9 @@ const Graph = React.createClass({
                 self.props.gridStep[i]
             );
         });
-    },
+    }
 
-    _updateProtractor: function() {
+    _updateProtractor = () => {
         if (this.protractor) {
             this.protractor.remove();
         }
@@ -346,9 +345,9 @@ const Graph = React.createClass({
             const coord = this.pointsFromNormalized([[0.5, 0.05]])[0];
             this.protractor = this._graphie.protractor(coord);
         }
-    },
+    }
 
-    _updateRuler: function() {
+    _updateRuler = () => {
         if (this.ruler) {
             this.ruler.remove();
         }
@@ -365,9 +364,9 @@ const Graph = React.createClass({
                 units: Math.round(0.8 * extent),
             });
         }
-    },
+    }
 
-    toJSON: function() {
+    toJSON = () => {
         return _.pick(
             this.props,
             "range",
@@ -382,7 +381,7 @@ const Graph = React.createClass({
             "gridStep",
             "snapStep"
         );
-    },
-});
+    }
+}
 
 module.exports = Graph;

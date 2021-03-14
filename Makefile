@@ -117,7 +117,7 @@ server: install server-offline
 
 server-offline:
 	(sleep 1; echo; echo http://localhost:$(PORT)/) &
-	INCLUDE_EDITORS=true __DEV__=true ./node_modules/.bin/webpack-dev-server --config webpack.config.demo-perseus.js --port $(PORT) --output-public-path build/ --devtool inline-source-map
+	INCLUDE_EDITORS=true __DEV__=true ./node_modules/.bin/webpack serve --config webpack.config.demo-perseus.js --port $(PORT) --output-public-path build/
 
 demo:
 	if [ -z $$TRAVIS ]; then echo "make demo must be run on travis"; exit 1; fi
@@ -151,9 +151,9 @@ endif
 install:
 ifneq ("$(SUPPRESSINSTALL)","TRUE")
 	$(SUBMODULE_UPDATE)
-	npm install
+	#npm install
 	rm -rf node_modules/react-components
-	ln -s ../react-components/js node_modules/react-components
+	ln -s react-components/js node_modules/react-components
 	rm -rf node_modules/kmath
 	ln -s ../kmath node_modules/kmath
 	rm -rf node_modules/simple-markdown

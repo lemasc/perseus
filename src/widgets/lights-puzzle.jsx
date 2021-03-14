@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable array-bracket-spacing, comma-dangle, no-undef, no-unused-vars, no-var, react/jsx-closing-bracket-location, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -85,8 +86,8 @@ var clampToInt = function(value, min, max) {
 // A single glowy cell
 var Tile = React.createClass({
     propTypes: {
-        value: React.PropTypes.bool.isRequired,
-        size: React.PropTypes.number.isRequired,
+        value: PropTypes.bool.isRequired,
+        size: PropTypes.number.isRequired,
     },
 
     render: function() {
@@ -107,10 +108,10 @@ var Tile = React.createClass({
 // A grid of glowy cells
 var TileGrid = React.createClass({
     propTypes: {
-        cells: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.bool)
+        cells: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.bool)
         ).isRequired,
-        size: React.PropTypes.number.isRequired,
+        size: PropTypes.number.isRequired,
     },
 
     render: function() {
@@ -168,14 +169,14 @@ var flipTilesPattern = (oldCells, tileY, tileX, pattern) => {
 var LightsPuzzle = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        cells: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.bool)
+        cells: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.bool)
         ),
-        startCells: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.bool)
+        startCells: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.bool)
         ),
-        flipPattern: React.PropTypes.string.isRequired,
-        moveCount: React.PropTypes.number.isRequired,
+        flipPattern: PropTypes.string.isRequired,
+        moveCount: PropTypes.number.isRequired,
     },
 
     getDefaultProps: function() {

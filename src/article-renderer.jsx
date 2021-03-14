@@ -1,5 +1,7 @@
 "use strict";
 
+const PropTypes = require('prop-types');
+
 /**
  * An article renderer. Articles are long-form pieces of content,
  * composed of multiple (Renderer) sections concatenated together.
@@ -21,58 +23,54 @@ const {
     linterContextDefault,
 } = require("./gorgon/proptypes.js");
 
-const rendererProps = React.PropTypes.shape({
-    content: React.PropTypes.string,
-    widgets: React.PropTypes.object,
-    images: React.PropTypes.object,
+const rendererProps = PropTypes.shape({
+    content: PropTypes.string,
+    widgets: PropTypes.object,
+    images: PropTypes.object,
 });
 
-const ArticleRenderer = React.createClass({
-    propTypes: {
+class ArticleRenderer extends React.Component {
+    static propTypes = {
         ...ProvideKeypad.propTypes,
-        apiOptions: React.PropTypes.shape({
-            onFocusChange: React.PropTypes.func,
-            isMobile: React.PropTypes.bool,
+        apiOptions: PropTypes.shape({
+            onFocusChange: PropTypes.func,
+            isMobile: PropTypes.bool,
         }),
-        json: React.PropTypes.oneOfType([
+        json: PropTypes.oneOfType([
             rendererProps,
-            React.PropTypes.arrayOf(rendererProps),
+            PropTypes.arrayOf(rendererProps),
         ]).isRequired,
 
         // Whether to use the new Bibliotron styles for articles
-        useNewStyles: React.PropTypes.bool,
+        useNewStyles: PropTypes.bool,
         linterContext: linterContextProps,
-        legacyPerseusLint: React.PropTypes.arrayOf(React.PropTypes.string),
-    },
+        legacyPerseusLint: PropTypes.arrayOf(PropTypes.string),
+    }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             apiOptions: {},
             useNewStyles: false,
             linterContext: linterContextDefault,
-        };
-    },
+    }
 
-    getInitialState() {
-        return ProvideKeypad.getInitialState();
-    },
+    state = ProvideKeypad.getInitialState();
 
     componentDidMount() {
         ProvideKeypad.componentDidMount.call(this);
         this._currentFocus = null;
-    },
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps !== this.props || nextState !== this.state;
-    },
+    }
 
     componentWillUnmount() {
         ProvideKeypad.componentWillUnmount.call(this);
-    },
+    }
 
     keypadElement() {
         return ProvideKeypad.keypadElement.call(this);
-    },
+    }
 
     _handleFocusChange(newFocusPath, oldFocusPath) {
         // TODO(charlie): DRY this up--some of this logic is repeated in
@@ -82,7 +80,7 @@ const ArticleRenderer = React.createClass({
         } else {
             this._onRendererBlur(oldFocusPath);
         }
-    },
+    }
 
     _setCurrentFocus(newFocusPath) {
         const keypadElement = this.keypadElement();
@@ -119,7 +117,7 @@ const ArticleRenderer = React.createClass({
                 keypadElement.dismiss();
             }
         }
-    },
+    }
 
     _onRendererBlur(blurPath) {
         const blurringFocusPath = this._currentFocus;
@@ -138,20 +136,20 @@ const ArticleRenderer = React.createClass({
                 this._setCurrentFocus(null);
             }
         });
-    },
+    }
 
     blur() {
         if (this._currentFocus) {
             const [sectionRef, ...inputPath] = this._currentFocus;
             this.refs[sectionRef].blurPath(inputPath);
         }
-    },
+    }
 
     _sections() {
         return Array.isArray(this.props.json)
             ? this.props.json
             : [this.props.json];
-    },
+    }
 
     render() {
         const apiOptions = {
@@ -192,7 +190,7 @@ const ArticleRenderer = React.createClass({
                                     oldFocusPath &&
                                         [refForSection].concat(oldFocusPath)
                                 );
-                            },
+                            }
                         }}
                         linterContext={Gorgon.pushContextStack(
                             this.props.linterContext,
@@ -209,7 +207,7 @@ const ArticleRenderer = React.createClass({
                 {sections}
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = ArticleRenderer;

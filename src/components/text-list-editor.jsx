@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types, react/sort-comp */
 
 const React = require("react");
@@ -15,33 +16,32 @@ function getTextWidth(text) {
     return textWidthCache[text];
 }
 
-const TextListEditor = React.createClass({
-    propTypes: {
-        options: React.PropTypes.array,
-        layout: React.PropTypes.string,
-        onChange: React.PropTypes.func.isRequired,
-    },
+class TextListEditor extends React.Component {
+    static propTypes = {
+        options: PropTypes.array,
+        layout: PropTypes.string,
+        onChange: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             options: [],
             layout: "horizontal",
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             items: this.props.options.concat(""),
         };
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this.setState({
             items: nextProps.options.concat(""),
         });
-    },
+    }
 
-    render: function() {
+    render() {
         const className = [
             "perseus-text-list-editor",
             "perseus-clearfix",
@@ -72,9 +72,9 @@ const TextListEditor = React.createClass({
                 {inputs}
             </ul>
         );
-    },
+    }
 
-    onChange: function(index, event) {
+    onChange(index, event) {
         let items = _.clone(this.state.items);
         items[index] = event.target.value;
 
@@ -84,9 +84,9 @@ const TextListEditor = React.createClass({
 
         this.setState({items: items});
         this.props.onChange(_.compact(items));
-    },
+    }
 
-    onKeyDown: function(index, event) {
+    onKeyDown(index, event) {
         const which = event.nativeEvent.keyCode;
 
         // Backspace deletes an empty input...
@@ -145,7 +145,7 @@ const TextListEditor = React.createClass({
                 });
             }
         }
-    },
-});
+    }
+}
 
 module.exports = TextListEditor;

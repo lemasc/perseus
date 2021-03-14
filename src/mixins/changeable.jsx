@@ -10,6 +10,7 @@
 
 const React = require("react");
 const _ = require("underscore");
+const PropTypes = require('prop-types');
 
 const WIDGET_PROP_BLACKLIST = require("./widget-prop-blacklist.jsx");
 
@@ -93,7 +94,7 @@ export const change = function(newPropsOrSinglePropName,
 };
 
 export const propTypes = {
-    onChange: React.PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 export type ChangeableProps = {

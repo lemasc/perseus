@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * In review mode (currently only visible in the sat-mission), NumericInput and
  * InputNumber use this component to display the set of correct answers.
@@ -6,11 +7,11 @@
 const React = require("react");
 const _ = require("underscore");
 
-const PossibleAnswers = React.createClass({
-    propTypes: {
-        answers: React.PropTypes.arrayOf(React.PropTypes.string),
-    },
-    render: function() {
+class PossibleAnswers extends React.Component {
+    static propTypes = {
+        answers: PropTypes.arrayOf(PropTypes.string),
+    }
+    render() {
         // It's redundant to show duplicate answers.
         // So, remove duplicates from the given list of answer strings.
         const answers = _.uniq(this.props.answers);
@@ -30,7 +31,7 @@ const PossibleAnswers = React.createClass({
                 {answerComponents}
             </dl>
         );
-    },
-});
+    }
+}
 
 module.exports = PossibleAnswers;

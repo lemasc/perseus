@@ -8,6 +8,7 @@
 // value?
 
 var lens = require("../../hubble/index.js");
+var PropTypes = require('prop-types');
 var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
@@ -38,21 +39,22 @@ var sigfigPrint = function(num, sigfigs) {
  * shows and hides an error buddy. The error message is only shown after a
 * rolling two second delay, but hidden immediately on further typing.
  */
-var OldUnitInput = React.createClass({
-    propTypes: {
-        ...Changeable.propTypes,
-        value: React.PropTypes.string,
-    },
 
-    getDefaultProps: function() {
+class OldUnitInput extends React.Component {
+    static propTypes = {
+        ...Changeable.propTypes,
+        value: PropTypes.string,
+    }
+
+    getDefaultProps() {
         return {
             apiOptions: ApiOptions.defaults,
             value: "",
         };
-    },
+    }
 
     // TODO(joel) think about showing the error buddy
-    render: function() {
+    render() {
         var inputType = this.props.apiOptions.staticRender
             ? React.createFactory(MathOutput)
             : React.DOM.input;
@@ -73,11 +75,11 @@ var OldUnitInput = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    _errorTimeout: null,
+    _errorTimeout = null
 
-    _showError: function() {
+    _showError() {
         if (this.props.value === "") {
             return;
         }
@@ -89,95 +91,95 @@ var OldUnitInput = React.createClass({
                 .show()
                 .animate({top: 0, opacity: 1.0}, 300);
         }
-    },
+    }
 
-    _hideError: function() {
+    _hideError() {
         var $error = $(ReactDOM.findDOMNode(this.refs.error));
         if ($error.is(":visible")) {
             $error.animate({top: 50, opacity: 0.1}, 300, function() {
                 $(this).hide();
             });
         }
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         clearTimeout(this._errorTimeout);
         if (KAS.unitParse(this.props.value).parsed) {
             this._hideError();
         } else {
             this._errorTimeout = setTimeout(this._showError, 2000);
         }
-    },
-
-    componentWillUnmount: function() {
+    }
+    
+    componentWillUnmount() {
         clearTimeout(this._errorTimeout);
-    },
+    }
 
-    handleBlur: function() {
+    handleBlur() {
         this.props.onBlur([]);
         clearTimeout(this._errorTimeout);
         if (!KAS.unitParse(this.props.value).parsed) {
             this._showError();
         }
-    },
+    }
 
-    handleChange: function(event) {
+    handleChange(event) {
         this._hideError();
         this.props.onChange({value: event.target.value});
-    },
+    }
 
-    simpleValidate: function(rubric, onInputError) {
+    simpleValidate(rubric, onInputError) {
         onInputError = onInputError || function() {};
         return OldUnitInput.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return this.props.value;
-    },
+    }
 
     // begin mobile stuff
 
-    getInputPaths: function() {
+    getInputPaths() {
         // The widget itself is an input, so we return a single empty list to
         // indicate this.
         return [[]];
-    },
+    }
 
-    focusInputPath: function(inputPath) {
+    focusInputPath(inputPath) {
         ReactDOM.findDOMNode(this.refs.input).focus();
-    },
+    }
 
-    handleFocus: function() {
+    handleFocus() {
         this.props.onFocus([]);
-    },
+    }
 
-    blurInputPath: function(inputPath) {
+    blurInputPath(inputPath) {
         ReactDOM.findDOMNode(this.refs.input).blur();
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue(path, newValue, cb) {
         this.props.onChange(
             {
                 value: newValue,
             },
             cb
         );
-    },
+    }
 
-    getDOMNodeForPath: function() {
+    getDOMNodeForPath() {
         return ReactDOM.findDOMNode(this.refs.input);
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath(inputPath) {
         return "unit";
-    },
+    }
 
     // end mobile stuff
-});
+}
 
 // Extract the primitive units from a unit expression. This first simplifies
 // `expr` to a `Mul` like "5 kg m / s^2" then removes the first term.
@@ -186,7 +188,7 @@ var primUnits = function(expr) {
 };
 
 _.extend(OldUnitInput, {
-    validate: function(state, rubric) {
+    validate(state, rubric) {
         var answer = KAS.unitParse(rubric.value).expr;
         var guess = KAS.unitParse(state);
         if (!guess.parsed) {

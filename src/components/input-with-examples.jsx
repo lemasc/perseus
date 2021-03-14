@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/sort-comp */
 
 const React = require("react");
@@ -20,50 +21,49 @@ const MATH = "math";
 const TEXT = "text";
 const TEX = "tex";
 
-const InputWithExamples = React.createClass({
-    propTypes: {
-        type: React.PropTypes.oneOf([MATH, TEXT, TEX]),
-        value: React.PropTypes.string,
-        onChange: React.PropTypes.func.isRequired,
-        className: React.PropTypes.string,
-        examples: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-        shouldShowExamples: React.PropTypes.bool,
-        convertDotToTimes: React.PropTypes.bool,
-        buttonSet: React.PropTypes.string,
-        buttonsVisible: React.PropTypes.oneOf(["always", "never", "focused"]),
-        labelText: React.PropTypes.string,
-        onFocus: React.PropTypes.func,
-        onBlur: React.PropTypes.func,
-        disabled: React.PropTypes.bool,
+class InputWithExamples extends React.Component {
+    static propTypes = {
+        type: PropTypes.oneOf([MATH, TEXT, TEX]),
+        value: PropTypes.string,
+        onChange: PropTypes.func.isRequired,
+        className: PropTypes.string,
+        examples: PropTypes.arrayOf(PropTypes.string).isRequired,
+        shouldShowExamples: PropTypes.bool,
+        convertDotToTimes: PropTypes.bool,
+        buttonSet: PropTypes.string,
+        buttonsVisible: PropTypes.oneOf(["always", "never", "focused"]),
+        labelText: PropTypes.string,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+        disabled: PropTypes.bool,
 
         // A unique string identifying this InputWithExamples
-        id: React.PropTypes.string.isRequired,
-        linterContext: linterContextProps,
-    },
+        id: PropTypes.string.isRequired,
+        linterContext: linterContextProps
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             type: TEXT,
             shouldShowExamples: true,
             onFocus: function() {},
             onBlur: function() {},
             disabled: false,
-            linterContext: linterContextDefault,
-        };
-    },
+            linterContext: linterContextDefault
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             focused: false,
             showExamples: false,
         };
-    },
+    }
 
-    _getUniqueId: function() {
+    _getUniqueId = () => {
         return `input-with-examples-${btoa(this.props.id).replace(/=/g, "")}`;
-    },
+    }
 
-    _getInputClassName: function() {
+    _getInputClassName = () => {
         // <MathOutput> is a special component that manages its own class and
         // state, as it's a <span> that wants to act like an <input>.
         if (this.props.type === TEX) {
@@ -79,9 +79,9 @@ const InputWithExamples = React.createClass({
             className += " " + this.props.className;
         }
         return className;
-    },
+    }
 
-    _getPropsForInputType: function() {
+    _getPropsForInputType = () => {
         // Minimal set of props, used by each input type
         const inputProps = {
             "aria-describedby": this._getUniqueId(),
@@ -125,9 +125,9 @@ const InputWithExamples = React.createClass({
                 inputProps
             );
         }
-    },
+    }
 
-    _getComponentForInputType: function() {
+    _getComponentForInputType = () => {
         switch (this.props.type) {
             case TEX:
                 return MathOutput;
@@ -141,15 +141,15 @@ const InputWithExamples = React.createClass({
             default:
                 return null;
         }
-    },
+    }
 
-    _renderInput: function() {
+    _renderInput = () => {
         const inputProps = this._getPropsForInputType();
         const InputComponent = this._getComponentForInputType();
         return <InputComponent {...inputProps} />;
-    },
+    }
 
-    render: function() {
+    render = () => {
         const input = this._renderInput();
 
         // Static rendering, which doesn't include the 'tooltip' logic that the
@@ -190,43 +190,43 @@ const InputWithExamples = React.createClass({
                 </div>
             </Tooltip>
         );
-    },
+    }
 
-    _handleFocus: function() {
+    _handleFocus = () => {
         this.props.onFocus();
         this.setState({
             focused: true,
             showExamples: true,
         });
-    },
+    }
 
-    show: function() {
+    show = () => {
         this.setState({showExamples: true});
-    },
+    }
 
-    hide: function() {
+    hide = () => {
         this.setState({showExamples: false});
-    },
+    }
 
-    _handleBlur: function() {
+    _handleBlur = () => {
         this.props.onBlur();
         this.setState({
             focused: false,
             showExamples: false,
         });
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         this.refs.input.focus();
-    },
+    }
 
-    blur: function() {
+    blur = () => {
         this.refs.input.blur();
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         this.props.onChange(e.target.value);
-    },
-});
+    }
+}
 
 module.exports = InputWithExamples;

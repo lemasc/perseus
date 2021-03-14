@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 var classNames = require("classnames");
+const PropTypes = require('prop-types');
 var React = require("react");
 var _ = require("underscore");
 
@@ -15,35 +16,33 @@ const {
     linterContextDefault,
 } = require("../gorgon/proptypes.js");
 
-var Group = React.createClass({
-    propTypes: {
+class Group extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        content: React.PropTypes.string,
-        widgets: React.PropTypes.object,
-        images: React.PropTypes.object,
-        icon: React.PropTypes.object,
-        reviewModeRubric: React.PropTypes.object,
+        content: PropTypes.string,
+        widgets: PropTypes.object,
+        images: PropTypes.object,
+        icon: PropTypes.object,
+        reviewModeRubric: PropTypes.object,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             content: "",
             widgets: {},
             images: {},
             icon: null,
             linterContext: linterContextDefault,
-        };
-    },
+    };
 
-    componentDidMount: function() {
+    componentDidMount() {
         // TODO(marcia): See comment in render method about our cyclical
         // numbering scheme. We force another render so that we can annotate
         // the group with the correct number.
         this.forceUpdate();
-    },
+    }
 
-    render: function() {
+    render() {
         var apiOptions = _.extend(
             {},
             ApiOptions.defaults,
@@ -117,43 +116,43 @@ var Group = React.createClass({
                     </div>}
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return this.refs.renderer.getUserInput();
-    },
+    }
 
-    getSerializedState: function() {
+    getSerializedState = () => {
         return this.refs.renderer.getSerializedState();
-    },
+    }
 
-    restoreSerializedState: function(state, callback) {
+    restoreSerializedState = (state, callback) => {
         this.refs.renderer.restoreSerializedState(state, callback);
         // Tell our renderer that we have no props to change
         // (all our changes were in state):
         return null;
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return this.refs.renderer.score();
-    },
+    }
 
     // Mobile API:
-    getInputPaths: function() {
+    getInputPaths = () => {
         return this.refs.renderer.getInputPaths();
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue = (path, newValue, cb) => {
         return this.refs.renderer.setInputValue(path, newValue, cb);
-    },
+    }
 
-    getAcceptableFormatsForInputPath: function(path) {
+    getAcceptableFormatsForInputPath = (path) => {
         return this.refs.renderer.getAcceptableFormatsForInputPath(path);
-    },
+    }
 
     /**
      * WARNING: This is an experimental/temporary API and should not be relied
@@ -163,26 +162,26 @@ var Group = React.createClass({
      * This function was created to allow Renderer.getAllWidgetIds to descend
      * into our renderer.
      */
-    getRenderer: function() {
+    getRenderer = () => {
         return this.refs.renderer;
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         return this.refs.renderer.focus();
-    },
+    }
 
-    focusInputPath: function(path) {
+    focusInputPath = (path) => {
         this.refs.renderer.focusPath(path);
-    },
+    }
 
-    blurInputPath: function(path) {
+    blurInputPath = (path) => {
         this.refs.renderer.blurPath(path);
-    },
+    }
 
     showRationalesForCurrentlySelectedChoices() {
         this.refs.renderer.showRationalesForCurrentlySelectedChoices();
-    },
-});
+    }
+}
 
 var traverseChildWidgets = function(props, traverseRenderer) {
     return _.extend({}, props, traverseRenderer(props));

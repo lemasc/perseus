@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -14,7 +15,7 @@ var mdOutput = PerseusMarkdown.basicOutput;
 var SimpleMarkdownTester = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        value: React.PropTypes.string,
+        value: PropTypes.string,
     },
 
     getDefaultProps: function() {

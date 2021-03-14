@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -20,14 +21,14 @@ var Sequence = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        json: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                content: React.PropTypes.string,
-                images: React.PropTypes.object,
-                widgets: React.PropTypes.object,
+        json: PropTypes.arrayOf(
+            PropTypes.shape({
+                content: PropTypes.string,
+                images: PropTypes.object,
+                widgets: PropTypes.object,
             })
         ),
-        trackInteraction: React.PropTypes.func.isRequired,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
     },
 

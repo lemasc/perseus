@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -7,38 +8,30 @@ const EditorJsonify = require("../mixins/editor-jsonify.jsx");
 const Editor = require("../editor.jsx");
 const TextInput = require("../components/text-input.jsx");
 
-const DefinitionEditor = React.createClass({
-    propTypes: {
+class DefinitionEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        togglePrompt: React.PropTypes.string,
-        definition: React.PropTypes.string,
-        apiOptions: React.PropTypes.any,
-    },
+        togglePrompt: PropTypes.string,
+        definition: PropTypes.string,
+        apiOptions: PropTypes.any,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             togglePrompt: "",
             definition: "",
-        };
-    },
+    };
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-widget-definition-editor">
-                <a
-                    href="https://docs.google.com/document/d/1udaPef4imOfTMhmLDlWq4SM0mxL0r3YHFZE-5J1uGfo"
-                    target="_blank"
-                >
-                    Definition style guide
-                </a>
                 <div className="perseus-widget-row">
                     <label>
                         Word to be defined:{" "}
@@ -66,7 +59,7 @@ const DefinitionEditor = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = DefinitionEditor;

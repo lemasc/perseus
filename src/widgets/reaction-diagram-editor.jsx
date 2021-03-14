@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,9 +14,9 @@ const TextInput = require("../components/text-input.jsx");
 var ReactionDiagramWidgetEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        rotationAngle: React.PropTypes.arrayOf(React.PropTypes.number),
-        separators: React.PropTypes.arrayOf(React.PropTypes.object),
-        smiles: React.PropTypes.arrayOf(React.PropTypes.string),
+        rotationAngle: PropTypes.arrayOf(PropTypes.number),
+        separators: PropTypes.arrayOf(PropTypes.object),
+        smiles: PropTypes.arrayOf(PropTypes.string),
     },
 
     getDefaultProps: function() {

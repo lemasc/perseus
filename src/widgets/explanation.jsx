@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 const {StyleSheet, css} = require("aphrodite");
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -16,48 +17,46 @@ const {
     linterContextDefault,
 } = require("../gorgon/proptypes.js");
 
-const defaultExplanationProps = {
-    showPrompt: "Explain",
-    hidePrompt: "Hide explanation",
-    explanation: "explanation goes here\n\nmore explanation",
-    widgets: {},
-    linterContext: linterContextDefault,
-};
 
-const Explanation = React.createClass({
-    propTypes: {
+class Explanation extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: PerseusApi.Options.propTypes,
-        explanation: React.PropTypes.string,
-        hidePrompt: React.PropTypes.string,
-        showPrompt: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func.isRequired,
-        widgets: React.PropTypes.object,
+        explanation: PropTypes.string,
+        hidePrompt: PropTypes.string,
+        showPrompt: PropTypes.string,
+        trackInteraction: PropTypes.func.isRequired,
+        widgets: PropTypes.object,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return defaultExplanationProps;
-    },
+    static defaultProps = {
+        showPrompt: "Explain",
+        hidePrompt: "Hide explanation",
+        explanation: "explanation goes here\n\nmore explanation",
+        widgets: {},
+        linterContext: linterContextDefault,
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             expanded: false,
         };
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    _onClick: function() {
+    _onClick = () => {
         this.setState({
             expanded: !this.state.expanded,
         });
         this.props.trackInteraction();
-    },
+    }
 
-    render: function() {
+    render() {
         const {Link} = this.props.apiOptions.baseElements;
         const {readOnly, isMobile} = this.props.apiOptions;
 
@@ -135,16 +134,16 @@ const Explanation = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return {};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Explanation.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 const leftBorderSpacing = 23;
 const verticalContentPadding = 10;

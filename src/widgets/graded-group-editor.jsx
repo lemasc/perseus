@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,42 +14,40 @@ const TextInput = require("../components/text-input.jsx");
 const InlineIcon = require("../components/inline-icon.jsx");
 const {iconPlus, iconTrash} = require("../icon-paths.js");
 
-const GradedGroupEditor = React.createClass({
-    propTypes: {
+class GradedGroupEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        title: React.PropTypes.string,
-        content: React.PropTypes.string,
-        widgets: React.PropTypes.object,
-        images: React.PropTypes.object,
+        title: PropTypes.string,
+        content: PropTypes.string,
+        widgets: PropTypes.object,
+        images: PropTypes.object,
         apiOptions: ApiOptions.propTypes,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             title: "",
             content: "",
             widgets: {},
             images: {},
             hint: null,
         };
-    },
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    handleAddHint: function() {
+    handleAddHint = () => {
         const hint = {content: ""};
         this.props.onChange({hint}, () => {
             this.refs["hint-editor"].focus();
         });
-    },
+    }
 
-    handleRemoveHint: function(i) {
+    handleRemoveHint = (i) => {
         this.props.onChange({hint: null});
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-group-editor">
                 <div className="perseus-widget-row">
@@ -116,13 +115,13 @@ const GradedGroupEditor = React.createClass({
                     </div>}
             </div>
         );
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         return {
             title: this.props.title,
             ...this.refs.editor.serialize(),
@@ -130,8 +129,8 @@ const GradedGroupEditor = React.createClass({
                 this.refs["hint-editor"] &&
                 this.refs["hint-editor"].serialize(),
         };
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     title: {

@@ -1,16 +1,17 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const {StyleSheet, css} = require("aphrodite");
 const constants = require("../styles/constants.js");
 
-const HUD = React.createClass({
-    propTypes: {
-        message: React.PropTypes.string.isRequired,
-        enabled: React.PropTypes.bool.isRequired,
-        onClick: React.PropTypes.func.isRequired,
-    },
+class HUD extends React.Component {
+    static propTypes = {
+        message: PropTypes.string.isRequired,
+        enabled: PropTypes.bool.isRequired,
+        onClick: PropTypes.func.isRequired,
+    }
 
     // Displays a stylized open eye: lint warnings are visible
-    renderVisibleIcon: function() {
+    renderVisibleIcon() {
         return (
             <svg
                 width="24"
@@ -43,10 +44,10 @@ const HUD = React.createClass({
                 </g>
             </svg>
         );
-    },
+    }
 
     // Displays a stylized eye with a line through it: I don't want to see lint
-    renderHiddenIcon: function() {
+    renderHiddenIcon() {
         return (
             <svg
                 width="24"
@@ -85,9 +86,9 @@ const HUD = React.createClass({
                 </g>
             </svg>
         );
-    },
+    }
 
-    render: function() {
+    render() {
         let state;
         let icon;
         if (this.props.enabled) {
@@ -109,8 +110,8 @@ const HUD = React.createClass({
                 {this.props.message}
             </button>
         );
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     hud: {
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
         },
         ":active": {
             backgroundColor: constants.warningColorActive,
-        },
+        }
     },
 
     disabled: {
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
         },
         ":active": {
             backgroundColor: constants.gray68,
-        },
+        }
     },
 });
 

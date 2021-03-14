@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -23,14 +24,14 @@ var updateQueryString = require("../util.js").updateQueryString;
 var Iframe = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        width: React.PropTypes.string,
-        height: React.PropTypes.string,
-        url: React.PropTypes.string,
-        settings: React.PropTypes.array,
-        status: React.PropTypes.oneOf(["incomplete", "incorrect", "correct"]),
-        message: React.PropTypes.string,
-        allowFullScreen: React.PropTypes.bool,
-        allowTopNavigation: React.PropTypes.bool,
+        width: PropTypes.string,
+        height: PropTypes.string,
+        url: PropTypes.string,
+        settings: PropTypes.array,
+        status: PropTypes.oneOf(["incomplete", "incorrect", "correct"]),
+        message: PropTypes.string,
+        allowFullScreen: PropTypes.bool,
+        allowTopNavigation: PropTypes.bool,
     },
 
     getDefaultProps: function() {

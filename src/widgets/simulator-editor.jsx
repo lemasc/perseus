@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -17,11 +18,11 @@ const maxTrials = 5000;
 const SimulatorEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        xAxisLabel: React.PropTypes.string,
-        yAxisLabel: React.PropTypes.string,
-        numTrials: React.PropTypes.number,
-        proportionLabel: React.PropTypes.string,
-        proportionOrPercentage: React.PropTypes.string,
+        xAxisLabel: PropTypes.string,
+        yAxisLabel: PropTypes.string,
+        numTrials: PropTypes.number,
+        proportionLabel: PropTypes.string,
+        proportionOrPercentage: PropTypes.string,
     },
 
     getDefaultProps: function() {

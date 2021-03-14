@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -14,62 +15,57 @@ var EditorPage = require("./editor-page.jsx");
  * changes. With StatefulEditorPage changes are stored in state so you can
  * query them with serialize.
  */
-var StatefulEditorPage = React.createClass({
-    propTypes: {
-        componentClass: React.PropTypes.func,
-    },
+class StatefulEditorPage extends React.Component {
+    static propTypes = {
+        componentClass: PropTypes.func,
+    }
+    
+    static defaultProps = {
+        componentClass: EditorPage,
+    };
 
-    getDefaultProps: function() {
-        return {
-            componentClass: EditorPage,
-        };
-    },
-
-    render: function() {
-        return <this.props.componentClass {...this.state} />;
-    },
-
-    getInitialState: function() {
-        return _({}).extend(_.omit(this.props, "componentClass"), {
+    constructor(props) {
+        super(props);
+        this.state = _.extend(_.omit(this.props, "componentClass"), {
             onChange: this.handleChange,
             ref: "editor",
         });
-    },
+    }
+
+    render = () => {
+        return <this.props.componentClass {...this.state} />;
+    }
 
     // getInitialState isn't called if the react component is re-rendered
     // in-place on the dom, in which case this is called instead, so we
     // need to update the state here.
     // (This component is currently re-rendered by the "Add image" button.)
-    componentWillReceiveProps: function(nextProps) {
-        this.setState(
-            _(nextProps).pick(
-                "apiOptions",
-                "imageUploader",
-                "developerMode",
-                "problemNum",
-                "previewDevice",
-                "frameSource"
-            )
-        );
-    },
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return _.pick(nextProps,
+            "apiOptions",
+            "imageUploader",
+            "developerMode",
+            "problemNum",
+            "previewDevice",
+            "frameSource"
+        )
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         return this.refs.editor.serialize();
-    },
+    }
 
-    handleChange: function(newState, cb) {
-        if (this.isMounted()) {
-            this.setState(newState, cb);
-        }
-    },
+    handleChange = (newState, cb) => {
+        this.setState(newState, cb);
+    }
 
-    scorePreview: function() {
+    scorePreview() {
         return this.refs.editor.scorePreview();
-    },
-});
+    }
+}
 
 module.exports = StatefulEditorPage;

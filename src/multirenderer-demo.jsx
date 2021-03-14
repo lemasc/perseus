@@ -6,6 +6,8 @@
  */
 const {StyleSheet, css} = require("aphrodite");
 const React = require("react");
+const createClass = require("create-react-class");
+const PropTypes = require('prop-types');
 
 const MultiRendererEditor = require("./multirenderer-editor.jsx");
 const Util = require("./util.js");
@@ -15,9 +17,9 @@ const {
     shapes,
 } = require("./multi-items.js");
 
-const DemoLayout = React.createClass({
+const DemoLayout = createClass({
     propTypes: {
-        item: React.PropTypes.any.isRequired,
+        item: PropTypes.any.isRequired,
     },
 
     statics: {
@@ -115,9 +117,9 @@ const demoStyles = StyleSheet.create({
     },
 });
 
-const MultiRendererDemo = React.createClass({
+const MultiRendererDemo = createClass({
     propTypes: {
-        item: React.PropTypes.any.isRequired,
+        item: PropTypes.any.isRequired,
     },
 
     getDefaultProps() {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types */
 
 /**
@@ -41,18 +42,18 @@ const InlineIcon = ({path, width, height, style = {}, title}) =>
 
 InlineIcon.propTypes = {
     // An SVG path to render.
-    path: React.PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
 
     // The path's viewBox dimensions.
     // We set the viewport height to 1em and scale the width accordingly.
-    height: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
 
-    style: React.PropTypes.object,
+    style: PropTypes.object,
 
     // A11y description for this icon. If absent, icon is marked
     // aria-hidden=true
-    title: React.PropTypes.string,
+    title: PropTypes.string,
 };
 /* eslint-enable react/jsx-sort-prop-types */
 

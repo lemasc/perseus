@@ -16,37 +16,38 @@
  * </FixedToResponsive>
  */
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 
 const {negativePhoneMargin} = require("../styles/constants.js");
 
 const MIN_VIEWPORT_HEIGHT = 480;
 
-const FixedToResponsive = React.createClass({
-    propTypes: {
-        width: React.PropTypes.number.isRequired,
-        height: React.PropTypes.number.isRequired,
-        className: React.PropTypes.string,
-        constrainHeight: React.PropTypes.bool,
-        allowFullBleed: React.PropTypes.bool,
-    },
+class FixedToResponsive extends React.Component {
+    static propTypes = {
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+        className: PropTypes.string,
+        constrainHeight: PropTypes.bool,
+        allowFullBleed: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             className: "",
             constrainHeight: false,
             allowFullBleed: false,
         };
-    },
+    }
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             viewportHeight: null,
             viewportWidth: null,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // Cache viewport sizes instead of computing on each render.
         // We setState() in componentDidMount(), even though it's a React
         // anti-pattern, because we do actually want to trigger a re-render
@@ -61,9 +62,9 @@ const FixedToResponsive = React.createClass({
         } else {
             this._cacheViewportSize();
         }
-    },
+    }
 
-    _cacheViewportSize: function() {
+    _cacheViewportSize() {
         if (this.isMounted()) {
             this.setState({
                 viewportHeight: Math.max(
@@ -73,9 +74,9 @@ const FixedToResponsive = React.createClass({
                 viewportWidth: window.innerWidth,
             });
         }
-    },
+    }
 
-    render: function() {
+    render() {
         // The ideal behavior for responsified, fixed size child components is
         // that they shrink when they need to (while preserving aspect ratio)
         // but never grow larger than their original dimensions. We accomplish
@@ -144,7 +145,7 @@ const FixedToResponsive = React.createClass({
         } else {
             return container;
         }
-    },
-});
+    }
+}
 
 module.exports = FixedToResponsive;

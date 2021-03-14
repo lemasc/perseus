@@ -1,12 +1,13 @@
 # ignore everything in node_modules, of course
 node_modules/*
 # ... except our fake packages
-!node_modules/react/
-!node_modules/react-addons-create-fragment/
-!node_modules/underscore/
+#!node_modules/react/
+#!node_modules/react-addons-create-fragment/
+#!node_modules/underscore/
 
 build/perseus.min.js
 perseus.sublime-workspace
+*.cmd
 
 # Ignore emacs backup files
 *~

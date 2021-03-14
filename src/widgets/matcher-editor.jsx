@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -9,26 +10,24 @@ var InfoTip = require("../components/info-tip.jsx");
 var PropCheckBox = require("../components/prop-check-box.jsx");
 var TextListEditor = require("../components/text-list-editor.jsx");
 
-var MatcherEditor = React.createClass({
-    propTypes: {
-        left: React.PropTypes.array,
-        right: React.PropTypes.array,
-        labels: React.PropTypes.array,
-        orderMatters: React.PropTypes.bool,
-        padding: React.PropTypes.bool,
-    },
+class MatcherEditor extends React.Component {
+    static propTypes = {
+        left: PropTypes.array,
+        right: PropTypes.array,
+        labels: PropTypes.array,
+        orderMatters: PropTypes.bool,
+        padding: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             left: ["$x$", "$y$", "$z$"],
             right: ["$1$", "$2$", "$3$"],
             labels: ["test", "label"],
             orderMatters: false,
             padding: true,
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-matcher-editor">
                 <div>
@@ -110,15 +109,15 @@ var MatcherEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    onLabelChange: function(index, e) {
+    onLabelChange = (index, e) => {
         var labels = _.clone(this.props.labels);
         labels[index] = e.target.value;
         this.props.onChange({labels: labels});
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings = () => {
         if (this.props.left.length !== this.props.right.length) {
             return [
                 "The two halves of the matcher have different numbers" +
@@ -126,9 +125,9 @@ var MatcherEditor = React.createClass({
             ];
         }
         return [];
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         return _.pick(
             this.props,
             "left",
@@ -137,7 +136,7 @@ var MatcherEditor = React.createClass({
             "orderMatters",
             "padding"
         );
-    },
-});
+    }
+}
 
 module.exports = MatcherEditor;

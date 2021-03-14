@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -18,33 +19,32 @@ var bound = (x, gt, lt) => Math.min(Math.max(x, gt), lt);
 
 var EN_DASH = "\u2013";
 
-var NumberLineEditor = React.createClass({
-    propTypes: {
-        range: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+class NumberLineEditor extends React.Component {
+    static propTypes = {
+        range: PropTypes.arrayOf(PropTypes.number).isRequired,
 
-        labelRange: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-        labelStyle: React.PropTypes.string.isRequired,
-        labelTicks: React.PropTypes.bool,
+        labelRange: PropTypes.arrayOf(PropTypes.number).isRequired,
+        labelStyle: PropTypes.string.isRequired,
+        labelTicks: PropTypes.bool,
 
-        divisionRange: React.PropTypes.arrayOf(React.PropTypes.number)
+        divisionRange: PropTypes.arrayOf(PropTypes.number)
             .isRequired,
-        numDivisions: React.PropTypes.number.isRequired,
-        snapDivisions: React.PropTypes.number,
+        numDivisions: PropTypes.number.isRequired,
+        snapDivisions: PropTypes.number,
 
-        tickStep: React.PropTypes.number,
-        correctRel: React.PropTypes.oneOf(["lt", "gt", "le", "ge", "eq"]),
-        correctX: React.PropTypes.number,
-        initialX: React.PropTypes.number,
-        isTickCtrl: React.PropTypes.bool,
+        tickStep: PropTypes.number,
+        correctRel: PropTypes.oneOf(["lt", "gt", "le", "ge", "eq"]),
+        correctX: PropTypes.number,
+        initialX: PropTypes.number,
+        isTickCtrl: PropTypes.bool,
 
-        onChange: React.PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
 
-        static: React.PropTypes.bool,
-        showTooltips: React.PropTypes.bool,
-    },
+        static: PropTypes.bool,
+        showTooltips: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             range: [0, 10],
 
             labelRange: [null, null],
@@ -62,18 +62,17 @@ var NumberLineEditor = React.createClass({
 
             showTooltips: false,
         };
-    },
 
-    onRangeChange: function(range) {
+    onRangeChange = (range) => {
         // Changing the range constrains the initial position, as well as the
         // position of the answer and labels. Atm, it just marks them as
         // invalid and prevents the number line from showing; it was annoying
         // to change it for them, because if they're typing in fractions,
         // it registers one-at-a-time and messes things up.
         this.props.onChange({range: range});
-    },
+    }
 
-    onLabelRangeChange: function(i, num) {
+    onLabelRangeChange = (i, num) => {
         var labelRange = this.props.labelRange.slice();
         var otherNum = labelRange[1 - i];
 
@@ -87,24 +86,24 @@ var NumberLineEditor = React.createClass({
         }
 
         this.props.onChange({labelRange: labelRange});
-    },
+    }
 
-    onDivisionRangeChange: function(divisionRange) {
+    onDivisionRangeChange = (divisionRange) => {
         var numDivisions = this.props.numDivisions;
         numDivisions = bound(numDivisions, divisionRange[0], divisionRange[1]);
         this.props.onChange({
             divisionRange: divisionRange,
             numDivisions: numDivisions,
         });
-    },
+    }
 
-    onNumChange: function(key, value) {
+    onNumChange = (key, value) => {
         var opts = {};
         opts[key] = value;
         this.props.onChange(opts);
-    },
+    }
 
-    onNumDivisionsChange: function(numDivisions) {
+    onNumDivisionsChange = (numDivisions) => {
         var divRange = this.props.divisionRange.slice();
 
         if (!_.isFinite(numDivisions)) {
@@ -131,34 +130,34 @@ var NumberLineEditor = React.createClass({
                 numDivisions: numDivisions,
             });
         }
-    },
+    }
 
-    onTickStepChange: function(tickStep) {
+    onTickStepChange = (tickStep) => {
         this.props.onChange({
             numDivisions: null,
             tickStep: tickStep,
         });
-    },
+    }
 
-    onChangeRelation: function(e) {
+    onChangeRelation =(e) => {
         const value = e.target.value;
         this.props.onChange({
             correctRel: value,
             isInequality: value !== "eq",
         });
-    },
+    }
 
-    onLabelStyleChange: function(labelStyle) {
+    onLabelStyleChange = (labelStyle) => {
         this.props.onChange({
             labelStyle: labelStyle,
         });
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         var range = this.props.range;
         var labelRange = this.props.labelRange;
         var divisionRange = this.props.divisionRange;
@@ -484,7 +483,7 @@ var NumberLineEditor = React.createClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = NumberLineEditor;

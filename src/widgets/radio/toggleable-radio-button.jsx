@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
@@ -20,22 +21,23 @@ const _ = require("underscore");
  *   handleKeyDown (A), handleClick (B), handleChange (B), handleKeyUp (B)
  * - Clicking with mac screenreader: handleClick, handleChange
  */
-const ToggleableRadioButton = React.createClass({
-    propTypes: {
+
+class ToggleableRadioButton extends React.Component {
+    static propTypes = {
         // Whether the radio button should be checked or unchecked (this is a
         // controlled component).
-        checked: React.PropTypes.bool.isRequired,
+        checked: PropTypes.bool.isRequired,
 
         // A ref function to attach to the <input> element.
-        inputRef: React.PropTypes.func,
+        inputRef: PropTypes.func,
 
         // A function that will be called whenever the radio button is checked
         // or unchecked. It's possible for this to be called twice for a single
         // checking or unchecking.
-        onChecked: React.PropTypes.func.isRequired,
-    },
+        onChecked: PropTypes.func.isRequired,
+    }
 
-    handleClick: function(event) {
+    handleClick = (event) => {
         this.props.onChecked(!this.props.checked);
 
         // NOTE(johnsullivan): Preventing default would make sense to do here
@@ -43,9 +45,9 @@ const ToggleableRadioButton = React.createClass({
         //     don't really want it to be (un)checked accidently. React
         //     requires that we *don't* call preventDefault from the onClick or
         //     onChecked handlers of a controlled component though.
-    },
+    }
 
-    handleKeyUp: function(event) {
+    handleKeyUp = (event) => {
         // Make hitting the spacebar with the element selected equivalent to
         // clicking it. Some browsers do this as part of the radio button's
         // default behavior, but since some browsers don't we normalize the
@@ -54,9 +56,9 @@ const ToggleableRadioButton = React.createClass({
             this.props.onChecked(!this.props.checked);
             event.preventDefault();
         }
-    },
+    }
 
-    handleChange: function(event) {
+    handleChange = (event) => {
         // If the checkbox is going from unchecked to checked, we'll handle it
         // here.
         // NOTE(johnsullivan): The onClick/onKeyUp handler most likely *also*
@@ -66,17 +68,17 @@ const ToggleableRadioButton = React.createClass({
         if (!this.props.checked && event.target.checked) {
             this.props.onChecked(true);
         }
-    },
+    }
 
-    handleKeyDown: function(event) {
+    handleKeyDown = (event) => {
         // This is necessary in order to prevent IE9 from creating a duplicate
         // click event on the radio button when the space bar is hit.
         if (event.key === " ") {
             event.preventDefault();
         }
-    },
+    }
 
-    render: function() {
+    render() {
         const {
             inputRef, // eslint-disable-line no-unused-vars
             onChecked, // eslint-disable-line no-unused-vars
@@ -94,7 +96,7 @@ const ToggleableRadioButton = React.createClass({
                 ref={this.props.inputRef}
             />
         );
-    },
-});
+    }
+}
 
 module.exports = ToggleableRadioButton;

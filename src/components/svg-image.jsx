@@ -1,5 +1,6 @@
 /* globals KA */
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const $ = require("jquery");
 const _ = require("underscore");
@@ -7,9 +8,10 @@ const _ = require("underscore");
 const FixedToResponsive = require("../components/fixed-to-responsive.jsx");
 const Graphie = require("../components/graphie.jsx");
 const ImageLoader = require("../components/image-loader.jsx");
-const {maybeUnescape} = require("../jipt-hack.jsx");
+const { maybeUnescape } = require("../jipt-hack.jsx");
 const Util = require("../util.js");
 const Zoom = require("../zoom.js");
+const { extend } = require("jquery");
 
 // Minimum image width to make an image appear as zoomable.
 const ZOOMABLE_THRESHOLD = 700;
@@ -21,14 +23,14 @@ const ZOOMABLE_THRESHOLD = 700;
 //     dataCallbacks: a list of callbacks to call with the data when the data
 //                    is loaded
 //     data: the other data for this hash
-//   },
+//   }
 //   ...
 // }
 const labelDataCache = {};
 
 // Write our own JSONP handler because all the other ones don't do things we
 // need.
-const doJSONP = function(url, options) {
+const doJSONP = function (url, options) {
     options = {
         callbackName: "callback",
         success: $.noop,
@@ -48,13 +50,13 @@ const doJSONP = function(url, options) {
     }
 
     // Add the global callback.
-    window[options.callbackName] = function() {
+    window[options.callbackName] = function () {
         cleanup();
         options.success.apply(null, arguments);
     };
 
     // Add the error handler.
-    script.addEventListener("error", function() {
+    script.addEventListener("error", function () {
         cleanup();
         options.error.apply(null, arguments);
     });
@@ -110,10 +112,10 @@ if (shouldRenderJipt()) {
         KA.jipt_dom_insert_checks = [];
     }
 
-    KA.jipt_dom_insert_checks.push(function(text, node, attribute) {
+    KA.jipt_dom_insert_checks.push(function (text, node, attribute) {
         const index = $(node).data("jipt-label-index");
         if (node && typeof index !== "undefined") {
-            const {label, useMath} = jiptLabels[index];
+            const { label, useMath } = jiptLabels[index];
 
             label.text("");
 
@@ -167,29 +169,37 @@ function defaultPreloader() {
             height: "100%",
             position: "absolute",
             minWidth: "20px",
-        },
+        }
     });
 }
 
-const SvgImage = React.createClass({
-    propTypes: {
-        allowFullBleed: React.PropTypes.bool,
-        alt: React.PropTypes.string,
-        constrainHeight: React.PropTypes.bool,
+const getRealImageUrl = (url) => {
+    if (isLabeledSVG(url)) {
+        return getSvgUrl(url);
+    } else {
+        return url;
+    }
+}
 
-        extraGraphie: React.PropTypes.shape({
-            box: React.PropTypes.array.isRequired,
-            range: React.PropTypes.array.isRequired,
-            labels: React.PropTypes.array.isRequired,
+class SvgImage extends React.Component {
+    static propTypes = {
+        allowFullBleed: PropTypes.bool,
+        alt: PropTypes.string,
+        constrainHeight: PropTypes.bool,
+
+        extraGraphie: PropTypes.shape({
+            box: PropTypes.array.isRequired,
+            range: PropTypes.array.isRequired,
+            labels: PropTypes.array.isRequired,
         }),
 
-        height: React.PropTypes.number,
+        height: PropTypes.number,
 
         // When the DOM updates to replace the preloader with the image, or
         // vice-versa, we trigger this callback.
-        onUpdate: React.PropTypes.func,
+        onUpdate: PropTypes.func,
 
-        preloader: React.PropTypes.func,
+        preloader: PropTypes.func,
 
         // By default, this component attempts to be responsive whenever
         // possible (specifically, when width and height are passed in).
@@ -198,48 +208,37 @@ const SvgImage = React.createClass({
         // The difference is that forcing via this prop will result in
         // explicit width and height styles being set on the rendered
         // component.
-        responsive: React.PropTypes.bool,
+        responsive: PropTypes.bool,
 
-        scale: React.PropTypes.number,
-        src: React.PropTypes.string.isRequired,
-        title: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func,
-        width: React.PropTypes.number,
+        scale: PropTypes.number,
+        src: PropTypes.string.isRequired,
+        title: PropTypes.string,
+        trackInteraction: PropTypes.func,
+        width: PropTypes.number,
 
         // Whether clicking this image will allow it to be fully zoomed in to
         // its original size on click, and allow the user to scroll in that
         // state. This also does some hacky viewport meta tag changing to
         // ensure this works on mobile devices, so I (david@) don't recommend
         // enabling this on desktop yet.
-        zoomToFullSizeOnMobile: React.PropTypes.bool,
-    },
+        zoomToFullSizeOnMobile: PropTypes.bool,
+    }
+    // Sometimes other components want to download the actual image e.g. to
+    // determine its size. Here, we transform an .svg-labels url into the
+    // correct image url, and leave normal image urls alone
 
-    statics: {
-        // Sometimes other components want to download the actual image e.g. to
-        // determine its size. Here, we transform an .svg-labels url into the
-        // correct image url, and leave normal image urls alone
-        getRealImageUrl: function(url) {
-            if (isLabeledSVG(url)) {
-                return getSvgUrl(url);
-            } else {
-                return url;
-            }
-        },
-    },
+    static defaultProps = {
+        constrainHeight: false,
+        onUpdate: () => { },
+        responsive: true,
+        src: "",
+        scale: 1,
+        zoomToFullSizeOnMobile: false
+    }
 
-    getDefaultProps: function() {
-        return {
-            constrainHeight: false,
-            onUpdate: () => {},
-            responsive: true,
-            src: "",
-            scale: 1,
-            zoomToFullSizeOnMobile: false,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             imageLoaded: false,
             imageDimensions: null,
             dataLoaded: false,
@@ -247,24 +246,24 @@ const SvgImage = React.createClass({
             labels: [],
             range: [[0, 0], [0, 0]],
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         if (isLabeledSVG(this.props.src)) {
             this.loadResources();
         }
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (this.props.src !== nextProps.src) {
             this.setState({
                 imageLoaded: false,
                 dataLoaded: false,
             });
         }
-    },
+    }
 
-    shouldComponentUpdate: function(nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState) {
         // If the props changed, we definitely need to update
         if (!_.isEqual(this.props, nextProps)) {
             return true;
@@ -278,20 +277,20 @@ const SvgImage = React.createClass({
         const nextLoaded = this.isLoadedInState(nextState);
 
         return wasLoaded !== nextLoaded;
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         if (isLabeledSVG(this.props.src) && !this.isLoadedInState(this.state)) {
             this.loadResources();
         }
-    },
+    }
 
     // Check if all of the resources are loaded in a given state
-    isLoadedInState: function(state) {
+    isLoadedInState(state) {
         return state.imageLoaded && state.dataLoaded;
-    },
+    }
 
-    loadResources: function() {
+    loadResources() {
         const hash = getUrlHash(this.props.src);
 
         // We can't make multiple jsonp calls to the same file because their
@@ -299,7 +298,7 @@ const SvgImage = React.createClass({
         // and only make the jsonp calls once.
         if (labelDataCache[hash]) {
             if (labelDataCache[hash].loaded) {
-                const {data, localized} = labelDataCache[hash];
+                const { data, localized } = labelDataCache[hash];
                 this.onDataLoaded(data, localized);
             } else {
                 labelDataCache[hash].dataCallbacks.push(this.onDataLoaded);
@@ -361,9 +360,9 @@ const SvgImage = React.createClass({
                 });
             }
         }
-    },
+    }
 
-    onDataLoaded: function(data, localized) {
+    onDataLoaded(data, localized) {
         if (this.isMounted() && data.labels && data.range) {
             this.setState({
                 dataLoaded: true,
@@ -372,13 +371,13 @@ const SvgImage = React.createClass({
                 range: data.range,
             });
         }
-    },
+    }
 
-    sizeProvided: function() {
+    sizeProvided() {
         return this.props.width != null && this.props.height != null;
-    },
+    }
 
-    onImageLoad: function() {
+    onImageLoad() {
         // Only need to do this if rendering a Graphie
         if (this.sizeProvided()) {
             // If width and height are provided, we don't need to calculate the
@@ -396,9 +395,9 @@ const SvgImage = React.createClass({
                 }
             });
         }
-    },
+    }
 
-    setupGraphie: function(graphie, options) {
+    setupGraphie(graphie, options) {
         _.map(options.labels, labelData => {
             if (shouldRenderJipt() && this.state.labelDataIsLocalized) {
                 // If we're using JIPT translation and we got proper JIPT tags,
@@ -429,7 +428,7 @@ const SvgImage = React.createClass({
                     labelData.content,
                     labelData.alignment,
                     labelData.typesetAsMath,
-                    {"font-size": 100 * this.props.scale + "%"}
+                    { "font-size": 100 * this.props.scale + "%" }
                 );
 
                 // Convert absolute positioning css from pixels to percentages
@@ -463,11 +462,11 @@ const SvgImage = React.createClass({
                 });
             }
         });
-    },
+    }
 
     // Try to parse a CSS value as pixels. Returns null if the parameter string
     // does not contain a number followed by "px".
-    _tryGetPixels: function(value) {
+    _tryGetPixels(value) {
         value = value || "";
         // While this doesn't check that there are no other alphabetical
         // characters prior to "px", that should be taken care of by the DOM,
@@ -477,9 +476,9 @@ const SvgImage = React.createClass({
         }
         // parseFloat() ignores trailing non-numerical characters.
         return parseFloat(value) || null;
-    },
+    }
 
-    _handleZoomClick: function(e) {
+    _handleZoomClick(e) {
         const $image = $(e.target);
 
         // It's possible that the image is already displayed at its
@@ -501,9 +500,9 @@ const SvgImage = React.createClass({
             );
         }
         this.props.trackInteraction && this.props.trackInteraction();
-    },
+    }
 
-    render: function() {
+    render() {
         const imageSrc = this.props.src;
 
         // Props to send to all images
@@ -543,7 +542,7 @@ const SvgImage = React.createClass({
                 <Graphie
                     box={this.props.extraGraphie.box}
                     range={this.props.extraGraphie.range}
-                    options={{labels: this.props.extraGraphie.labels}}
+                    options={{ labels: this.props.extraGraphie.labels }}
                     responsive={true}
                     addMouseLayer={false}
                     setup={this.setupGraphie}
@@ -673,7 +672,7 @@ const SvgImage = React.createClass({
                 </div>
             );
         }
-    },
-});
+    }
+}
 
-module.exports = SvgImage;
+module.exports = {SvgImage, getRealImageUrl};

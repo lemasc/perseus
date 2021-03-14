@@ -1,28 +1,27 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/sort-comp */
 
 const React = require("react");
 
 const ReactDOM = require("react-dom");
 
-const TextInput = React.createClass({
-    propTypes: {
-        value: React.PropTypes.string,
-        onChange: React.PropTypes.func.isRequired,
-        className: React.PropTypes.string,
-        labelText: React.PropTypes.string,
-        onFocus: React.PropTypes.func,
-        onBlur: React.PropTypes.func,
-        disabled: React.PropTypes.bool,
-    },
+class TextInput extends React.Component {
+    static propTypes = {
+        value: PropTypes.string,
+        onChange: PropTypes.func.isRequired,
+        className: PropTypes.string,
+        labelText: PropTypes.string,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+        disabled: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             value: "",
-            disabled: false,
-        };
-    },
+            disabled: false
+    }
 
-    render: function() {
+    render() {
         const {labelText, ...props} = this.props;
         return (
             <input
@@ -32,38 +31,38 @@ const TextInput = React.createClass({
                 onChange={e => this.props.onChange(e.target.value)}
             />
         );
-    },
+    }
 
-    focus: function() {
+    focus() {
         ReactDOM.findDOMNode(this).focus();
-    },
+    }
 
-    blur: function() {
+    blur() {
         ReactDOM.findDOMNode(this).blur();
-    },
+    }
 
-    getValue: function() {
+    getValue() {
         return ReactDOM.findDOMNode(this).value;
-    },
+    }
 
-    getStringValue: function() {
+    getStringValue() {
         return ReactDOM.findDOMNode(this).value.toString();
-    },
+    }
 
-    setSelectionRange: function(selectionStart, selectionEnd) {
+    setSelectionRange(selectionStart, selectionEnd) {
         ReactDOM.findDOMNode(this).setSelectionRange(
             selectionStart,
             selectionEnd
         );
-    },
+    }
 
-    getSelectionStart: function() {
+    getSelectionStart() {
         return ReactDOM.findDOMNode(this).selectionStart;
-    },
+    }
 
-    getSelectionEnd: function() {
+    getSelectionEnd() {
         return ReactDOM.findDOMNode(this).selectionEnd;
-    },
-});
+    }
+}
 
 module.exports = TextInput;

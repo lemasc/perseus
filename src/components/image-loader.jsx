@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * Component to display an image (or other React components) while the desired
  * image is loading.
@@ -10,8 +11,6 @@
 
 const React = require("react");
 
-const {PropTypes} = React;
-
 const Status = {
     PENDING: "pending",
     LOADING: "loading",
@@ -19,11 +18,11 @@ const Status = {
     FAILED: "failed",
 };
 
-const ImageLoader = React.createClass({
-    propTypes: {
-        children: React.PropTypes.oneOfType([
-            React.PropTypes.arrayOf(React.PropTypes.node),
-            React.PropTypes.node,
+class ImageLoader extends React.Component {
+    static propTypes = {
+        children: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.node),
+            PropTypes.node,
         ]),
         imgProps: PropTypes.any,
         onError: PropTypes.func,
@@ -35,27 +34,27 @@ const ImageLoader = React.createClass({
 
         preloader: PropTypes.func,
         src: PropTypes.string,
-    },
+    }
 
-    getInitialState: function(props) {
+    getInitialState(props) {
         return {status: this.props.src ? Status.LOADING : Status.PENDING};
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         if (this.state.status === Status.LOADING) {
             this.createLoader();
         }
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (this.props.src !== nextProps.src) {
             this.setState({
                 status: nextProps.src ? Status.LOADING : Status.PENDING,
             });
         }
-    },
+    }
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.state.status === Status.LOADING && !this.img) {
             this.createLoader();
         }
@@ -63,48 +62,48 @@ const ImageLoader = React.createClass({
         if (prevState.status !== this.state.status) {
             this.props.onUpdate();
         }
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this.destroyLoader();
-    },
+    }
 
-    createLoader: function() {
+    createLoader() {
         this.destroyLoader(); // We can only have one loader at a time.
 
         this.img = new Image();
         this.img.onload = this.handleLoad;
         this.img.onerror = this.handleError;
         this.img.src = this.props.src;
-    },
+    }
 
-    destroyLoader: function() {
+    destroyLoader() {
         if (this.img) {
             this.img.onload = null;
             this.img.onerror = null;
             this.img = null;
         }
-    },
+    }
 
-    handleLoad: function(event) {
+    handleLoad(event) {
         this.destroyLoader();
         this.setState({status: Status.LOADED});
 
         if (this.props.onLoad) {
             this.props.onLoad(event);
         }
-    },
+    }
 
-    handleError: function(error) {
+    handleError(error) {
         this.destroyLoader();
         this.setState({status: Status.FAILED});
 
         if (this.props.onError) {
             this.props.onError(error);
         }
-    },
+    }
 
-    renderImg: function() {
+    renderImg() {
         const {src, imgProps} = this.props;
         const props = {src};
 
@@ -115,9 +114,9 @@ const ImageLoader = React.createClass({
         }
 
         return <img {...props} />;
-    },
+    }
 
-    render: function() {
+    render() {
         switch (this.state.status) {
             case Status.LOADED:
                 return this.renderImg();
@@ -133,7 +132,7 @@ const ImageLoader = React.createClass({
                 }
         }
         return null;
-    },
-});
+    }
+}
 
 module.exports = ImageLoader;

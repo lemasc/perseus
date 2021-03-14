@@ -1,6 +1,7 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 
 module.exports = {
-    propTypes: React.PropTypes.shape({}).isRequired,
+    propTypes: PropTypes.shape({}).isRequired,
     defaults: {},
 };

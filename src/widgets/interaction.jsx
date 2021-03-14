@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable brace-style, no-redeclare, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/sort-comp, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -73,26 +74,27 @@ var defaultInteractionProps = {
     elements: [],
 };
 
-var Interaction = React.createClass({
+class Interaction extends React.Component {
     // TODO(eater): Make more better
-    propTypes: {
+    static propTypes ={
         ...Changeable.propTypes,
-        graph: React.PropTypes.object,
-        elements: React.PropTypes.arrayOf(React.PropTypes.object),
-    },
+        graph: PropTypes.object,
+        elements: PropTypes.arrayOf(PropTypes.object),
+    }
 
-    getDefaultProps: function() {
-        return defaultInteractionProps;
-    },
+    static defaultProps = {
+        defaultInteractionProps
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             variables: this._getInitialVariables(this.props.elements),
             functions: this._getInitialFunctions(this.props.elements),
         };
-    },
+    }
 
-    _getInitialVariables: function(elements) {
+    _getInitialVariables =  (elements) => {
         var variables = {};
         // TODO(eater): look at all this copypasta! refactor this!
         _.each(
@@ -150,23 +152,23 @@ var Interaction = React.createClass({
             variables[element.options.funcName] = element.options.value;
         });
         return variables;
-    },
+    }
 
-    _getInitialFunctions: function(elements) {
+    _getInitialFunctions = (elements) => {
         return _.map(
             _.where(elements, {type: "function"}),
             element => element.options.funcName
         );
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps = (nextProps) => {
         this.setState({
             variables: this._getInitialVariables(nextProps.elements),
             functions: this._getInitialFunctions(nextProps.elements),
         });
-    },
+    }
 
-    _setupGraphie: function(graphie, options) {
+    _setupGraphie = (graphie, options) => {
         graphie.graphInit(
             _.extend({}, options, {
                 grid: _.contains(["graph", "grid"], this.props.graph.markings),
@@ -186,17 +188,17 @@ var Interaction = React.createClass({
             graphie.label([0, range[1][1]], labels[1], "above");
             graphie.label([range[0][1], 0], labels[0], "right");
         }
-    },
+    }
 
-    _updatePointLocation: function(subscript, coord) {
+    _updatePointLocation = (subscript, coord) => {
         var variables = _.clone(this.state.variables);
         variables["x_" + subscript] = coord[0];
         variables["y_" + subscript] = coord[1];
         this.setState({variables: variables});
         this.props.trackInteraction();
-    },
+    }
 
-    _updateLineLocation: function(options, startCoord) {
+    _updateLineLocation = (options, startCoord) => {
         var xDiff = this._eval(
             "(" + options.endX + ")-(" + options.startX + ")"
         );
@@ -211,9 +213,9 @@ var Interaction = React.createClass({
         variables["y_" + options.endSubscript] = endCoord[1];
         this.setState({variables: variables});
         this.props.trackInteraction();
-    },
+    }
 
-    _eval: function(expression, variables) {
+    _eval = (expression, variables) => {
         var func = KAScompile(expression, {functions: this.state.functions});
         var compiledVars = _.extend({}, this.state.variables, variables);
         _.each(_.keys(compiledVars), name => {
@@ -232,10 +234,10 @@ var Interaction = React.createClass({
         });
         // Default to 0 if the expression couldn't be parsed
         return func(compiledVars) || 0;
-    },
+    }
 
     // Return an array of all the variables in an expression
-    _extractVars: function(expr) {
+    _extractVars = (expr) => {
         if (expr == null) {
             return [];
         }
@@ -254,13 +256,13 @@ var Interaction = React.createClass({
             vars.push(expr.prettyPrint());
         }
         return vars;
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <Graphie
                 box={this.props.graph.box}
@@ -643,20 +645,20 @@ var Interaction = React.createClass({
                 )}
             </Graphie>
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         // TODO(eater): Perhaps we want to be able to record the state of the
         // user's interaction. Unfortunately sending all the props will
         // probably make the attempt payload too large. So for now, don't send
         // anything.
         return {};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Interaction.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Interaction, {
     validate: function(state, rubric) {

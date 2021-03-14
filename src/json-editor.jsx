@@ -5,25 +5,27 @@
 var React = require("react");
 const _ = require("underscore");
 
-var JsonEditor = React.createClass({
-    getInitialState: function() {
-        return {
-            currentValue: JSON.stringify(this.props.value, null, 4),
-            valid: true,
-        };
-    },
+class JsonEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = this.defaultState;
+    }
+    defaultState = {
+        currentValue: JSON.stringify(this.props.value, null, 4),
+        valid: true,
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         var shouldReplaceContent =
             !this.state.valid ||
             !_.isEqual(nextProps.value, JSON.parse(this.state.currentValue));
 
         if (shouldReplaceContent) {
-            this.setState(this.getInitialState());
+            this.setState(this.defaultState);
         }
-    },
+    }
 
-    render: function() {
+    render() {
         var classes =
             "perseus-json-editor " + (this.state.valid ? "valid" : "invalid");
 
@@ -36,9 +38,9 @@ var JsonEditor = React.createClass({
                 onBlur={this.handleBlur}
             />
         );
-    },
+    }
 
-    handleKeyDown: function(e) {
+    handleKeyDown(e) {
         // This handler allows the tab character to be entered by pressing
         // tab, instead of jumping to the next (non-existant) field
         if (e.key === "Tab") {
@@ -53,9 +55,9 @@ var JsonEditor = React.createClass({
             e.preventDefault();
             this.handleChange(e);
         }
-    },
+    }
 
-    handleChange: function(e) {
+    handleChange(e) {
         var nextString = e.target.value;
         try {
             var json = JSON.parse(nextString);
@@ -81,11 +83,11 @@ var JsonEditor = React.createClass({
                 valid: false,
             });
         }
-    },
+    }
 
     // You can type whatever you want as you're typing, but if it's not valid
     // when you blur, it will revert to the last valid value.
-    handleBlur: function(e) {
+    handleBlur(e) {
         var nextString = e.target.value;
         try {
             var json = JSON.parse(nextString);
@@ -111,7 +113,7 @@ var JsonEditor = React.createClass({
                 valid: true,
             });
         }
-    },
-});
+    }
+}
 
 module.exports = JsonEditor;

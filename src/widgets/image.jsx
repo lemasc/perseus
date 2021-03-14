@@ -9,6 +9,7 @@
 
 var classNames = require("classnames");
 const {StyleSheet, css} = require("aphrodite");
+const PropTypes = require('prop-types');
 var React = require("react");
 var _ = require("underscore");
 
@@ -26,7 +27,7 @@ const {
 var defaultBoxSize = 400;
 var defaultRange = [0, 10];
 var defaultBackgroundImage = {
-    url: null,
+    url: "",
     width: 0,
     height: 0,
 };
@@ -44,43 +45,43 @@ const editorAlignments = ["block", "full-width"];
 
 const DEFAULT_ALIGNMENT = "block";
 
-var ImageWidget = React.createClass({
-    propTypes: {
+class ImageWidget extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        alignment: React.PropTypes.oneOf(supportedAlignments),
-        alt: React.PropTypes.string,
+        alignment: PropTypes.oneOf(supportedAlignments),
+        alt: PropTypes.string,
         apiOptions: ApiOptions.propTypes,
         // TODO(alex): Rename to something else, e.g. "image", perhaps flatten
-        backgroundImage: React.PropTypes.shape({
-            url: React.PropTypes.string,
-            width: React.PropTypes.number,
-            height: React.PropTypes.number,
+        backgroundImage: PropTypes.shape({
+            url: PropTypes.string,
+            width: PropTypes.number,
+            height: PropTypes.number,
         }),
 
-        box: React.PropTypes.arrayOf(React.PropTypes.number),
+        box: PropTypes.arrayOf(PropTypes.number),
 
-        caption: React.PropTypes.string,
+        caption: PropTypes.string,
 
         // TODO(alex): Convert uses of this widget's labeling functionality to
         // SvgImage wherever possible (almost certainly requires a backfill)
-        labels: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                content: React.PropTypes.string,
-                coordinates: React.PropTypes.arrayOf(React.PropTypes.number),
-                alignment: React.PropTypes.string,
+        labels: PropTypes.arrayOf(
+            PropTypes.shape({
+                content: PropTypes.string,
+                coordinates: PropTypes.arrayOf(PropTypes.number),
+                alignment: PropTypes.string,
             })
         ),
 
-        range: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.number)
+        range: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.number)
         ),
 
-        title: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func.isRequired,
+        title: PropTypes.string,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    statics: {
+    statics = {
         styles: StyleSheet.create({
             caption: {
                 display: "inline-block",
@@ -96,13 +97,12 @@ var ImageWidget = React.createClass({
 
                 [mediaQueries.smOrSmaller]: {
                     maxWidth: 450,
-                },
-            },
+                }
+            }
         }),
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             alignment: DEFAULT_ALIGNMENT,
             title: "",
             range: [defaultRange, defaultRange],
@@ -112,10 +112,9 @@ var ImageWidget = React.createClass({
             alt: "",
             caption: "",
             linterContext: linterContextDefault,
-        };
-    },
+    }
 
-    render: function() {
+    render = () => {
         var image;
         var alt;
         var {apiOptions} = this.props;
@@ -287,22 +286,22 @@ var ImageWidget = React.createClass({
                 </div>
             );
         }
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return null;
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = function(rubric) {
         return ImageWidget.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    focus: $.noop,
-});
+    focus = $.noop
+}
 
 _.extend(ImageWidget, {
     validate: function(state, rubric) {
@@ -312,7 +311,7 @@ _.extend(ImageWidget, {
             total: 0,
             message: null,
         };
-    },
+    }
 });
 
 module.exports = {

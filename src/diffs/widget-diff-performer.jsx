@@ -30,8 +30,8 @@ const valueEntry = function(before, after, key) {
 
 // For values which require a more granular diff (objects and arrays)
 const objectEntry = function(before, after, key) {
-    const beforeKeys = _.isObject(before) ? _(before).keys() : [];
-    const afterKeys = _.isObject(after) ? _(after).keys() : [];
+    const beforeKeys = _.isObject(before) ? _.keys(before) : [];
+    const afterKeys = _.isObject(after) ? _.keys(after) : [];
     const keys = _.union(beforeKeys, afterKeys);
 
     const children = _.map(keys, function(key) {

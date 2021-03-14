@@ -217,7 +217,7 @@ const Util = {
     },
 
     stringArrayOfSize: function(size) {
-        return _(size).times(function() {
+        return _.times(size,function() {
             return "";
         });
     },
@@ -263,7 +263,7 @@ const Util = {
      * Returns: [1, 1]
      */
     getGridStep: function(range, step, boxSize) {
-        return _(2).times(function(i) {
+        return _.times(2,function(i) {
             var scale = Util.scaleFromExtent(range[i], boxSize);
             var gridStep = Util.gridStepFromTickStep(step[i], scale);
             return gridStep;
@@ -685,8 +685,8 @@ const Util = {
         };
 
         // Require here to prevent recursive imports
-        var SvgImage = require("./components/svg-image.jsx");
-        img.src = SvgImage.getRealImageUrl(url);
+        var { getRealImageUrl } = require("./components/svg-image.jsx");
+        img.src = getRealImageUrl(url);
     },
 
     textarea: {

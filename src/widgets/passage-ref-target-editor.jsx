@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -11,7 +12,7 @@ const EditorJsonify = require("../mixins/editor-jsonify.jsx");
 const PassageRefTargetEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        content: React.PropTypes.string,
+        content: PropTypes.string,
     },
 
     getDefaultProps: function() {

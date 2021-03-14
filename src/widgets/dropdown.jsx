@@ -4,6 +4,7 @@
 
 const {StyleSheet, css} = require("aphrodite");
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 const _ = require("underscore");
@@ -17,26 +18,24 @@ const {iconDropdownArrow} = require("../icon-paths.js");
 
 const dropdownArrowSize = 24;
 
-const Dropdown = React.createClass({
-    propTypes: {
+class Dropdown extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        choices: React.PropTypes.arrayOf(React.PropTypes.string),
-        onChange: React.PropTypes.func.isRequired,
-        placeholder: React.PropTypes.string,
-        selected: React.PropTypes.number,
-        trackInteraction: React.PropTypes.func.isRequired,
-    },
+        choices: PropTypes.arrayOf(PropTypes.string),
+        onChange: PropTypes.func.isRequired,
+        placeholder: PropTypes.string,
+        selected: PropTypes.number,
+        trackInteraction: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             choices: [],
             selected: 0,
             placeholder: "",
             apiOptions: ApiOptions.defaults,
         };
-    },
 
-    render: function() {
+    render() {
         var choices = this.props.choices.slice();
 
         var selectClasses = classNames({
@@ -89,30 +88,30 @@ const Dropdown = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         ReactDOM.findDOMNode(this).focus();
         return true;
-    },
+    }
 
-    _handleChangeEvent: function(e) {
+    _handleChangeEvent = (e) => {
         this._handleChange(parseInt(e.target.value));
-    },
+    }
 
-    _handleChange: function(selected) {
+    _handleChange = (selected) => {
         this.props.trackInteraction();
         this.props.onChange({selected: selected});
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {value: this.props.selected};
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Dropdown.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Dropdown, {
     validate: function(state, rubric) {

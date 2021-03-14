@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -28,32 +29,30 @@ function getSlugFromUrl(url) {
 /**
  * This is the main editor for this widget, to specify all the options.
  */
-const VideoEditor = React.createClass({
-    propTypes: {
+class VideoEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        location: React.PropTypes.string,
-        onChange: React.PropTypes.func,
-    },
+        location: PropTypes.string,
+        onChange: PropTypes.func,
+    }
 
-    getDefaultProps: function() {
-        return {
-            location: "",
-        };
-    },
+    static defaultProps = {
+            location: ""
+    }
 
-    _handleUrlChange: function(url) {
+    _handleUrlChange = (url) => {
         this.props.onChange({location: getSlugFromUrl(url)});
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div>
                 <label>
@@ -71,7 +70,7 @@ const VideoEditor = React.createClass({
                 </label>
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = VideoEditor;

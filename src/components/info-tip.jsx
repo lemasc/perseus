@@ -9,26 +9,27 @@ const React = require("react");
 
 const ReactComponentsInfoTip = require("react-components/info-tip.jsx");
 
-const InfoTip = React.createClass({
-    getInitialState: function() {
-        return {
+class InfoTip extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             didMount: false,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         /* eslint-disable react/no-did-mount-set-state */
         this.setState({didMount: true});
         /* eslint-enable react/no-did-mount-set-state */
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.state.didMount) {
             return <ReactComponentsInfoTip {...this.props} />;
         } else {
             return <div />;
         }
-    },
-});
+    }
+}
 
 module.exports = InfoTip;

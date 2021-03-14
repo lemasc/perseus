@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable no-var, object-curly-spacing, react/prop-types, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -12,32 +13,33 @@ var DeviceFramer = require("./components/device-framer.jsx");
 var ITEM_DATA_VERSION = require("./version.json").itemDataVersion;
 const IframeContentRenderer = require("./iframe-content-renderer.jsx");
 
-var ItemEditor = React.createClass({
-    propTypes: {
-        apiOptions: ApiOptions.propTypes,
-        deviceType: React.PropTypes.string,
-        frameSource: React.PropTypes.string.isRequired,
-        gradeMessage: React.PropTypes.string,
-        imageUploader: React.PropTypes.func,
-        wasAnswered: React.PropTypes.bool,
-    },
+class ItemEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleEditorChange = this.handleEditorChange.bind(this);
+    }
 
-    getDefaultProps: function() {
-        return {
-            onChange: () => {},
-            question: {},
-            answerArea: {},
-        };
-    },
+    static propTypes = {
+        apiOptions: ApiOptions.propTypes,
+        deviceType: PropTypes.string,
+        frameSource: PropTypes.string.isRequired,
+        gradeMessage: PropTypes.string,
+        imageUploader: PropTypes.func,
+        wasAnswered: PropTypes.bool,
+    }
+    static defaultProps = {
+        onChange: () => {},
+        question: {},
+        answerArea: {},
+    };
 
     // Notify the parent that the question or answer area has been updated.
-    updateProps: function(newProps, cb, silent) {
-        var props = _(this.props).pick("question", "answerArea");
+    updateProps(newProps, cb, silent) {
+        var props = _.pick(this.props,"question", "answerArea");
+        this.props.onChange(_.extend(props,newProps), cb, silent);
+    }
 
-        this.props.onChange(_(props).extend(newProps), cb, silent);
-    },
-
-    render: function() {
+    render() {
         const isMobile =
             this.props.deviceType === "phone" ||
             this.props.deviceType === "tablet";
@@ -98,37 +100,37 @@ var ItemEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    triggerPreviewUpdate: function(newData) {
+    triggerPreviewUpdate(newData) {
         this.refs.frame.sendNewData(newData);
-    },
+    }
 
-    handleEditorChange: function(newProps, cb, silent) {
-        var question = _.extend({}, this.props.question, newProps);
+    handleEditorChange = (newProps, cb, silent) => {
+        var question = _.extend(this.props.question, newProps);
         this.updateProps({question}, cb, silent);
-    },
+    }
 
-    handleItemExtrasChange: function(newProps, cb, silent) {
+    handleItemExtrasChange = (newProps, cb, silent) => {
         var answerArea = _.extend({}, this.props.answerArea, newProps);
         this.updateProps({answerArea}, cb, silent);
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         return this.refs.questionEditor.getSaveWarnings();
-    },
+    }
 
-    serialize: function(options) {
+    serialize(options) {
         return {
             question: this.refs.questionEditor.serialize(options),
             answerArea: this.refs.itemExtrasEditor.serialize(options),
             itemDataVersion: ITEM_DATA_VERSION,
         };
-    },
+    }
 
-    focus: function() {
+    focus() {
         this.questionEditor.focus();
-    },
-});
+    }
+}
 
 module.exports = ItemEditor;

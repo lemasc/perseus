@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 var classNames = require("classnames");
+const PropTypes = require('prop-types');
 var React = require("react");
 var _ = require("underscore");
 const {StyleSheet, css} = require("aphrodite");
@@ -17,7 +18,8 @@ var ApiClassNames = require("../perseus-api.jsx").ClassNames;
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
 const KhanMath = require("../util/math.js");
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//TODO_SZ: math-input
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 const {
     linterContextProps,
     linterContextDefault,
@@ -35,7 +37,7 @@ var answerFormButtons = [
         content: "\u2077\u2044\u2084",
     },
     {title: "Mixed numbers", value: "mixed", content: "1\u00BE"},
-    {title: "Numbers with \u03C0", value: "pi", content: "\u03C0"},
+    {title: "Numbers with \u03C0", value: "pi", content: "\u03C0"}
 ];
 
 var formExamples = {
@@ -57,31 +59,30 @@ var formExamples = {
         ),
 };
 
-var NumericInput = React.createClass({
-    propTypes: {
-        currentValue: React.PropTypes.string,
-        currentMultipleValues: React.PropTypes.arrayOf(React.PropTypes.string),
-        size: React.PropTypes.oneOf(["normal", "small"]),
+class NumericInput extends React.Component {
+    static propTypes = {
+        currentValue: PropTypes.string,
+        currentMultipleValues: PropTypes.arrayOf(PropTypes.string),
+        size: PropTypes.oneOf(["normal", "small"]),
         apiOptions: ApiOptions.propTypes,
-        coefficient: React.PropTypes.bool,
-        answerForms: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                name: React.PropTypes.string.isRequired,
-                simplify: React.PropTypes.oneOf(["required", "optional"])
+        coefficient: PropTypes.bool,
+        answerForms: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                simplify: PropTypes.oneOf(["required", "optional"])
                     .isRequired,
             })
         ),
-        keypadElement: keypadElementPropType,
-        labelText: React.PropTypes.string,
-        reviewModeRubric: React.PropTypes.object,
-        trackInteraction: React.PropTypes.func.isRequired,
-        widgetId: React.PropTypes.string.isRequired,
+        //keypadElement: keypadElementPropType,
+        labelText: PropTypes.string,
+        reviewModeRubric: PropTypes.object,
+        trackInteraction: PropTypes.func.isRequired,
+        widgetId: PropTypes.string.isRequired,
         linterContext: linterContextProps,
-        multipleNumberInput: React.PropTypes.bool,
-    },
+        multipleNumberInput: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             currentValue: "",
             // currentMultipleValues has an empty string, because if finite
             // solutions is chosen, there must be at least 1 answer
@@ -93,20 +94,20 @@ var NumericInput = React.createClass({
             labelText: "",
             linterContext: linterContextDefault,
             multipleNumberInput: false,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             // dropdown option: either no-solutions or finite-solutions
             numSolutions: "no-solutions",
             // keeps track of the other set of values when switching
             // between 0 and finite solutions
             previousValues: [""],
         };
-    },
+    }
 
-    getAnswerBlurb: function(rubric) {
+    getAnswerBlurb(rubric) {
         var correct;
         var answerBlurb;
         if (this.props.apiOptions.satStyling && rubric) {
@@ -145,9 +146,9 @@ var NumericInput = React.createClass({
             }
         }
         return [answerBlurb, correct];
-    },
+    }
 
-    getClasses: function(correct, rubric) {
+    getClasses(correct, rubric) {
         const classes = {};
         classes["perseus-input-size-" + this.props.size] = true;
         classes[ApiClassNames.CORRECT] =
@@ -156,9 +157,9 @@ var NumericInput = React.createClass({
             rubric && !correct && this.props.currentValue;
         classes[ApiClassNames.UNANSWERED] = rubric && !this.props.currentValue;
         return classes;
-    },
+    }
 
-    render: function() {
+    render() {
         const rubric = this.props.reviewModeRubric;
         const answers = this.getAnswerBlurb(rubric);
         const answerBlurb = answers[0];
@@ -231,7 +232,7 @@ var NumericInput = React.createClass({
                             <SimpleKeypadInput
                                 ref="input"
                                 value={this.props.currentMultipleValues[i]}
-                                keypadElement={this.props.keypadElement}
+                                //keypadElement={this.props.keypadElement}
                                 onChange={
                                     e => this.handleMultipleInputChange(i, e)}
                                 onFocus={this._handleFocus}
@@ -267,7 +268,7 @@ var NumericInput = React.createClass({
                     <SimpleKeypadInput
                         ref="input"
                         value={this.props.currentValue}
-                        keypadElement={this.props.keypadElement}
+                        //keypadElement={this.props.keypadElement}
                         onChange={this.handleChange}
                         onFocus={this._handleFocus}
                         onBlur={this._handleBlur}
@@ -320,23 +321,23 @@ var NumericInput = React.createClass({
                 {input}
             </div>;
         }
-    },
+    }
 
-    handleChange: function(newValue, cb) {
+    handleChange = (newValue, cb) => {
         this.props.onChange({currentValue: newValue}, cb);
         this.props.trackInteraction();
-    },
+    }
 
-    handleMultipleInputChange: function(index, newValue) {
+    handleMultipleInputChange = (index, newValue) => {
         const newValues = this.props.currentMultipleValues.slice();
         newValues[index] = newValue;
         this.props.onChange({
             currentMultipleValues: newValues,
         });
         this.props.trackInteraction();
-    },
+    }
 
-    handleNumSolutionsChange: function(event) {
+    handleNumSolutionsChange = (event) => {
         const newValue = event.target.value;
         this.setState({numSolutions: newValue});
 
@@ -359,17 +360,17 @@ var NumericInput = React.createClass({
                 previousValues: [],
             });
         }
-    },
+    }
 
-    _getInputType: function() {
+    _getInputType() {
         if (this.props.apiOptions.staticRender) {
             return "tex";
         } else {
             return "text";
         }
-    },
+    }
 
-    _handleFocus: function() {
+    _handleFocus = () => {
         this.props.onFocus([]);
         // HACK(kevinb): We want to dismiss the feedback popover that webapp
         // displays as soon as a user clicks in in the input field so we call
@@ -378,63 +379,63 @@ var NumericInput = React.createClass({
         if (interactionCallback) {
             interactionCallback();
         }
-    },
+    }
 
-    _handleBlur: function() {
+    _handleBlur = () => {
         this.props.onBlur([]);
-    },
+    }
 
-    _addInput: function() {
+    _addInput = () => {
         // Add a new blank value to the list of current values
         this.props.onChange({
             currentMultipleValues: this.props.currentMultipleValues.concat([
                 "",
             ]),
         });
-    },
+    }
 
-    _removeInput: function(i, event) {
+    _removeInput = (i, event) => {
         const length = this.props.currentMultipleValues.length;
         const newValues = this.props.currentMultipleValues.slice(0, i).concat(
             this.props.currentMultipleValues.slice(i + 1, length));
         this.props.onChange({
             currentMultipleValues: newValues,
         });
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         this.refs.input.focus();
         return true;
-    },
+    }
 
-    focusInputPath: function(inputPath) {
+    focusInputPath = (inputPath) => {
         this.refs.input.focus();
-    },
+    }
 
-    blurInputPath: function(inputPath) {
+    blurInputPath = (inputPath) => {
         this.refs.input.blur();
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         // The widget itself is an input, so we return a single empty list to
         // indicate this.
         return [[]];
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath(inputPath) {
         return "number";
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue(path, newValue, cb) {
         this.props.onChange(
             {
                 currentValue: newValue,
             },
             cb
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         const multiple = this.props.multipleNumberInput;
         return {
             multInput: multiple,
@@ -442,13 +443,13 @@ var NumericInput = React.createClass({
                 ? this.props.currentMultipleValues
                 : this.props.currentValue,
         };
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate(rubric) {
         return NumericInput.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    shouldShowExamples: function() {
+    shouldShowExamples() {
         var noFormsAccepted = this.props.answerForms.length === 0;
         // To check if all answer forms are accepted, we must first
         // find the *names* of all accepted forms, and see if they are
@@ -458,9 +459,9 @@ var NumericInput = React.createClass({
         );
         var allFormsAccepted = answerFormNames.length >= _.size(formExamples);
         return !noFormsAccepted && !allFormsAccepted;
-    },
+    }
 
-    examples: function() {
+    examples() {
         // if the set of specified forms are empty, allow all forms
         var forms =
             this.props.answerForms.length !== 0
@@ -480,11 +481,11 @@ var NumericInput = React.createClass({
         examples = _.uniq(examples);
 
         return [i18n._("**Your answer should be** ")].concat(examples);
-    },
-});
+    }
+}
 
 _.extend(NumericInput, {
-    validate: function(state, rubric) {
+    validate(state, rubric) {
         var allAnswerForms = _.pluck(answerFormButtons, "value");
 
         var createValidator = answer =>
@@ -612,7 +613,7 @@ _.extend(NumericInput, {
                 };
             }
         }
-    },
+    }
 });
 
 // TODO(thomas): Currently we receive a list of lists of acceptable answer types
@@ -736,7 +737,7 @@ const styles = StyleSheet.create({
 
         ':disabled + svg' : {
             color: styleConstants.gray68,
-        },
+        }
     },
 
     numberInput: {
@@ -751,12 +752,12 @@ const styles = StyleSheet.create({
             outline: 'none',
             border: `2px solid ${styleConstants.kaGreen}`,
             padding: `8px 25px 8px 8px`,
-        },
+        }
     },
 
     numberInputContainer: {
         display: "flex",
-    },
+    }
 });
 
 module.exports = {

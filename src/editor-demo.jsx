@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
   * Demonstrates the main Perseus editor
   *
@@ -11,68 +12,66 @@ const EditorPage = require("./editor-page.jsx");
 const Util = require("./util.js");
 const Renderability = require("./renderability.jsx");
 
-const defaultQuestion = {
-    question: {
-        content: "",
-        images: {},
-        widgets: {},
-    },
-    answerArea: {
-        calculator: false,
-    },
-    itemDataVersion: {
-        major: 0,
-        minor: 1,
-    },
-    hints: [],
-};
 
-const EditorDemo = React.createClass({
-    propTypes: {
-        problemNum: React.PropTypes.number,
-        question: React.PropTypes.any.isRequired,
-    },
+class EditorDemo extends React.Component {
+    static propTypes = {
+        problemNum: PropTypes.number,
+        question: PropTypes.any.isRequired,
+    }
+    static defaultProps = {
+        question: {
+            question: {
+                content: "",
+                images: {},
+                widgets: {}
+            },
+            answerArea: {
+                calculator: false,
+            },
+            itemDataVersion: {
+                major: 0,
+                minor: 1,
+            },
+            hints: [],
+        },
+        problemNum: 1
+    }
 
-    getDefaultProps: function() {
-        return {
-            question: defaultQuestion,
-            problemNum: 1,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             deviceType: "desktop",
             scratchpadEnabled: true,
         };
-    },
+        this.editor = React.createRef();
+    }
 
-    componentDidMount: function() {
+    componentDidMount = () => {
         // Hacks to make debugging nicer
-        window.editorPage = this.refs.editor.refs.editor;
+        window.editorPage = this.editor.current.refs.editor;
         window.itemRenderer = window.editorPage.renderer;
-    },
+    }
 
-    serialize: function() {
-        console.log(JSON.stringify(this.refs.editor.serialize(), null, 4)); // eslint-disable-line no-console
-    },
+    serialize = () => {
+        console.log(JSON.stringify(this.editor.current.serialize(), null, 4)); // eslint-disable-line no-console
+    }
 
-    scorePreview: function() {
-        console.log(this.refs.editor.scorePreview()); // eslint-disable-line no-console
-    },
+    scorePreview = () => {
+        console.log(this.editor.current.scorePreview()); // eslint-disable-line no-console
+    }
 
-    _getContentHash: function() {
+    _getContentHash = () => {
         return Util.strongEncodeURIComponent(
-            JSON.stringify(this.refs.editor.serialize())
+            JSON.stringify(this.editor.current.serialize())
         );
-    },
+    }
 
-    permalink: function(e) {
+    permalink = (e) => {
         window.location.hash = `content=${this._getContentHash()}`;
         e.preventDefault();
-    },
+    }
 
-    viewRendered: function(e) {
+    viewRendered = (e) => {
         const link = document.createElement("a");
         link.href =
             window.location.pathname +
@@ -80,33 +79,33 @@ const EditorDemo = React.createClass({
         link.target = "_blank";
         link.click();
         e.preventDefault();
-    },
+    }
 
-    inputVersion: function(e) {
+    inputVersion = (e) => {
         e.preventDefault();
         // print whether or not this item consists only of
         // input-numbers and numeric-inputs.
         // just for versioning testing
         console.log( // eslint-disable-line no-console
             Renderability.isItemRenderableByVersion(
-                this.refs.editor.serialize(),
+                this.editor.current.serialize(),
                 {
                     "::renderer::": {major: 100, minor: 0},
                     group: {major: 100, minor: 0},
                     sequence: {major: 100, minor: 0},
                     "input-number": {major: 100, minor: 0},
-                    "numeric-input": {major: 100, minor: 0},
+                    "numeric-input": {major: 100, minor: 0}
                 }
             )
         );
-    },
+    }
 
-    saveWarnings: function(e) {
+    saveWarnings = (e) => {
         e.preventDefault();
-        console.log(this.refs.editor.getSaveWarnings()); // eslint-disable-line no-console
-    },
+        console.log(this.editor.current.getSaveWarnings()); // eslint-disable-line no-console
+    }
 
-    getEditorProps() {
+    getEditorProps = () => {
         const {deviceType} = this.state;
         const isMobile = deviceType === "phone" || deviceType === "tablet";
 
@@ -114,7 +113,7 @@ const EditorDemo = React.createClass({
             ...this.props.question,
             problemNum: this.props.problemNum,
             developerMode: true,
-            imageUploader: function(image, callback) {
+            imageUploader(image, callback) {
                 setTimeout(
                     callback,
                     1000,
@@ -122,7 +121,7 @@ const EditorDemo = React.createClass({
                 ); // eslint-disable-line max-len
             },
             apiOptions: {
-                onFocusChange: function(newPath, oldPath) {
+                onFocusChange(newPath, oldPath) {
                     console.log("onFocusChange", newPath, oldPath); // eslint-disable-line no-console
                 },
                 customKeypad: isMobile,
@@ -131,7 +130,7 @@ const EditorDemo = React.createClass({
                     this.setState({
                         scratchpadEnabled: enabled,
                     });
-                },
+                }
             },
             componentClass: EditorPage,
             onPreviewDeviceChange: deviceType => {
@@ -184,9 +183,9 @@ const EditorDemo = React.createClass({
             </html>`,
             /* eslint-enable max-len */
         };
-    },
+    }
 
-    render: function() {
+    render() {
         const editorProps = this.getEditorProps();
 
         return (
@@ -213,12 +212,12 @@ const EditorDemo = React.createClass({
                 </div>
                 <StatefulEditorPage
                     key={this.props.question}
-                    ref="editor"
+                    ref={this.editor}
                     {...editorProps}
                 />
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = EditorDemo;

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -14,9 +15,9 @@ const TextInput = require("../components/text-input.jsx");
 const PassageRefEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        passageNumber: React.PropTypes.number,
-        referenceNumber: React.PropTypes.number,
-        summaryText: React.PropTypes.string,
+        passageNumber: PropTypes.number,
+        referenceNumber: PropTypes.number,
+        summaryText: PropTypes.string,
     },
 
     getDefaultProps: function() {

@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
   * Demonstrates the rendered result of a Perseus question
   *
@@ -17,7 +18,7 @@ const defaultQuestion = {
     question: {
         content: "",
         images: {},
-        widgets: {},
+        widgets: {}
     },
     answerArea: {
         calculator: false,
@@ -29,43 +30,42 @@ const defaultQuestion = {
     hints: [],
 };
 
-const RendererDemo = React.createClass({
-    propTypes: {
-        problemNum: React.PropTypes.number,
-        question: React.PropTypes.any.isRequired,
-    },
+class RendererDemo extends React.Component {
+    static propTypes = {
+        problemNum: PropTypes.number,
+        question: PropTypes.any.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             question: defaultQuestion,
             problemNum: 1,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             // Matches ItemRenderer.showInput
             answer: {empty: true, correct: null},
             scratchpadEnabled: true,
             isMobile: navigator.userAgent.indexOf("Mobile") !== -1,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         ReactDOM.findDOMNode(this.refs.itemRenderer).focus();
 
         window.addEventListener("resize", this._handleResize);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         window.removeEventListener("resize", this._handleResize);
-    },
+    }
 
-    onScore: function() {
+    onScore() {
         console.log(this.refs.itemRenderer.scoreInput()); // eslint-disable-line no-console
-    },
+    }
 
-    checkAnswer: function() {
+    checkAnswer = () => {
         this.refs.itemRenderer.showRationalesForCurrentlySelectedChoices();
         this.setState(
             {
@@ -75,20 +75,20 @@ const RendererDemo = React.createClass({
                 this.refs.itemRenderer.deselectIncorrectSelectedChoices();
             }
         );
-    },
+    }
 
-    takeHint: function() {
+    takeHint = () => {
         this.refs.itemRenderer.showHint();
-    },
+    }
 
-    _handleResize() {
+    _handleResize = () => {
         const isMobile = navigator.userAgent.indexOf("Mobile") !== -1;
         if (this.state.isMobile !== isMobile) {
             this.setState({isMobile});
         }
-    },
+    }
 
-    render: function() {
+    render() {
         const {isMobile} = this.state;
 
         const apiOptions = {
@@ -104,7 +104,7 @@ const RendererDemo = React.createClass({
             },
             styling: {
                 radioStyleVersion: "final",
-            },
+            }
         };
 
         const answer = this.state.answer;
@@ -196,8 +196,8 @@ const RendererDemo = React.createClass({
                 </div>
             );
         }
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     problemAndAnswer: {
@@ -245,8 +245,8 @@ const styles = StyleSheet.create({
             position: "absolute",
             right: -1,
             top: -24,
-        },
-    },
+        }
+    }
 });
 
 module.exports = RendererDemo;

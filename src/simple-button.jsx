@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
   * Provides a simple styled button
   *
@@ -6,22 +7,19 @@
 const React = require("react");
 const {StyleSheet, css} = require("aphrodite");
 
-const SimpleButton = React.createClass({
-    propTypes: {
-        children: React.PropTypes.node,
-        color: React.PropTypes.oneOf(["orange", "green"]),
-        onClick: React.PropTypes.func,
-    },
+class SimpleButton extends React.Component {
+    static propTypes = {
+        children: PropTypes.node,
+        color: PropTypes.oneOf(["orange", "green"]),
+        onClick: PropTypes.func,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             children: null,
             color: "green",
-            onClick: () => {},
-        };
-    },
+            onClick: () => {},    }
 
-    render: function() {
+    render() {
         const {children, color, onClick, ...otherProps} = this.props;
         return (
             <div
@@ -32,8 +30,8 @@ const SimpleButton = React.createClass({
                 {children}
             </div>
         );
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     baseButton: {

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, indent, no-var, object-curly-spacing, one-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,18 +14,18 @@ var InfoTip = require("../components/info-tip.jsx");
 var PropCheckBox = require("../components/prop-check-box.jsx");
 var SortableArea = require("react-components/sortable.jsx");
 var TeX = require("react-components/tex.jsx"); // OldExpression only
-var TexButtons = require("../components/tex-buttons.jsx");
+var { TexButtons, buttonSets, buttonSetsType } = require("../components/tex-buttons.jsx");
 
 var Expression = require("./expression.jsx").Expression;
 
 // An answer can be considered correct, wrong, or ungraded.
 var CONSIDERED = ["correct", "wrong", "ungraded"];
 
-var answerFormType = React.PropTypes.shape({
-    considered: React.PropTypes.oneOf(CONSIDERED).isRequired,
-    value: React.PropTypes.string.isRequired,
-    form: React.PropTypes.bool.isRequired,
-    simplify: React.PropTypes.bool.isRequired,
+var answerFormType = PropTypes.shape({
+    considered: PropTypes.oneOf(CONSIDERED).isRequired,
+    value: PropTypes.string.isRequired,
+    form: PropTypes.bool.isRequired,
+    simplify: PropTypes.bool.isRequired,
 });
 
 // Pick a key that isn't currently used by an answer in answerForms
@@ -49,25 +50,24 @@ var _makeNewKey = (answerForms) => {
   return usedKeys.length;
 };
 
-var ExpressionEditor = React.createClass({
-    propTypes: {
+class ExpressionEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        answerForms: React.PropTypes.arrayOf(answerFormType),
-        times: React.PropTypes.bool,
-        buttonSets: TexButtons.buttonSetsType,
-        functions: React.PropTypes.arrayOf(React.PropTypes.string),
-    },
-
-    getDefaultProps: function() {
-        return {
-            answerForms: [],
-            times: false,
-            buttonSets: ["basic"],
-            functions: ["f", "g", "h"],
-        };
-    },
-
-    getInitialState: function() {
+        answerForms: PropTypes.arrayOf(answerFormType),
+        times: PropTypes.bool,
+        buttonSets: buttonSetsType,
+        functions: PropTypes.arrayOf(PropTypes.string),
+    }
+    static defaultProps = {
+        answerForms: [],
+        times: false,
+        buttonSets: ["basic"],
+        functions: ["f", "g", "h"],
+    };
+    
+    constructor(props) {
+        super(props);
+        
         // Is the format of `value` TeX or plain text?
         // TODO(alex): Remove after backfilling everything to TeX
         // TODO(joel) - sucks if you edit some expression without
@@ -79,7 +79,7 @@ var ExpressionEditor = React.createClass({
         if (this.props.answerForms.length === 0) {
             isTex = true;
         } else {
-            isTex = _(this.props.answerForms).any(form => {
+            isTex = _.any(this.props.answerForms,form => {
                 var {value} = form;
                 // only TeX has backslashes and curly braces
                 return (
@@ -88,15 +88,14 @@ var ExpressionEditor = React.createClass({
                 );
             });
         }
-
-        return {isTex};
-    },
+        this.state = {isTex};
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         var answerOptions = this.props.answerForms
             .map((obj, ix) => {
                 var expressionProps = {
@@ -138,7 +137,7 @@ var ExpressionEditor = React.createClass({
         );
 
         // checkboxes to choose which sets of input buttons are shown
-        var buttonSetChoices = _(TexButtons.buttonSets).map((set, name) => {
+        var buttonSetChoices = _.map(buttonSets,(set, name) => {
             // The first one gets special cased to always be checked, disabled,
             // and float left.
             var isFirst = name === "basic";
@@ -244,9 +243,9 @@ var ExpressionEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    serialize: function() {
+    serialize() {
         var formSerializables = [
             "value",
             "form",
@@ -259,29 +258,29 @@ var ExpressionEditor = React.createClass({
         var serializables = ["answerForms", "buttonSets", "functions", "times"];
 
         var answerForms = this.props.answerForms.map(form => {
-            return _(form).pick(formSerializables);
+            return _.pick(form,formSerializables);
         });
 
         return lens(this.props)
             .set(["answerForms"], answerForms)
-            .mod([], props => _(props).pick(serializables))
+            .mod([], props => _.pick(props,serializables))
             .freeze();
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         var issues = [];
 
         if (this.props.answerForms.length === 0) {
             issues.push("No answers specified");
         } else {
-            var hasCorrect = !!_(this.props.answerForms).find(form => {
+            var hasCorrect = !!_.find(this.props.answerForms,form => {
                 return form.considered === "correct";
             });
             if (!hasCorrect) {
                 issues.push("No correct answer specified");
             }
 
-            _(this.props.answerForms).each((form, ix) => {
+            _.each(this.props.answerForms,(form, ix) => {
                 if (this.props.value === "") {
                     issues.push(`Answer ${ix + 1} is empty`);
                 } else {
@@ -308,9 +307,9 @@ var ExpressionEditor = React.createClass({
         }
 
         return issues;
-    },
+    }
 
-    _newEmptyAnswerForm: function() {
+    _newEmptyAnswerForm() {
         return {
             considered: "correct",
             form: false,
@@ -322,33 +321,33 @@ var ExpressionEditor = React.createClass({
             simplify: false,
             value: "",
         };
-    },
+    }
 
-    newAnswer: function() {
+    newAnswer = () => {
         var answerForms = this.props.answerForms.slice();
         answerForms.push(this._newEmptyAnswerForm());
         this.change({answerForms});
-    },
+    }
 
-    handleRemoveForm: function(i) {
+    handleRemoveForm = (i) => {
         var answerForms = this.props.answerForms.slice();
         answerForms.splice(i, 1);
         this.change({answerForms});
-    },
+    }
 
     // called when the options (including the expression itself) to an answer
     // form change
-    updateForm: function(i, props) {
+    updateForm = (i, props) => {
         var answerForms = lens(this.props.answerForms)
             .merge([i], props)
             .freeze();
 
         this.change({answerForms});
-    },
+    }
 
-    handleReorder: function(components) {
-        var answerForms = _(components).map(component => {
-            var form = _(component.props).pick(
+    handleReorder = (components) => {
+        var answerForms = _.map(components,component => {
+            var form = _.pick(component.props,
                 "considered",
                 "form",
                 "simplify",
@@ -359,31 +358,29 @@ var ExpressionEditor = React.createClass({
         });
 
         this.change({answerForms});
-    },
+    }
 
     // called when the selected buttonset changes
-    handleButtonSet: function(changingName) {
-        var buttonSetNames = _(TexButtons.buttonSets).keys();
-
+    handleButtonSet = (changingName) => {
+        var buttonSetNames = _.keys(buttonSets);
         // Filter to preserve order - using .union and .difference would always
         // move the last added button set to the end.
-        var buttonSets = _(buttonSetNames).filter(set => {
+        var _buttonSets = _.filter(buttonSetNames,set => {
             return (
-                _(this.props.buttonSets).contains(set) !==
+                _.contains(this.props.buttonSets,set) !==
                 (set === changingName)
             );
         });
+        this.props.onChange({buttonSets: _buttonSets});
+    }
 
-        this.props.onChange({buttonSets});
-    },
-
-    handleToggleDiv: function() {
+    handleToggleDiv = () => {
         // We always want buttonSets to contain exactly one of "basic" and
         // "basic+div". Toggle between the two of them.
         // If someone can think of a more elegant formulation of this (there
         // must be one!) feel free to change it.
         var keep, remove;
-        if (_(this.props.buttonSets).contains("basic+div")) {
+        if (_.contains(this.props.buttonSets,"basic+div")) {
             keep = "basic";
             remove = "basic+div";
         } else {
@@ -391,62 +388,65 @@ var ExpressionEditor = React.createClass({
             remove = "basic";
         }
 
-        var buttonSets = _(this.props.buttonSets)
-            .reject(set => set === remove)
+        var buttonSets = _
+            .reject(this.props.buttonSets,set => set === remove)
             .concat(keep);
 
         this.change("buttonSets", buttonSets);
-    },
+    }
 
     // called when the correct answer changes
-    handleTexInsert: function(str) {
-        this.refs.expression.insert(str);
-    },
+    handleTexInsert = (str) => {
+        if(this.refs.expression) {
+            this.refs.expression.insert(str);
+        }
+    }
 
     // called when the function variables change
-    handleFunctions: function(e) {
+    handleFunctions = (e) => {
         var newProps = {};
         newProps.functions = _.compact(e.target.value.split(/[ ,]+/));
         this.props.onChange(newProps);
-    },
-});
+    }
+}
 
 // Find the next element in arr after val, wrapping around to the first.
 var findNextIn = function(arr, val) {
-    var ix = _(arr).indexOf(val);
+    var ix = _.indexOf(arr,val);
     ix = (ix + 1) % arr.length;
     return arr[ix];
 };
 
-var AnswerOption = React.createClass({
-    propTypes: {
+class AnswerOption extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        considered: React.PropTypes.oneOf(CONSIDERED).isRequired,
-        expressionProps: React.PropTypes.object.isRequired,
+        considered: PropTypes.oneOf(CONSIDERED).isRequired,
+        expressionProps: PropTypes.object.isRequired,
 
         // Must the answer have the same form as this answer.
-        form: React.PropTypes.bool.isRequired,
+        form: PropTypes.bool.isRequired,
 
         // Must the answer be simplified.
-        simplify: React.PropTypes.bool.isRequired,
+        simplify: PropTypes.bool.isRequired,
 
-        onChange: React.PropTypes.func.isRequired,
-        onDelete: React.PropTypes.func.isRequired,
-    },
+        onChange: PropTypes.func.isRequired,
+        onDelete: PropTypes.func.isRequired,
+    }
+    
+    constructor(props) {
+        super(props);
+        this.state = {deleteFocused: false};
+    }
 
-    getInitialState: function() {
-        return {deleteFocused: false};
-    },
-
-    handleDeleteBlur: function() {
+    handleDeleteBlur = () => {
         this.setState({deleteFocused: false});
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         var removeButton = null;
         if (this.state.deleteFocused) {
             removeButton = (
@@ -530,20 +530,20 @@ var AnswerOption = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    handleImSure: function() {
+    handleImSure = () => {
         this.props.onDelete();
-    },
+    }
 
-    handleDelete: function() {
+    handleDelete = () => {
         this.setState({deleteFocused: true});
-    },
+    }
 
-    toggleConsidered: function() {
+    toggleConsidered = () => {
         var newVal = findNextIn(CONSIDERED, this.props.considered);
         this.change({considered: newVal});
-    },
-});
+    }
+}
 
 module.exports = ExpressionEditor;

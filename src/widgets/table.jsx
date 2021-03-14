@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/prop-types, react/sort-comp, space-before-function-paren */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -11,7 +12,7 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 var Renderer = require("../renderer.jsx");
 var Util = require("../util.js");
 
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
 const {
@@ -50,46 +51,43 @@ var getRefForPath = function(path) {
     return "answer" + row + "," + column;
 };
 
-var Table = React.createClass({
-    propTypes: {
-        answers: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.string)
-        ),
-        editableHeaders: React.PropTypes.bool,
-        // The editor to use when editableHeaders is enabled
-        Editor: React.PropTypes.func,
-        headers: React.PropTypes.arrayOf(React.PropTypes.string),
-        keypadElement: keypadElementPropType,
-        trackInteraction: React.PropTypes.func.isRequired,
-        linterContext: linterContextProps,
-    },
+var defaultRows = 4;
+var defaultColumns = 1;
 
-    getDefaultProps: function() {
-        var defaultRows = 4;
-        var defaultColumns = 1;
-        var blankAnswers = _(defaultRows).times(function() {
-            return Util.stringArrayOfSize(defaultColumns);
-        });
-        return {
+class Table extends React.Component {
+    static propTypes = {
+        answers: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.string)
+        ),
+        editableHeaders: PropTypes.bool,
+        // The editor to use when editableHeaders is enabled
+        Editor: PropTypes.func,
+        headers: PropTypes.arrayOf(PropTypes.string),
+        //keypadElement: keypadElementPropType,
+        trackInteraction: PropTypes.func.isRequired,
+        linterContext: linterContextProps,
+    }
+    static defaultProps = {
             apiOptions: ApiOptions.defaults,
             headers: [""],
             editableHeaders: false,
             rows: defaultRows,
             columns: defaultColumns,
-            answers: blankAnswers,
+            answers: _.times(defaultRows,function() {
+                return Util.stringArrayOfSize(defaultColumns);
+            }),
             linterContext: linterContextDefault,
-        };
-    },
+    };
 
-    _getRows: function() {
+    _getRows() {
         return this.props.answers.length;
-    },
+    }
 
-    _getColumns: function() {
+    _getColumns() {
         return this.props.answers[0].length;
-    },
+    }
 
-    render: function() {
+    render() {
         var rows = this._getRows();
         var columns = this._getColumns();
         var headers = this.props.headers;
@@ -145,10 +143,10 @@ var Table = React.createClass({
                     </tr>
                 </thead>
                 <tbody>
-                    {_(rows).times(r => {
+                    {_.times(rows,r => {
                         return (
                             <tr key={r}>
-                                {_(columns).times(c => {
+                                {_.times(columns,c => {
                                     return (
                                         <td key={c}>
                                             <InputComponent
@@ -157,9 +155,9 @@ var Table = React.createClass({
                                                 )}
                                                 type="text"
                                                 value={this.props.answers[r][c]}
-                                                keypadElement={
+                                               /* keypadElement={
                                                     this.props.keypadElement
-                                                }
+                                                }*/
                                                 disabled={
                                                     this.props.apiOptions
                                                         .readOnly
@@ -188,13 +186,13 @@ var Table = React.createClass({
                 </tbody>
             </table>
         );
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return _.map(this.props.answers, _.clone);
-    },
+    }
 
-    onValueChange: function(row, column, eventOrValue) {
+    onValueChange(row, column, eventOrValue) {
         var answers = _.map(this.props.answers, _.clone);
 
         // If this is coming from an "input", the last argument will be an
@@ -207,34 +205,34 @@ var Table = React.createClass({
             answers: answers,
         });
         this.props.trackInteraction();
-    },
+    }
 
-    onHeaderChange: function(index, e) {
+    onHeaderChange(index, e) {
         var headers = this.props.headers.slice();
         headers[index] = e.content;
         this.props.onChange({
             headers: headers,
         });
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate(rubric) {
         return Table.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    _handleFocus: function(inputPath) {
+    _handleFocus(inputPath) {
         this.props.onFocus(inputPath);
-    },
+    }
 
-    _handleBlur: function(inputPath) {
+    _handleBlur(inputPath) {
         this.props.onBlur(inputPath);
-    },
+    }
 
-    focus: function() {
+    focus() {
         this.focusInputPath(getDefaultPath());
         return true;
-    },
+    }
 
-    focusInputPath: function(path) {
+    focusInputPath(path) {
         var inputID = getRefForPath(path);
         var inputComponent = this.refs[inputID];
         if (this.props.apiOptions.customKeypad) {
@@ -244,9 +242,9 @@ var Table = React.createClass({
         } else {
             ReactDOM.findDOMNode(inputComponent).focus();
         }
-    },
+    }
 
-    blurInputPath: function(path) {
+    blurInputPath(path) {
         var inputID = getRefForPath(path);
         var inputComponent = this.refs[inputID];
         if (this.props.apiOptions.customKeypad) {
@@ -256,31 +254,31 @@ var Table = React.createClass({
         } else {
             ReactDOM.findDOMNode(inputComponent).blur();
         }
-    },
+    }
 
-    getDOMNodeForPath: function(path) {
+    getDOMNodeForPath(path) {
         var inputID = getRefForPath(path);
         return ReactDOM.findDOMNode(this.refs[inputID]);
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         var rows = this._getRows();
         var columns = this._getColumns();
         var inputPaths = [];
-        _(rows).times(r => {
-            _(columns).times(c => {
+        _.times(rows,r => {
+            _.times(columns,c => {
                 var inputPath = getInputPath(r, c);
                 inputPaths.push(inputPath);
             });
         });
         return inputPaths;
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath(inputPath) {
         return "number";
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue(path, newValue, cb) {
         // Extract row, column information
         var row = getRowFromPath(path);
         var column = getColumnFromPath(path);
@@ -293,11 +291,11 @@ var Table = React.createClass({
             },
             cb
         );
-    },
-});
+    }
+}
 
 _.extend(Table, {
-    validate: function(state, rubric) {
+    validate(state, rubric) {
         var filterNonEmpty = function(table) {
             return _.filter(table, function(row) {
                 // Check if row has a cell that is nonempty
@@ -362,7 +360,7 @@ var propTransform = editorProps => {
     // Remove answers before passing to widget
     var rows = editorProps.answers.length;
     var columns = editorProps.answers[0].length;
-    var blankAnswers = _(rows).times(function() {
+    var blankAnswers = _.times(rows,function() {
         return Util.stringArrayOfSize(columns);
     });
     return _.extend({}, editorProps, {

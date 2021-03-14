@@ -6,6 +6,7 @@
 
 const React = require("react");
 const {StyleSheet, css} = require("aphrodite");
+const PropTypes = require('prop-types');
 
 const styleConstants = require("../../styles/constants.js");
 const {iconCheck, iconMinus} = require("../../icon-paths.js");
@@ -13,12 +14,12 @@ const InlineIcon = require("../../components/inline-icon.jsx");
 const FocusRing = require("./focus-ring.jsx");
 
 class SATChoiceIcon extends React.Component {
-    props: {
-        letter: string,
-        a11yText: string,
-        checked: boolean,
-        correct: boolean,
-        reviewMode: boolean,
+    props = {
+        letter: PropTypes.string,
+        a11yText: PropTypes.string,
+        checked: PropTypes.bool,
+        correct: PropTypes.bool,
+        reviewMode: PropTypes.bool,
     };
 
     // TODO(amy): figure out a better scheme for specifying these

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -34,14 +35,14 @@ function getUrlFromProgramID(programID) {
 var CSProgram = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        programID: React.PropTypes.string,
-        width: React.PropTypes.number,
-        height: React.PropTypes.number,
-        settings: React.PropTypes.array,
-        showEditor: React.PropTypes.bool,
-        showButtons: React.PropTypes.bool,
-        status: React.PropTypes.oneOf(["incomplete", "incorrect", "correct"]),
-        message: React.PropTypes.string,
+        programID: PropTypes.string,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        settings: PropTypes.array,
+        showEditor: PropTypes.bool,
+        showButtons: PropTypes.bool,
+        status: PropTypes.oneOf(["incomplete", "incorrect", "correct"]),
+        message: PropTypes.string,
     },
 
     getDefaultProps: function() {

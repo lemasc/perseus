@@ -4,6 +4,7 @@
 
 /* globals $_, i18n */
 var InfoTip = require("../components/info-tip.jsx");
+const PropTypes = require('prop-types');
 var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
@@ -29,10 +30,10 @@ var maxTrials = 5000;
 
 var Histogram = React.createClass({
     propTypes: {
-        data: React.PropTypes.arrayOf(React.PropTypes.number),
-        xAxisLabel: React.PropTypes.string,
-        yAxisLabel: React.PropTypes.string,
-        box: React.PropTypes.arrayOf(React.PropTypes.number),
+        data: PropTypes.arrayOf(PropTypes.number),
+        xAxisLabel: PropTypes.string,
+        yAxisLabel: PropTypes.string,
+        box: PropTypes.arrayOf(PropTypes.number),
     },
 
     getDefaultProps: function() {
@@ -388,16 +389,16 @@ var Simulator = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        data: React.PropTypes.arrayOf(React.PropTypes.number),
-        numTrials: React.PropTypes.number,
-        proportionLabel: React.PropTypes.string,
-        proportionOrPercentage: React.PropTypes.string,
-        randomSeed: React.PropTypes.number,
-        sampleSize: React.PropTypes.number,
-        trackInteraction: React.PropTypes.func.isRequired,
-        userProportion: React.PropTypes.number,
-        xAxisLabel: React.PropTypes.string,
-        yAxisLabel: React.PropTypes.string,
+        data: PropTypes.arrayOf(PropTypes.number),
+        numTrials: PropTypes.number,
+        proportionLabel: PropTypes.string,
+        proportionOrPercentage: PropTypes.string,
+        randomSeed: PropTypes.number,
+        sampleSize: PropTypes.number,
+        trackInteraction: PropTypes.func.isRequired,
+        userProportion: PropTypes.number,
+        xAxisLabel: PropTypes.string,
+        yAxisLabel: PropTypes.string,
     },
 
     getInitialState: function() {

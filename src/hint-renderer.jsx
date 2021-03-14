@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const {StyleSheet, css} = require("aphrodite");
 const classnames = require("classnames");
@@ -22,34 +23,30 @@ const {
 } = require("./gorgon/proptypes.js");
 
 /* Renders just a hint preview */
-const HintRenderer = React.createClass({
-    propTypes: {
+class HintRenderer extends React.Component {
+    static propTypes = {
         apiOptions: ApiOptions.propTypes,
-        className: React.PropTypes.string,
-        hint: React.PropTypes.any,
-        lastHint: React.PropTypes.bool,
-        lastRendered: React.PropTypes.bool,
-        pos: React.PropTypes.number,
-        totalHints: React.PropTypes.number,
-        findExternalWidgets: React.PropTypes.func,
+        className: PropTypes.string,
+        hint: PropTypes.any,
+        lastHint: PropTypes.bool,
+        lastRendered: PropTypes.bool,
+        pos: PropTypes.number,
+        totalHints: PropTypes.number,
+        findExternalWidgets: PropTypes.func,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             linterContext: linterContextDefault,
-        };
-    },
-
-    getSerializedState: function() {
+    }
+    
+    getSerializedState() {
         return this.refs.renderer.getSerializedState();
-    },
-
-    restoreSerializedState: function(state, callback) {
+    }
+    restoreSerializedState(state, callback) {
         this.refs.renderer.restoreSerializedState(state, callback);
-    },
-
-    render: function() {
+    }
+    render() {
         const {
             apiOptions,
             className,
@@ -117,8 +114,8 @@ const HintRenderer = React.createClass({
                 />
             </div>
         );
-    },
-});
+    }
+}
 
 const styles = StyleSheet.create({
     newHint: {

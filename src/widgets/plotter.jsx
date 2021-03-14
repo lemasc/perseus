@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, indent, max-lines, no-redeclare, no-unused-vars, no-var, object-curly-spacing, one-var, react/prop-types, react/sort-comp, space-before-function-paren */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -22,39 +23,38 @@ var BAR = "bar",
     DOTPLOT = "dotplot";
 
 const widgetPropTypes = {
-    type: React.PropTypes.oneOf([BAR, LINE, PIC, HISTOGRAM, DOTPLOT]),
-    labels: React.PropTypes.arrayOf(React.PropTypes.string),
-    categories: React.PropTypes.arrayOf(
-        React.PropTypes.oneOfType([
-            React.PropTypes.number,
-            React.PropTypes.string,
+    type: PropTypes.oneOf([BAR, LINE, PIC, HISTOGRAM, DOTPLOT]),
+    labels: PropTypes.arrayOf(PropTypes.string),
+    categories: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.number,
+            PropTypes.string,
         ])
     ),
 
-    scaleY: React.PropTypes.number,
-    maxY: React.PropTypes.number,
-    snapsPerLine: React.PropTypes.number,
+    scaleY: PropTypes.number,
+    maxY: PropTypes.number,
+    snapsPerLine: PropTypes.number,
 
-    picSize: React.PropTypes.number,
-    pixBoxHeight: React.PropTypes.number,
-    picUrl: React.PropTypes.string,
+    picSize: PropTypes.number,
+    pixBoxHeight: PropTypes.number,
+    picUrl: PropTypes.string,
 
-    plotDimensions: React.PropTypes.arrayOf(React.PropTypes.number),
-    labelInterval: React.PropTypes.number,
-    starting: React.PropTypes.arrayOf(React.PropTypes.number),
-    static: React.PropTypes.bool,
+    plotDimensions: PropTypes.arrayOf(PropTypes.number),
+    labelInterval: PropTypes.number,
+    starting: PropTypes.arrayOf(PropTypes.number),
+    static: PropTypes.bool,
 };
 
-var Plotter = React.createClass({
-    propTypes: {
-        onChange: React.PropTypes.func.isRequired,
-        trackInteraction: React.PropTypes.func.isRequired,
+class Plotter extends React.Component {
+    static propTypes = {
+        onChange: PropTypes.func.isRequired,
+        trackInteraction: PropTypes.func.isRequired,
         // TODO(alex): Figure out why lint chokes on this line
         // ...widgetPropTypes,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             type: BAR,
             labels: ["", ""],
             categories: [""],
@@ -69,26 +69,26 @@ var Plotter = React.createClass({
 
             plotDimensions: [380, 300],
             labelInterval: 1,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             values: this.props.starting || [1],
         };
-    },
+    }
 
-    DOT_PLOT_POINT_SIZE: function() {
+    DOT_PLOT_POINT_SIZE = () => {
         return this.props.apiOptions.isMobile ? 6 : 4;
-    },
-    DOT_PLOT_POINT_PADDING: function() {
+    }
+    DOT_PLOT_POINT_PADDING() {
         return 8;
-    },
-    DOT_TICK_POINT_SIZE: function() {
+    }
+    DOT_TICK_POINT_SIZE() {
         return 2;
-    },
+    }
 
-    render: function() {
+    render() {
         // TODO(kevinb) actually compute the size of the graphie correctly and
         // make it that size so we don't have to add extra padding.  The value
         // was determined by eye-balling the layout.  :(
@@ -107,19 +107,19 @@ var Plotter = React.createClass({
                 style={style}
             />
         );
-    },
+    }
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdaten(prevProps, prevState) {
         if (this.shouldSetupGraphie) {
             this.setupGraphie(prevState);
         }
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.setupGraphie(this.state);
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         var props = [
             "type",
             "labels",
@@ -147,9 +147,9 @@ var Plotter = React.createClass({
             this.shouldSetupGraphie = true;
             this.setState({values: nextProps.starting});
         }
-    },
+    }
 
-    setupGraphie: function(prevState) {
+    setupGraphie = prevState => {
         var self = this;
         self.shouldSetupGraphie = false;
         var graphieDiv = ReactDOM.findDOMNode(self.refs.graphieDiv);
@@ -414,9 +414,9 @@ var Plotter = React.createClass({
 
             this.hairlineRange = [[0, c.dimX], [0, c.dimY]];
         }
-    },
+    }
 
-    showHairlines: function(point) {
+    showHairlines = (point) => {
         if (this.props.apiOptions.isMobile && this.props.markings !== "none") {
             // Hairlines are already initialized when the graph is loaded, so
             // here we just move them to the updated location and make them
@@ -428,15 +428,15 @@ var Plotter = React.createClass({
 
             this.horizHairline.show();
         }
-    },
+    }
 
-    hideHairlines: function() {
+    hideHairlines = () => {
         if (this.props.apiOptions.isMobile) {
             this.horizHairline.hide();
         }
-    },
+    }
 
-    labelCategory: function(x, category) {
+    labelCategory = (x, category) => {
         const isMobile = this.props.apiOptions.isMobile;
 
         var graphie = this.graphie;
@@ -467,9 +467,9 @@ var Plotter = React.createClass({
                     isTeX
                 )
         );
-    },
+    }
 
-    setupCategories: function(config) {
+    setupCategories = (config) => {
         var self = this;
         var c = config;
         var graphie = self.graphie;
@@ -559,27 +559,27 @@ var Plotter = React.createClass({
                 );
             });
         }
-    },
+    }
 
-    _clampValue: function(v, min, max) {
+    _clampValue = (v, min, max) => {
         return Math.max(Math.min(v, max), min);
-    },
+    }
 
-    _maybeShowDragPrompt: function() {
+    _maybeShowDragPrompt = () => {
         // The drag prompt is only added on certain types of plots.
         if (this.graphie.dragPrompt != null) {
             this.graphie.dragPrompt[0].style.display = "inline";
         }
-    },
+    }
 
-    _maybeHideDragPrompt: function() {
+    _maybeHideDragPrompt = () => {
         // The drag prompt is only added on certain types of plots.
         if (this.graphie.dragPrompt != null) {
             this.graphie.dragPrompt[0].style.display = "none";
         }
-    },
+    }
 
-    setupBar: function(args) {
+    setupBar = (args) => {
         const isMobile = this.props.apiOptions.isMobile;
 
         var i = args.index;
@@ -761,7 +761,7 @@ var Plotter = React.createClass({
 
         scaleBar(i, startHeight);
         return x;
-    },
+    }
 
     /**
      * Renders a segment of an interactive line to the plotter graph
@@ -769,7 +769,7 @@ var Plotter = React.createClass({
      * @param startHeight the initial height of the given point
      * @param config the graph setup, such as scale and dimensions
      */
-    setupLine: function(i, startHeight, config) {
+    setupLine = (i, startHeight, config) => {
         const isMobile = this.props.apiOptions.isMobile;
 
         var self = this;
@@ -858,9 +858,9 @@ var Plotter = React.createClass({
         }
 
         return x;
-    },
+    }
 
-    setupDotplot: function(i, config) {
+    setupDotplot = (i, config) => {
         var graphie = this.graphie;
         const isMobile = this.props.apiOptions.isMobile;
 
@@ -877,9 +877,9 @@ var Plotter = React.createClass({
                 }
             );
         });
-    },
+    }
 
-    setupPic: function(i, config) {
+    setupPic = (i, config) => {
         var graphie = this.graphie;
         return this.setupTiledPlot(i, 0, config, (x, y) => {
             var scaledCenter = graphie.scalePoint([x, y]);
@@ -892,9 +892,9 @@ var Plotter = React.createClass({
                 size
             );
         });
-    },
+    }
 
-    setupTiledPlot: function(i, bottomMargin, config, createImage) {
+    setupTiledPlot = (i, bottomMargin, config, createImage) => {
         var self = this;
         var c = config;
         var graphie = self.graphie;
@@ -912,7 +912,7 @@ var Plotter = React.createClass({
         pics[i] = [];
         dotTicks[i] = [];
         var n = Math.round(c.dimY / c.scaleY) + 1;
-        _(n).times(function(j) {
+        _.times(n,function(j) {
             j -= 1;
             var midY = (j + 0.5) * c.scaleY;
             var leftX = x - c.picBoxWidth / 2;
@@ -973,22 +973,22 @@ var Plotter = React.createClass({
             );
         });
         return x;
-    },
+    }
 
-    setPicHeight: function(i, y) {
+    setPicHeight = (i, y) => {
         var values = _.clone(this.state.values);
         values[i] = y;
         this.drawPicHeights(values, this.state.values);
         this.setState({values: values});
         this.changeAndTrack({values: values});
-    },
+    }
 
-    changeAndTrack: function(data) {
+    changeAndTrack = (data) => {
         this.props.onChange(data);
         this.props.trackInteraction();
-    },
+    }
 
-    drawPicHeights: function(values, prevValues) {
+    drawPicHeights = (values, prevValues) => {
         var self = this;
         var graphie = self.graphie;
         var pics = graphie.pics;
@@ -1032,16 +1032,16 @@ var Plotter = React.createClass({
                     show || !isMobile ? "none" : "inline";
             });
         });
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return this.state.values;
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return Plotter.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Plotter, {
     validate: function(guess, rubric) {

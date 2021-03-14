@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /**
  * A side by side diff view for Perseus exercise items.
  */
@@ -8,20 +9,20 @@ const _ = require("underscore");
 const RendererDiff = require("./renderer-diff.jsx");
 const WidgetDiff = require("./widget-diff.jsx");
 
-const itemProps = React.PropTypes.shape({
-    question: React.PropTypes.shape({}).isRequired,
-    answerArea: React.PropTypes.shape({}).isRequired,
-    hints: React.PropTypes.array.isRequired,
+const itemProps = PropTypes.shape({
+    question: PropTypes.shape({}).isRequired,
+    answerArea: PropTypes.shape({}).isRequired,
+    hints: PropTypes.array.isRequired,
 });
 
 
-const ItemDiff = React.createClass({
-    propTypes: {
+class ItemDiff extends React.Component {
+    static propTypes = {
         after: itemProps.isRequired,
         before: itemProps.isRequired,
-    },
+    }
 
-    render: function() {
+    render() {
         const {before, after} = this.props;
 
         const hintCount = Math.max(before.hints.length, after.hints.length);
@@ -57,7 +58,7 @@ const ItemDiff = React.createClass({
             {hints && <div className="diff-separator"/>}
             {hints}
         </div>;
-    },
-});
+    }
+}
 
 module.exports = ItemDiff;

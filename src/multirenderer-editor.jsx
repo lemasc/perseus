@@ -9,6 +9,8 @@ const {StyleSheet, css} = require("aphrodite");
 const React = require("react");
 const ReactDOM = require("react-dom");
 const lens = require("../hubble/index.js");
+const createClass = require("create-react-class");
+const PropTypes = require('prop-types');
 
 const ApiOptions = require("./perseus-api.jsx").Options;
 const Editor = require("./editor.jsx");
@@ -32,12 +34,12 @@ const EDITOR_MODES = ["edit", "preview", "json"];
  * The mode dropdown is the selector at the top of the editor that lets you
  * switch between edit, preview, and dev-only JSON mode.
  */
-const ModeDropdown = React.createClass({
+const ModeDropdown = createClass({
     propTypes: {
-        currentMode: React.PropTypes.oneOf(EDITOR_MODES),
+        currentMode: PropTypes.oneOf(EDITOR_MODES),
 
         // A function that takes in a string signifying the mode (ex: "edit")
-        onChange: React.PropTypes.func,
+        onChange: PropTypes.func,
     },
 
     _handleSelectMode: function(event) {
@@ -112,32 +114,32 @@ function Header({depth, ...props}) {
     return <HeaderTag {...props} />;
 }
 Header.propTypes = {
-    depth: React.PropTypes.number.isRequired,
+    depth: PropTypes.number.isRequired,
 };
 
 const nodePropTypes = {
     shape: shapePropType,
-    data: React.PropTypes.any.isRequired,
-    path: React.PropTypes.arrayOf(
-        React.PropTypes.oneOfType([
-            React.PropTypes.string.isRequired,
-            React.PropTypes.number.isRequired,
+    data: PropTypes.any.isRequired,
+    path: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string.isRequired,
+            PropTypes.number.isRequired,
         ])
     ).isRequired,
-    actions: React.PropTypes.shape({
-        addArrayElement: React.PropTypes.func.isRequired,
-        mergeValueAtPath: React.PropTypes.func.isRequired,
-        setValueAtPath: React.PropTypes.func.isRequired,
-        moveArrayElementDown: React.PropTypes.func.isRequired,
-        moveArrayElementUp: React.PropTypes.func.isRequired,
-        removeArrayElement: React.PropTypes.func.isRequired,
+    actions: PropTypes.shape({
+        addArrayElement: PropTypes.func.isRequired,
+        mergeValueAtPath: PropTypes.func.isRequired,
+        setValueAtPath: PropTypes.func.isRequired,
+        moveArrayElementDown: PropTypes.func.isRequired,
+        moveArrayElementUp: PropTypes.func.isRequired,
+        removeArrayElement: PropTypes.func.isRequired,
     }).isRequired,
-    apiOptions: React.PropTypes.any.isRequired, // TODO(mdr): real proptype?
+    apiOptions: PropTypes.any.isRequired, // TODO(mdr): real proptype?
 
     // For the left-hand column, we use edit mode and leave renderers empty.
     // For the right-hand column, we use preview mode and provide renderers
     // via a MultiRenderer.
-    renderers: React.PropTypes.any,
+    renderers: PropTypes.any,
 };
 
 /**
@@ -197,7 +199,7 @@ const NodeContainer = props => {
 };
 NodeContainer.propTypes = {
     ...nodePropTypes,
-    controls: React.PropTypes.arrayOf(React.PropTypes.node),
+    controls: PropTypes.arrayOf(PropTypes.node),
 };
 
 const LeafContainer = ({name, controls, children, path, shape}) => {
@@ -233,10 +235,10 @@ const LeafContainer = ({name, controls, children, path, shape}) => {
     );
 };
 LeafContainer.propTypes = {
-    name: React.PropTypes.string,
-    controls: React.PropTypes.node,
-    children: React.PropTypes.node,
-    path: React.PropTypes.arrayOf(React.PropTypes.any).isRequired,
+    name: PropTypes.string,
+    controls: PropTypes.node,
+    children: PropTypes.node,
+    path: PropTypes.arrayOf(PropTypes.any).isRequired,
     shape: shapePropType,
 };
 
@@ -269,13 +271,13 @@ const ArrayContainer = props => {
     );
 };
 ArrayContainer.propTypes = {
-    name: React.PropTypes.string,
-    controls: React.PropTypes.node,
-    children: React.PropTypes.node,
-    path: React.PropTypes.arrayOf(React.PropTypes.any).isRequired,
+    name: PropTypes.string,
+    controls: PropTypes.node,
+    children: PropTypes.node,
+    path: PropTypes.arrayOf(PropTypes.any).isRequired,
     shape: shapePropType,
-    actions: React.PropTypes.shape({
-        addArrayElement: React.PropTypes.func.isRequired,
+    actions: PropTypes.shape({
+        addArrayElement: PropTypes.func.isRequired,
     }).isRequired,
 };
 
@@ -326,10 +328,10 @@ const ObjectContainer = ({name, controls, children, path}) => {
     );
 };
 ObjectContainer.propTypes = {
-    name: React.PropTypes.string,
-    controls: React.PropTypes.node,
-    children: React.PropTypes.node,
-    path: React.PropTypes.arrayOf(React.PropTypes.any).isRequired,
+    name: PropTypes.string,
+    controls: PropTypes.node,
+    children: PropTypes.node,
+    path: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 /**
@@ -697,16 +699,16 @@ const ObjectNodeContent = props => {
 };
 ObjectNodeContent.propTypes = nodePropTypes;
 
-const MultiRendererEditor = React.createClass({
+const MultiRendererEditor = createClass({
     propTypes: {
-        Layout: React.PropTypes.func,
+        Layout: PropTypes.func,
         // TODO(emily): use ApiOptions.propTypes
-        apiOptions: React.PropTypes.any.isRequired,
+        apiOptions: PropTypes.any.isRequired,
 
-        item: React.PropTypes.any.isRequired,
-        editorMode: React.PropTypes.oneOf(EDITOR_MODES).isRequired,
+        item: PropTypes.any.isRequired,
+        editorMode: PropTypes.oneOf(EDITOR_MODES).isRequired,
 
-        onChange: React.PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
     },
 
     _renderLayout() {

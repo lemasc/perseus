@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 var classNames = require("classnames");
+const PropTypes = require('prop-types');
 var React = require("react");
 var ReactDOM = require("react-dom");
 var Tooltip = require("react-components/tooltip.jsx");
@@ -17,13 +18,14 @@ const KhanAnswerTypes = require("../util/answer-types.js");
 const InlineIcon = require("../components/inline-icon.jsx");
 var InputWithExamples = require("../components/input-with-examples.jsx");
 var MathInput = require("../components/math-input.jsx");
-var TexButtons = require("../components/tex-buttons.jsx");
-const {KeypadInput} = require("../../math-input").components;
+var { buttonSetsType } = require("../components/tex-buttons.jsx");
+//TODO_SZ
+/*const {KeypadInput} = require("../../math-input").components;
 const {
     keypadConfigurationPropType,
     keypadElementPropType,
 } = require("../../math-input").propTypes;
-const {KeypadTypes} = require("../../math-input").consts;
+const {KeypadTypes} = require("../../math-input").consts;*/
 const {
     linterContextProps,
     linterContextDefault,
@@ -84,47 +86,46 @@ var insertBraces = value => {
 };
 
 // The new, MathQuill input expression widget
-var Expression = React.createClass({
-    propTypes: {
+class Expression extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        buttonSets: TexButtons.buttonSetsType,
-        buttonsVisible: React.PropTypes.oneOf(["always", "never", "focused"]),
-        functions: React.PropTypes.arrayOf(React.PropTypes.string),
-        keypadConfiguration: keypadConfigurationPropType,
-        keypadElement: keypadElementPropType,
-        times: React.PropTypes.bool,
-        trackInteraction: React.PropTypes.func.isRequired,
-        value: React.PropTypes.string,
-        widgetId: React.PropTypes.string.isRequired,
+        buttonSets: buttonSetsType,
+        buttonsVisible: PropTypes.oneOf(["always", "never", "focused"]),
+        functions: PropTypes.arrayOf(PropTypes.string),
+        //keypadConfiguration: keypadConfigurationPropType,
+        //keypadElement: keypadElementPropType,
+        times: PropTypes.bool,
+        trackInteraction: PropTypes.func.isRequired,
+        value: PropTypes.string,
+        widgetId: PropTypes.string.isRequired,
         linterContext: linterContextProps,
-    },
-
-    getDefaultProps: function() {
-        return {
-            value: "",
-            times: false,
-            functions: [],
-            buttonSets: ["basic", "trig", "prealgebra", "logarithms"],
-            onFocus: function() {},
-            onBlur: function() {},
-            apiOptions: ApiOptions.defaults,
-            linterContext: linterContextDefault,
-        };
-    },
-
-    getInitialState: function() {
-        return {
+    }
+    static defaultProps = {
+        value: "",
+        times: false,
+        functions: [],
+        buttonSets: ["basic", "trig", "prealgebra", "logarithms"],
+        onFocus() {},
+        onBlur() {},
+        apiOptions: ApiOptions.defaults,
+        linterContext: linterContextDefault,
+    };
+    
+    constructor(props) {
+        super(props);
+        this.state = {
             showErrorTooltip: false,
             showErrorText: false,
         };
-    },
+        this.input = React.createRef();
+    }
 
-    change(...args) {
+    change = (...args) => {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    parse: function(value, props) {
+    parse(value, props) {
         // TODO(jack): Disable icu for content creators here, or
         // make it so that solution answers with ','s or '.'s work
         var options = _.pick(props || this.props, "functions");
@@ -132,13 +133,13 @@ var Expression = React.createClass({
             _.extend(options, window.icu.getDecimalFormatSymbols());
         }
         return KAS.parse(insertBraces(value), options);
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.props.apiOptions.customKeypad) {
             return (
                 <KeypadInput
-                    ref="input"
+                    ref={this.input}
                     value={this.props.value}
                     keypadElement={this.props.keypadElement}
                     onChange={this.changeAndTrack}
@@ -161,7 +162,7 @@ var Expression = React.createClass({
             // component used by InputNumber and NumericInput
             return (
                 <InputWithExamples
-                    ref="input"
+                    ref={this.input}
                     value={this.props.value}
                     type={"tex"}
                     examples={[]}
@@ -219,7 +220,7 @@ var Expression = React.createClass({
             return (
                 <span className={className}>
                     <MathInput
-                        ref="input"
+                        ref={this.input}
                         className={ApiClassNames.INTERACTIVE}
                         value={this.props.value}
                         onChange={this.changeAndTrack}
@@ -233,28 +234,28 @@ var Expression = React.createClass({
                 </span>
             );
         }
-    },
+    }
 
-    changeAndTrack: function(e, cb) {
+    changeAndTrack = (e, cb) => {
         this.change("value", e, cb);
         this.props.trackInteraction();
-    },
+    }
 
-    _handleFocus: function() {
+    _handleFocus = () => {
         this.props.onFocus([]);
-    },
+    }
 
-    _handleBlur: function() {
+    _handleBlur = () => {
         this.props.onBlur([]);
-    },
+    }
 
-    errorTimeout: null,
+    errorTimeout = null
 
     // Whenever the input value changes, attempt to parse it.
     //
     // Clear any errors if this parse succeeds, show an error within a second
     // if it fails.
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (
             !_.isEqual(this.props.value, nextProps.value) ||
             !_.isEqual(this.props.functions, nextProps.functions)
@@ -277,71 +278,71 @@ var Expression = React.createClass({
                 }, 2000);
             }
         }
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         clearTimeout(this.errorTimeout);
-    },
+    }
 
-    focus: function() {
+    focus() {
         if (this.props.apiOptions.customKeypad) {
-            this.refs.input.focus();
+            this.input.current.focus();
         } else {
             // The buttons are often on top of text you're trying to read, so
             // don't focus the editor automatically.
         }
 
         return true;
-    },
+    }
 
-    focusInputPath: function(inputPath) {
-        this.refs.input.focus();
-    },
+    focusInputPath = (inputPath) => {
+        this.input.current.focus();
+    }
 
-    blurInputPath: function(inputPath) {
-        this.refs.input.blur();
-    },
+    blurInputPath = (inputPath) => {
+        this.input.current.blur();
+    }
 
     // HACK(joel)
-    insert: function(text) {
+    insert(text) {
         if (!this.props.apiOptions.staticRender) {
-            this.refs.input.insert(text);
+            this.input.current.insert(text);
         }
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         // The widget itself is an input, so we return a single empty list to
         // indicate this.
         return [[]];
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath(inputPath) {
         return "expression";
-    },
+    }
 
-    setInputValue: function(path, newValue, cb) {
+    setInputValue(path, newValue, cb) {
         this.props.onChange(
             {
                 value: newValue,
             },
             cb
         );
-    },
+    }
 
-    getAcceptableFormatsForInputPath: function() {
+    getAcceptableFormatsForInputPath() {
         // TODO(charlie): What format does the mobile team want this in?
         return null;
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput() {
         return insertBraces(this.props.value);
-    },
+    }
 
-    simpleValidate: function(rubric, onInputError) {
+    simpleValidate(rubric, onInputError) {
         onInputError = onInputError || function() {};
         return Expression.validate(this.getUserInput(), rubric, onInputError);
-    },
-});
+    }
+}
 
 /* Content creators input a list of answers which are matched from top to
  * bottom. The intent is that they can include spcific solutions which should
@@ -362,7 +363,7 @@ var Expression = React.createClass({
  * - Otherwise, pass through the resulting points and message.
  */
 _.extend(Expression, {
-    validate: function(state, rubric, onInputError) {
+    validate(state, rubric, onInputError) {
         var options = _.clone(rubric);
         if (window.icu && window.icu.getDecimalFormatSymbols) {
             _.extend(options, window.icu.getDecimalFormatSymbols());
@@ -375,7 +376,7 @@ _.extend(Expression, {
                 // don't want a solution to work if the student is using a
                 // different language but not in english.
                 KAS.parse(answer.value, rubric).expr,
-                _({}).extend(options, {
+                _.extend(options, {
                     simplify: answer.simplify,
                     form: answer.form,
                 })
@@ -386,7 +387,7 @@ _.extend(Expression, {
         var result;
         var matchingAnswer;
         var allEmpty = true;
-        var foundMatch = !!_(rubric.answerForms).find(answer => {
+        var foundMatch = !!_().find(rubric.answerForms,answer => {
             var validate = createValidator(answer);
 
             // save these because they'll be needed if this answer matches
@@ -444,7 +445,7 @@ _.extend(Expression, {
                 message: message,
             };
         }
-    },
+    }
 });
 
 /**
@@ -461,8 +462,9 @@ _.extend(Expression, {
 const keypadConfigurationForProps = props => {
     // Always use the Expression keypad, regardless of the button sets that have
     // been enabled.
-    const keypadType = KeypadTypes.EXPRESSION;
-
+    //const keypadType = KeypadTypes.EXPRESSION;
+    const keypadType = "EXPRESSION";
+    
     // Extract any and all variables and constants from the answer forms.
     const uniqueExtraVariables = {};
     const uniqueExtraConstants = {};
@@ -546,7 +548,7 @@ var propUpgrades = {
                 simplify: v0props.simplify,
                 value: v0props.value,
                 key: 0,
-            },
+            }
         ],
     }),
 };

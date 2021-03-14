@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-alert, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/prop-types, react/sort-comp, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -39,15 +40,15 @@ var StepControlButton = React.createClass({
 
 const SequenceEditor = React.createClass({
     propTypes: {
-        json: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                content: React.PropTypes.string,
-                widgets: React.PropTypes.object,
-                images: React.PropTypes.object,
+        json: PropTypes.arrayOf(
+            PropTypes.shape({
+                content: PropTypes.string,
+                widgets: PropTypes.object,
+                images: PropTypes.object,
             })
         ),
         apiOptions: ApiOptions.propTypes,
-        onChange: React.PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
     },
 
     getDefaultProps: function() {

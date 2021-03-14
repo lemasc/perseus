@@ -15,8 +15,9 @@ window.Khan = {
 };
 
 const Perseus = (window.Perseus = require("./editor-perseus.js"));
-const ReactDOM = (window.ReactDOM = React.__internalReactDOM);
-
+//const ReactDOM = (window.ReactDOM = React.__internalReactDOM);
+//const React = require("react");
+const ReactDOM = (window.ReactDOM = require("react-dom"));
 const EditorDemo = require("./editor-demo.jsx");
 const RendererDemo = require("./renderer-demo.jsx");
 const ArticleDemo = require("./article-demo.jsx");

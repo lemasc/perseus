@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable react/forbid-prop-types, react/sort-comp */
 
 const React = require("react");
@@ -8,21 +9,19 @@ const truth = () => true;
 /* A minor abstraction on top of NumberInput for ranges
  *
  */
-const RangeInput = React.createClass({
-    propTypes: {
-        value: React.PropTypes.array.isRequired,
-        onChange: React.PropTypes.func.isRequired,
-        placeholder: React.PropTypes.array,
-        checkValidity: React.PropTypes.func,
-    },
+class RangeInput extends React.Component {
+    static propTypes = {
+        value: PropTypes.array.isRequired,
+        onChange: PropTypes.func.isRequired,
+        placeholder: PropTypes.array,
+        checkValidity: PropTypes.func,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             placeholder: [null, null],
-        };
-    },
+    };
 
-    render: function() {
+    render() {
         const value = this.props.value;
         const checkValidity = this.props.checkValidity || truth;
 
@@ -44,16 +43,16 @@ const RangeInput = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    onChange: function(i, newVal) {
+    onChange = (i, newVal) => {
         const value = this.props.value;
         if (i === 0) {
             this.props.onChange([newVal, value[1]]);
         } else {
             this.props.onChange([value[0], newVal]);
         }
-    },
-});
+    }
+}
 
 module.exports = RangeInput;

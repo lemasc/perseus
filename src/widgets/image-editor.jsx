@@ -20,7 +20,7 @@ const RangeInput = require("../components/range-input.jsx");
 const defaultBoxSize = 400;
 const defaultRange = [0, 10];
 const defaultBackgroundImage = {
-    url: null,
+    url: "",
     width: 0,
     height: 0,
 };
@@ -55,21 +55,20 @@ var captionAlignments = [
     "above left",
 ];
 
-const ImageEditor = React.createClass({
-    propTypes: {
+class ImageEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // defer this because it can call a change handler synchronously
         _.defer(() => {
             var url = this.props.backgroundImage.url;
             this.onUrlChange(url, true);
         });
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             title: "",
             range: [defaultRange, defaultRange],
             box: [defaultBoxSize, defaultBoxSize],
@@ -78,15 +77,15 @@ const ImageEditor = React.createClass({
             alt: "",
             caption: "",
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             backgroundImageError: "",
         };
-    },
+    }
 
-    render: function() {
+    render() {
         var backgroundImage = this.props.backgroundImage;
 
         var imageSettings = (
@@ -154,9 +153,9 @@ const ImageEditor = React.createClass({
                 {backgroundImage.url && imageSettings}
             </div>
         );
-    },
+    }
 
-    _renderRowForLabel: function(label, i) {
+    _renderRowForLabel = (label, i) => {
         return (
             <tr key={i}>
                 <td>
@@ -200,46 +199,46 @@ const ImageEditor = React.createClass({
                 </td>
             </tr>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    removeLabel: function(labelIndex, e) {
+    removeLabel = (labelIndex, e) => {
         e.preventDefault();
-        var labels = _(this.props.labels).clone();
+        var labels = _.clone(this.props.labels);
         labels.splice(labelIndex, 1);
         this.props.onChange({labels: labels});
-    },
+    }
 
-    onCoordinateChange: function(labelIndex, newCoordinates) {
+    onCoordinateChange = (labelIndex, newCoordinates) => {
         var labels = this.props.labels.slice();
         labels[labelIndex] = _.extend({}, labels[labelIndex], {
             coordinates: newCoordinates,
         });
         this.props.onChange({labels: labels});
-    },
+    }
 
-    onContentChange: function(labelIndex, e) {
+    onContentChange = (labelIndex, e) => {
         var newContent = e.target.value;
         var labels = this.props.labels.slice();
         labels[labelIndex] = _.extend({}, labels[labelIndex], {
             content: newContent,
         });
         this.props.onChange({labels: labels});
-    },
+    }
 
-    onAlignmentChange: function(labelIndex, e) {
+    onAlignmentChange = (labelIndex, e) => {
         var newAlignment = e.target.value;
         var labels = this.props.labels.slice();
         labels[labelIndex] = _.extend({}, labels[labelIndex], {
             alignment: newAlignment,
         });
         this.props.onChange({labels: labels});
-    },
+    }
 
-    setUrl: function(url, width, height, silent) {
+    setUrl = (url, width, height, silent) => {
         // Because this calls into WidgetEditor._handleWidgetChange, which
         // checks for this widget's ref to serialize it.
         //
@@ -262,12 +261,12 @@ const ImageEditor = React.createClass({
             null,
             silent
         );
-    },
+    }
 
     // silently load the image when the component mounts
     // silently update url and sizes when the image loads
     // noisily load the image in response to the author changing it
-    onUrlChange: function(url, silent) {
+    onUrlChange = (url, silent) => {
         // All article content must be KA-owned!
         if (!INTERNALLY_HOSTED_URL_RE.test(url)) {
             this.setState({
@@ -298,17 +297,17 @@ const ImageEditor = React.createClass({
 
             this.setUrl(url, width, height, true);
         });
-    },
+    }
 
-    onRangeChange: function(type, newRange) {
+    onRangeChange = (type, newRange) => {
         var range = this.props.range.slice();
         range[type] = newRange;
         this.props.onChange({range: range});
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = ImageEditor;

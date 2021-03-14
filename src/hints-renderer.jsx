@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 const {StyleSheet, css} = require("aphrodite");
@@ -6,7 +7,7 @@ const _ = require("underscore");
 const i18n = window.i18n;
 
 const HintRenderer = require("./hint-renderer.jsx");
-const SvgImage = require("./components/svg-image.jsx");
+const {getRealImageUrl} = require("./components/svg-image.jsx");
 const ApiOptionsProps = require("./mixins/api-options-props.js");
 
 const mediaQueries = require("./styles/media-queries.js");
@@ -25,27 +26,21 @@ const {
     linterContextDefault,
 } = require("./gorgon/proptypes.js");
 
-const HintsRenderer = React.createClass({
-    propTypes: {
+class HintsRenderer extends React.Component {
+    static propTypes = {
         ...ApiOptionsProps.propTypes,
-        className: React.PropTypes.string,
-        hints: React.PropTypes.arrayOf(React.PropTypes.any),
-        hintsVisible: React.PropTypes.number,
-        findExternalWidgets: React.PropTypes.func,
+        className: PropTypes.string,
+        hints: PropTypes.arrayOf(PropTypes.any),
+        hintsVisible: PropTypes.number,
+        findExternalWidgets: PropTypes.func,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
-            linterContext: linterContextDefault,
-        };
-    },
-
-    componentDidMount: function() {
+    componentDidMount() {
         this._cacheHintImages();
-    },
+    }
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         if (
             !_.isEqual(prevProps.hints, this.props.hints) ||
             prevProps.hintsVisible !== this.props.hintsVisible
@@ -58,24 +53,24 @@ const HintsRenderer = React.createClass({
             const pos = this.props.hintsVisible - 1;
             ReactDOM.findDOMNode(this.refs["hintRenderer" + pos]).focus();
         }
-    },
+    }
 
-    _hintsVisible: function() {
+    _hintsVisible() {
         if (this.props.hintsVisible == null || this.props.hintsVisible === -1) {
             return this.props.hints.length;
         } else {
             return this.props.hintsVisible;
         }
-    },
+    }
 
-    _cacheImagesInHint: function(hint) {
+    _cacheImagesInHint(hint) {
         _.each(hint.images, (data, src) => {
             const image = new Image();
-            image.src = SvgImage.getRealImageUrl(src);
+            image.src = getRealImageUrl(src);
         });
-    },
+    }
 
-    _cacheHintImages: function() {
+    _cacheHintImages() {
         // Only cache images in the first hint at the start. When hints are
         // taken, cache images in the rest of the hints
         if (this._hintsVisible() > 0) {
@@ -83,19 +78,19 @@ const HintsRenderer = React.createClass({
         } else if (this.props.hints.length > 0) {
             this._cacheImagesInHint(this.props.hints[0]);
         }
-    },
+    }
 
     getApiOptions() {
         return ApiOptionsProps.getApiOptions.call(this);
-    },
+    }
 
-    getSerializedState: function() {
+    getSerializedState() {
         return _.times(this._hintsVisible(), i => {
             return this.refs["hintRenderer" + i].getSerializedState();
         });
-    },
+    }
 
-    restoreSerializedState: function(state, callback) {
+    restoreSerializedState(state, callback) {
         // We need to wait until all the renderers are finished restoring their
         // state before we fire our callback.
         let numCallbacks = 1;
@@ -122,9 +117,9 @@ const HintsRenderer = React.createClass({
         // This makes sure that the callback is fired if there aren't any
         // mounted renderers.
         fireCallback();
-    },
+    }
 
-    render: function() {
+    render() {
         const apiOptions = this.getApiOptions();
         const hintsVisible = this._hintsVisible();
         const hints = [];
@@ -214,8 +209,12 @@ const HintsRenderer = React.createClass({
                     </button>}
             </div>
         );
-    },
-});
+    }
+}
+
+HintsRenderer.defaultProps = {
+    linterContext: linterContextDefault,
+};
 
 const hintIndentation = baseUnitPx + hintBorderWidth;
 

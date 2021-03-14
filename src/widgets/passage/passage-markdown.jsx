@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -44,25 +45,23 @@ var CIRCLE_LABEL_STYLE = {
     textAlign: "center",
 };
 
-var RefStart = React.createClass({
-    propTypes: {
-        refContent: React.PropTypes.node.isRequired,
-    },
+class RefStart extends React.Component {
+    static propTypes =  {
+        refContent: PropTypes.node.isRequired,
+    }
 
-    render: function() {
+    render() {
         return <span style={REF_STYLE}>_</span>;
-    },
+    }
 
-    getRefContent: function() {
+    getRefContent() {
         return this.props.refContent;
-    },
-});
+    }
+}
 
-var RefEnd = React.createClass({
-    render: function() {
-        return <span style={REF_STYLE}>_</span>;
-    },
-});
+var RefEnd = function() {
+    return <span style={REF_STYLE}>_</span>;
+}
 
 var rules = {
     newline: SimpleMarkdown.defaultRules.newline,

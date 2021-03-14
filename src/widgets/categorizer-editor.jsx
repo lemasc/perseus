@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, comma-dangle, indent, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -13,30 +14,28 @@ const TextListEditor = require("../components/text-list-editor.jsx");
 
 const Categorizer = require("./categorizer.jsx").widget;
 
-const CategorizerEditor = React.createClass({
-    propTypes: {
+class CategorizerEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
         apiOptions: ApiOptions.propTypes,
-        items: React.PropTypes.arrayOf(React.PropTypes.string),
-        categories: React.PropTypes.arrayOf(React.PropTypes.string),
-        values: React.PropTypes.arrayOf(React.PropTypes.number),
-        randomizeItems: React.PropTypes.bool,
-    },
+        items: PropTypes.arrayOf(PropTypes.string),
+        categories: PropTypes.arrayOf(PropTypes.string),
+        values: PropTypes.arrayOf(PropTypes.number),
+        randomizeItems: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             items: [],
             categories: [],
             values: [],
             randomizeItems: false,
         };
-    },
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="perseus-widget-row">
@@ -86,11 +85,11 @@ const CategorizerEditor = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = CategorizerEditor;

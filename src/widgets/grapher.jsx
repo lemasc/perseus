@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, comma-dangle, indent, no-var, object-curly-spacing, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -50,8 +51,8 @@ var typeSelectorStyle = {
 };
 
 /* Graphing interface. */
-var FunctionGrapher = React.createClass({
-    _coords: function(props) {
+class FunctionGrapher extends React.Component {
+    _coords = (props) => {
         // Coords are usually based on props, but should fall back to the
         // model's default whenever they're not provided (if there's a model)
         props = props || this.props;
@@ -65,45 +66,43 @@ var FunctionGrapher = React.createClass({
                 graph.snapStep
             );
         return props.coords || defaultModelCoords || null;
-    },
+    }
 
-    _asymptote: function(props) {
+    _asymptote = (props) => {
         // Unlike coords, asymptotes are never null; see defaultPlotProps.
         props = props || this.props;
         return props.asymptote;
-    },
+    }
 
-    propTypes: {
+    static propTypes = {
         ...Changeable.propTypes,
-        flexibleType: React.PropTypes.bool,
-        graph: React.PropTypes.any,
-        hideHairlines: React.PropTypes.func,
-        isMobile: React.PropTypes.bool,
-        model: React.PropTypes.any,
-        onChange: React.PropTypes.func,
-        setDrawingAreaAvailable: React.PropTypes.func,
-        showHairlines: React.PropTypes.func,
-        showTooltips: React.PropTypes.bool,
-        static: React.PropTypes.bool,
-    },
+        flexibleType: PropTypes.bool,
+        graph: PropTypes.any,
+        hideHairlines: PropTypes.func,
+        isMobile: PropTypes.bool,
+        model: PropTypes.any,
+        onChange: PropTypes.func,
+        setDrawingAreaAvailable: PropTypes.func,
+        showHairlines: PropTypes.func,
+        showTooltips: PropTypes.bool,
+        static: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             graph: {
                 range: [[-10, 10], [-10, 10]],
                 step: [1, 1],
             },
             coords: null,
             asymptote: null,
-            isMobile: false,
-        };
-    },
+            isMobile: false
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    render: function() {
+    render() {
         var pointForCoord = (coord, i) => {
             return (
                 <MovablePoint
@@ -231,9 +230,9 @@ var FunctionGrapher = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
-    renderPlot: function() {
+    renderPlot = () => {
         var model = this.props.model;
         var xRange = this.props.graph.range[0];
         var style = {
@@ -257,9 +256,9 @@ var FunctionGrapher = React.createClass({
                 style={style}
             />
         );
-    },
+    }
 
-    renderAsymptote: function() {
+    renderAsymptote = () => {
         var model = this.props.model;
         var graph = this.props.graph;
         var asymptote = this._asymptote();
@@ -320,28 +319,28 @@ var FunctionGrapher = React.createClass({
                 )}
             </MovableLine>
         );
-    },
-});
+    }
+}
 
 /* Widget and editor. */
-var Grapher = React.createClass({
-    propTypes: {
-        apiOptions: React.PropTypes.any,
-        availableTypes: React.PropTypes.arrayOf(React.PropTypes.any),
+class Grapher extends React.Component {
+    static propTypes = {
+        apiOptions: PropTypes.any,
+        availableTypes: PropTypes.arrayOf(PropTypes.any),
         containerSizeClass: containerSizeClassPropType.isRequired,
-        graph: React.PropTypes.any,
-        markings: React.PropTypes.string,
-        onChange: React.PropTypes.func,
-        plot: React.PropTypes.any,
-        static: React.PropTypes.bool,
-        trackInteraction: React.PropTypes.func.isRequired,
-    },
+        graph: PropTypes.any,
+        markings: PropTypes.string,
+        onChange: PropTypes.func,
+        plot: PropTypes.any,
+        static: PropTypes.bool,
+        trackInteraction: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return DEFAULT_GRAPHER_PROPS;
-    },
+    static defaultProps = {
+        DEFAULT_GRAPHER_PROPS
+    }
 
-    render: function() {
+    render() {
         var type = this.props.plot.type;
         var coords = this.props.plot.coords;
         var asymptote = this.props.plot.asymptote;
@@ -406,17 +405,17 @@ var Grapher = React.createClass({
                 {this.props.availableTypes.length > 1 && typeSelector}
             </div>
         );
-    },
+    }
 
-    handlePlotChanges: function(newPlot) {
+    handlePlotChanges = (newPlot) => {
         var plot = _.extend({}, this.props.plot, newPlot);
         this.props.onChange({
             plot: plot,
         });
         this.props.trackInteraction();
-    },
+    }
 
-    handleActiveTypeChange: function(newType) {
+    handleActiveTypeChange = (newType) => {
         var graph = this.props.graph;
         var plot = _.extend(
             {},
@@ -426,9 +425,9 @@ var Grapher = React.createClass({
         this.props.onChange({
             plot: plot,
         });
-    },
+    }
 
-    _getGridConfig: function(options) {
+    _getGridConfig = (options) => {
         return _.map(options.step, function(step, i) {
             return Util.gridDimensionConfig(
                 step,
@@ -437,7 +436,7 @@ var Grapher = React.createClass({
                 options.gridStep[i]
             );
         });
-    },
+    }
 
     _calculateMobileTickStep(gridStep, step, ranges) {
         const tickStep = Util.constrainedTickStepsFromTickSteps(step, ranges);
@@ -449,9 +448,9 @@ var Grapher = React.createClass({
         tickStep[1] = tickStep[1] / gridStep[1];
 
         return tickStep;
-    },
+    }
 
-    _setupGraphie: function(graphie, options) {
+    _setupGraphie = (graphie, options) => {
         const isMobile = this.props.apiOptions.isMobile;
 
         if (options.markings === "graph") {
@@ -531,9 +530,9 @@ var Grapher = React.createClass({
             });
             this.vertHairline.hide();
         }
-    },
+    }
 
-    showHairlines: function(point) {
+    showHairlines = (point) => {
         if (this.props.apiOptions.isMobile && this.props.markings !== "none") {
             // Hairlines are already initialized when the graph is loaded, so
             // here we just move them to the updated location and make them
@@ -552,25 +551,25 @@ var Grapher = React.createClass({
 
             this.vertHairline.show();
         }
-    },
+    }
 
-    hideHairlines: function() {
+    hideHairlines = () => {
         if (this.props.apiOptions.isMobile) {
             this.horizHairline.hide();
             this.vertHairline.hide();
         }
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return GrapherUtil.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return this.props.plot;
-    },
+    }
 
-    focus: $.noop,
-});
+    focus = $.noop
+}
 
 var propTransform = editorProps => {
     var widgetProps = {

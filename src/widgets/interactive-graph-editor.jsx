@@ -20,20 +20,13 @@ const {
 } = require("../util/sizing-utils.js");
 
 const defaultBackgroundImage = {
-    url: null,
+    url: "",
 };
 
-var deprecatedProps = {
-    showGraph: function(props) {
-        return {markings: props.showGraph ? "graph" : "none"};
-    },
-};
+class InteractiveGraphEditor extends React.Component {
+    className = "perseus-widget-interactive-graph"
 
-const InteractiveGraphEditor = React.createClass({
-    className: "perseus-widget-interactive-graph",
-
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             labels: ["x", "y"],
             range: [[-10, 10], [-10, 10]],
             step: [1, 1],
@@ -50,16 +43,19 @@ const InteractiveGraphEditor = React.createClass({
                 coords: null,
             },
         };
-    },
 
     // TODO(jack): Use versioning instead of DeprecationMixin
-    deprecatedProps: deprecatedProps,
+    deprecatedProps = {
+        showGraph: function(props) {
+            return {markings: props.showGraph ? "graph" : "none"};
+        },
+    };
 
     componentWillMount() {
         DeprecationMixin.componentWillMount.call(this);
-    },
+    }
 
-    render: function() {
+    render() {
         var graph;
         var equationString;
 
@@ -241,16 +237,16 @@ const InteractiveGraphEditor = React.createClass({
                 {graph}
             </div>
         );
-    },
+    }
 
-    changeMatchType: function(e) {
+    changeMatchType = (e) => {
         var correct = _.extend({}, this.props.correct, {
             match: e.target.value,
         });
         this.props.onChange({correct: correct});
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         var json = _.pick(
             this.props,
             "step",
@@ -297,7 +293,7 @@ const InteractiveGraphEditor = React.createClass({
             );
         }
         return json;
-    },
-});
+    }
+}
 
 module.exports = InteractiveGraphEditor;

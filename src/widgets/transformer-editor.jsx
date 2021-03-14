@@ -34,7 +34,7 @@ function arraySum(array) {
 }
 
 var defaultBackgroundImage = {
-    url: null,
+    url: "",
 };
 
 /* Scales a distance from the default range of
@@ -80,68 +80,12 @@ var defaultGraphProps = function(setProps, boxSize) {
     };
 };
 
-var defaultTransformerProps = {
-    apiOptions: ApiOptions.defaults,
-    gradeEmpty: false,
-    graphMode: "interactive",
-    listMode: "dynamic",
-    graph: {},
-    tools: {
-        translation: {
-            enabled: true,
-            required: false,
-            constraints: {},
-        },
-        rotation: {
-            enabled: true,
-            required: false,
-            constraints: {
-                fixed: false,
-            },
-            coord: [1, 6],
-        },
-        reflection: {
-            enabled: true,
-            required: false,
-            constraints: {
-                fixed: false,
-            },
-            coords: [[2, -4], [2, 2]],
-        },
-        dilation: {
-            enabled: true,
-            required: false,
-            constraints: {
-                fixed: false,
-            },
-            coord: [6, 6],
-        },
-    },
-    drawSolutionShape: true,
-    starting: {
-        shape: {
-            type: "polygon-3",
-            coords: [[2, 2], [2, 6], [7, 2]],
-        },
-        transformations: [],
-    },
-    correct: {
-        shape: {
-            type: "polygon-3",
-            coords: [[2, 2], [2, 6], [7, 2]],
-        },
-        transformations: [],
-    },
-};
-
-const ToolSettings = React.createClass({
-    getDefaultProps: function() {
-        return {
+class ToolSettings extends React.Component {
+    static defaultProps = {
             allowFixed: true,
-        };
-    },
+    };
 
-    render: function() {
+    render() {
         return (
             <div>
                 {this.props.name}: {" "}
@@ -177,18 +121,18 @@ const ToolSettings = React.createClass({
                     </InfoTip>}
             </div>
         );
-    },
+    }
 
-    changeConstraints: function(changed) {
+    changeConstraints = (changed) => {
         var newConstraints = _.extend({}, this.props.constraints, changed);
         this.props.onChange({
             constraints: newConstraints,
         });
-    },
-});
+    }
+}
 
-var TransformationExplorerSettings = React.createClass({
-    render: function() {
+class TransformationExplorerSettings extends React.Component {
+    render() {
         return (
             <div className="transformer-settings">
                 <div>
@@ -255,13 +199,13 @@ var TransformationExplorerSettings = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    getMode: function() {
+    getMode = () => {
         return this.props.graphMode + "," + this.props.listMode;
-    },
+    }
 
-    changeMode: function(e) {
+    changeMode = (e) => {
         var selected = e.target.value;
         var modes = selected.split(",");
 
@@ -269,9 +213,9 @@ var TransformationExplorerSettings = React.createClass({
             graphMode: modes[0],
             listMode: modes[1],
         });
-    },
+    }
 
-    changeHandlerFor: function(toolName) {
+    changeHandlerFor = (toolName) => {
         return change => {
             var newTools = _.clone(this.props.tools);
             newTools[toolName] = _.extend(
@@ -284,8 +228,8 @@ var TransformationExplorerSettings = React.createClass({
                 tools: newTools,
             });
         };
-    },
-});
+    }
+}
 var ShapeTypes = {
     getPointCountForType: function(type) {
         var splitType = type.split("-");
@@ -725,8 +669,8 @@ var ShapeTypes = {
     },
 };
 
-var TransformationsShapeEditor = React.createClass({
-    render: function() {
+class TransformationsShapeEditor extends React.Component {
+    render() {
         return (
             <div>
                 <Graph
@@ -760,10 +704,10 @@ var TransformationsShapeEditor = React.createClass({
                 </select>
             </div>
         );
-    },
+    }
 
     /* Return the option string for a given type */
-    getTypeString: function(type) {
+    getTypeString = (type) => {
         if (_.isArray(type)) {
             return _.map(type, this.getTypeString).join(",");
         } else if (type === "polygon") {
@@ -771,13 +715,13 @@ var TransformationsShapeEditor = React.createClass({
         } else {
             return type;
         }
-    },
+    }
 
     /* Change the type on the window event e
      *
      * e.target.value is the new type string
      */
-    changeType: function(e) {
+    changeType = (e) => {
         var types = String(e.target.value).split(",");
         var pointCount = arraySum(
             _.map(types, ShapeTypes.getPointCountForType)
@@ -796,42 +740,92 @@ var TransformationsShapeEditor = React.createClass({
                 options: ShapeTypes.defaultOptions(types),
             },
         });
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.setupGraphie(this.refs.graph.graphie());
-    },
+    }
 
-    componentDidUpdate: function(prevProps) {
+    componentDidUpdate(prevProps) {
         if (!deepEq(prevProps.shape, this.props.shape)) {
             this.refs.graph.reset();
         }
-    },
+    }
 
-    updateCoords: function() {
+    updateCoords = () => {
         this.props.onChange({
             shape: this.shape.toJSON(),
         });
-    },
+    }
 
-    setupGraphie: function(graphie) {
+    setupGraphie = (graphie) => {
         this.shape = ShapeTypes.addMovableShape(graphie, {
             editable: true,
             snap: graphie.snap,
             shape: this.props.shape,
             onMoveEnd: this.updateCoords,
         });
-    },
-});
+    }
+}
 
-var TransformerEditor = React.createClass({
+class TransformerEditor extends React.Component {
     // TODO (jack): These should be refactored into a nice object at the top
     // so that we don't have all this duplication
-    getDefaultProps: function() {
-        return defaultTransformerProps;
-    },
+    static defaultProps = {
+        apiOptions: ApiOptions.defaults,
+        gradeEmpty: false,
+        graphMode: "interactive",
+        listMode: "dynamic",
+        graph: {},
+        tools: {
+            translation: {
+                enabled: true,
+                required: false,
+                constraints: {},
+            },
+            rotation: {
+                enabled: true,
+                required: false,
+                constraints: {
+                    fixed: false,
+                },
+                coord: [1, 6],
+            },
+            reflection: {
+                enabled: true,
+                required: false,
+                constraints: {
+                    fixed: false,
+                },
+                coords: [[2, -4], [2, 2]],
+            },
+            dilation: {
+                enabled: true,
+                required: false,
+                constraints: {
+                    fixed: false,
+                },
+                coord: [6, 6],
+            },
+        },
+        drawSolutionShape: true,
+        starting: {
+            shape: {
+                type: "polygon-3",
+                coords: [[2, 2], [2, 6], [7, 2]],
+            },
+            transformations: [],
+        },
+        correct: {
+            shape: {
+                type: "polygon-3",
+                coords: [[2, 2], [2, 6], [7, 2]],
+            },
+            transformations: [],
+        },
+    };
 
-    render: function() {
+    render() {
         // Fill in any missing value in this.props.graph
         // this can happen because the graph json doesn't include
         // box, for example
@@ -912,11 +906,11 @@ var TransformerEditor = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
     // propagate a props change on our graph settings to
     // this.props.graph
-    changeGraph: function(graphChanges, callback) {
+    changeGraph = (graphChanges, callback) => {
         var newGraph = _.extend({}, this.props.graph, graphChanges);
         this.props.onChange(
             {
@@ -924,19 +918,19 @@ var TransformerEditor = React.createClass({
             },
             callback
         );
-    },
+    }
 
     // propagate a props change on our starting graph to
     // this.props.starting
-    changeStarting: function(startingChanges) {
+    changeStarting = (startingChanges) => {
         var newStarting = _.extend({}, this.props.starting, startingChanges);
         this.props.onChange({
             starting: newStarting,
         });
-    },
+    }
 
     // propagate a transformations change onto correct.transformations
-    changeTransformer: function(changes, callback) {
+    changeTransformer = (changes, callback) => {
         if (changes.transformations) {
             changes.correct = {
                 ...this.props.correct,
@@ -945,14 +939,14 @@ var TransformerEditor = React.createClass({
             delete changes.transformations;
         }
         this.props.onChange(changes, callback);
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         var json = this.refs.explorer.getEditorJSON();
         json.correct = json.answer;
         delete json.answer;
         return json;
-    },
-});
+    }
+}
 
 module.exports = TransformerEditor;

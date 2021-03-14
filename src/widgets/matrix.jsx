@@ -3,6 +3,7 @@
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
 var classNames = require("classnames");
+const PropTypes = require('prop-types');
 var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
@@ -15,7 +16,8 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//TODO_sz
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var assert = require("../interactive2/interactive-util.js").assert;
 var stringArrayOfSize = require("../util.js").stringArrayOfSize;
@@ -84,9 +86,9 @@ var getMatrixSize = function(matrix) {
 
     // We need to find the widest row and tallest column to get the correct
     // matrix size.
-    _(matrix).each((matrixRow, row) => {
+    _.each(matrix,(matrixRow, row) => {
         var rowWidth = 0;
-        _(matrixRow).each((matrixCol, col) => {
+        _.each(matrixRow,(matrixCol, col) => {
             if (matrixCol != null && matrixCol.toString().length) {
                 rowWidth = col + 1;
             }
@@ -103,29 +105,28 @@ var getMatrixSize = function(matrix) {
     return matrixSize;
 };
 
-var Matrix = React.createClass({
-    propTypes: {
-        answers: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(
-                React.PropTypes.oneOfType([
-                    React.PropTypes.string,
-                    React.PropTypes.number,
+class Matrix extends React.Component {
+    static propTypes ={
+        answers: PropTypes.arrayOf(
+            PropTypes.arrayOf(
+                PropTypes.oneOfType([
+                    PropTypes.string,
+                    PropTypes.number,
                 ])
             )
         ),
         apiOptions: ApiOptions.propTypes,
-        cursorPosition: React.PropTypes.arrayOf(React.PropTypes.number),
-        keypadElement: keypadElementPropType,
-        matrixBoardSize: React.PropTypes.arrayOf(React.PropTypes.number)
+        cursorPosition: PropTypes.arrayOf(PropTypes.number),
+        //keypadElement: keypadElementPropType,
+        matrixBoardSize: PropTypes.arrayOf(PropTypes.number)
             .isRequired,
-        prefix: React.PropTypes.string,
-        suffix: React.PropTypes.string,
-        trackInteraction: React.PropTypes.func.isRequired,
+        prefix: PropTypes.string,
+        suffix: PropTypes.string,
+        trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             matrixBoardSize: [3, 3],
             answers: [[]],
             prefix: "",
@@ -134,20 +135,20 @@ var Matrix = React.createClass({
             apiOptions: ApiOptions.defaults,
             linterContext: linterContextDefault,
         };
-    },
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             enterTheMatrix: 0,
         };
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // Used in the `onBlur` and `onFocus` handlers
         this.cursorPosition = [0, 0];
-    },
+    }
 
-    render: function() {
+    render() {
         // Set the input sizes through JS so we can control the size of the
         // brackets. (If we set them in CSS we won't know values until the
         // inputs are rendered.)
@@ -203,11 +204,11 @@ var Matrix = React.createClass({
                             left: bracketOffset,
                         }}
                     />
-                    {_(maxRows).times(row => {
+                    {_.times(maxRows,row => {
                         var rowVals = this.props.answers[row];
                         return (
                             <div className="matrix-row" key={row}>
-                                {_(maxCols).times(col => {
+                                {_.times(maxCols,col => {
                                     var outside =
                                         row > highlightedRow ||
                                         col > highlightedCol;
@@ -342,66 +343,66 @@ var Matrix = React.createClass({
                     </div>}
             </div>
         );
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths() {
         var inputPaths = [];
         var maxRows = this.props.matrixBoardSize[0];
         var maxCols = this.props.matrixBoardSize[1];
 
-        _(maxRows).times(row => {
-            _(maxCols).times(col => {
+        _.times(maxRows,row => {
+            _.times(maxCols,col => {
                 var inputPath = getInputPath(row, col);
                 inputPaths.push(inputPath);
             });
         });
 
         return inputPaths;
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath = (inputPath) => {
         return "number";
-    },
+    }
 
-    _handleFocus: function(row, col) {
+    _handleFocus = (row, col) => {
         this.props.onFocus(getInputPath(row, col));
-    },
+    }
 
-    _handleBlur: function(row, col) {
+    _handleBlur = (row, col) => {
         this.props.onBlur(getInputPath(row, col));
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         this.focusInputPath(getDefaultPath());
         return true;
-    },
+    }
 
-    focusInputPath: function(path) {
+    focusInputPath = path => {
         var inputID = getRefForPath(path);
         this.refs[inputID].focus();
-    },
+    }
 
-    blurInputPath: function(path) {
+    blurInputPath = path => {
         if (path.length === 0) {
             path = getDefaultPath();
         }
 
         var inputID = getRefForPath(path);
         this.refs[inputID].blur();
-    },
+    }
 
-    getDOMNodeForPath: function(inputPath) {
+    getDOMNodeForPath  = inputPath => {
         var inputID = getRefForPath(inputPath);
         return ReactDOM.findDOMNode(this.refs[inputID]);
-    },
+    }
 
-    setInputValue: function(inputPath, value, callback) {
+    setInputValue = (inputPath, value, callback) => {
         var row = getRowFromPath(inputPath);
         var col = getColumnFromPath(inputPath);
         this.onValueChange(row, col, value, callback);
-    },
+    }
 
-    handleKeyDown: function(row, col, e) {
+    handleKeyDown = (row, col, e) => {
         var maxRow = this.props.matrixBoardSize[0];
         var maxCol = this.props.matrixBoardSize[1];
         var enterTheMatrix = null;
@@ -457,9 +458,9 @@ var Matrix = React.createClass({
                 enterTheMatrix: enterTheMatrix,
             });
         }
-    },
+    }
 
-    onValueChange: function(row, column, value, cb) {
+    onValueChange = (row, column, value, cb) => {
         var answers = _.map(this.props.answers, _.clone);
         if (!answers[row]) {
             answers[row] = [];
@@ -472,18 +473,18 @@ var Matrix = React.createClass({
             cb
         );
         this.props.trackInteraction();
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {
             answers: this.props.answers,
         };
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) =>{
         return Matrix.validate(this.getUserInput(), rubric);
-    },
-});
+    }
+}
 
 _.extend(Matrix, {
     validate: function(state, rubric) {
@@ -500,8 +501,8 @@ _.extend(Matrix, {
         var message = null;
         var hasEmptyCell = false;
         var incorrect = false;
-        _(suppliedSize[0]).times(row => {
-            _(suppliedSize[1]).times(col => {
+        _.times(suppliedSize[0],row => {
+            _.times(suppliedSize[1],col => {
                 if (
                     supplied[row][col] == null ||
                     supplied[row][col].toString().length === 0
@@ -550,7 +551,7 @@ _.extend(Matrix, {
 
 var propTransform = editorProps => {
     // Remove answers before passing to widget
-    var blankAnswers = _(editorProps.matrixBoardSize[0]).times(function() {
+    var blankAnswers = _.times(editorProps.matrixBoardSize[0],function() {
         return stringArrayOfSize(editorProps.matrixBoardSize[1]);
     });
     editorProps = _.pick(editorProps, "matrixBoardSize", "prefix", "suffix");

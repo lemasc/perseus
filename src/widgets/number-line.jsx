@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable brace-style, no-var */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -14,7 +15,7 @@ var MathOutput = require("../components/math-output.jsx");
 const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
-const {keypadElementPropType} = require("../../math-input").propTypes;
+//const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var Graphie = require("../components/graphie.jsx");
 var MovablePoint = Graphie.MovablePoint;
@@ -185,39 +186,38 @@ var TickMarks = Graphie.createSimpleClass((graphie, props) => {
     return results;
 });
 
-var NumberLine = React.createClass({
-    propTypes: {
+class NumberLine extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        range: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+        range: PropTypes.arrayOf(PropTypes.number).isRequired,
 
-        labelRange: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-        labelStyle: React.PropTypes.string.isRequired,
-        labelTicks: React.PropTypes.bool.isRequired,
+        labelRange: PropTypes.arrayOf(PropTypes.number).isRequired,
+        labelStyle: PropTypes.string.isRequired,
+        labelTicks: PropTypes.bool.isRequired,
 
-        divisionRange: React.PropTypes.arrayOf(React.PropTypes.number)
+        divisionRange: PropTypes.arrayOf(PropTypes.number)
             .isRequired,
-        numDivisions: React.PropTypes.number.isRequired,
-        snapDivisions: React.PropTypes.number.isRequired,
+        numDivisions: PropTypes.number.isRequired,
+        snapDivisions: PropTypes.number.isRequired,
 
-        isTickCtrl: React.PropTypes.bool.isRequired,
-        isInequality: React.PropTypes.bool.isRequired,
+        isTickCtrl: PropTypes.bool.isRequired,
+        isInequality: PropTypes.bool.isRequired,
 
-        numLinePosition: React.PropTypes.number.isRequired,
-        rel: React.PropTypes.oneOf(["lt", "gt", "le", "ge"]),
+        numLinePosition: PropTypes.number.isRequired,
+        rel: PropTypes.oneOf(["lt", "gt", "le", "ge"]),
 
-        onFocus: React.PropTypes.func.isRequired,
-        onBlur: React.PropTypes.func.isRequired,
-        onChange: React.PropTypes.func.isRequired,
+        onFocus: PropTypes.func.isRequired,
+        onBlur: PropTypes.func.isRequired,
+        onChange: PropTypes.func.isRequired,
 
         apiOptions: ApiOptions.propTypes,
-        keypadElement: keypadElementPropType,
-        static: React.PropTypes.bool,
-        showTooltips: React.PropTypes.bool,
-        trackInteraction: React.PropTypes.func.isRequired,
-    },
+        //keypadElement: keypadElementPropType,
+        static: PropTypes.bool,
+        showTooltips: PropTypes.bool,
+        trackInteraction: PropTypes.func.isRequired,
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             range: [0, 10],
             labelStyle: "decimal",
             labelRange: [null, null],
@@ -231,19 +231,19 @@ var NumberLine = React.createClass({
             rel: "ge",
             apiOptions: ApiOptions.defaults,
         };
-    },
 
-    getInitialState() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             numDivisionsEmpty: false,
-        };
-    },
+        }
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    isValid: function() {
+    isValid = () => {
         var range = this.props.range;
         var initialX = this.props.numLinePosition;
         var divisionRange = this.props.divisionRange;
@@ -258,9 +258,9 @@ var NumberLine = React.createClass({
             0 < this.props.numDivisions &&
             0 < this.props.snapDivisions
         );
-    },
+    }
 
-    onNumDivisionsChange: function(numDivisions, cb) {
+    onNumDivisionsChange = (numDivisions, cb) => {
         var divRange = this.props.divisionRange.slice();
         var width = this.props.range[1] - this.props.range[0];
 
@@ -304,62 +304,62 @@ var NumberLine = React.createClass({
                 cb
             );
         }
-    },
+    }
 
-    _handleTickCtrlFocus: function() {
+    _handleTickCtrlFocus = () => {
         this.props.onFocus(["tick-ctrl"]);
-    },
+    }
 
-    _handleTickCtrlBlur: function() {
+    _handleTickCtrlBlur = () => {
         this.props.onBlur(["tick-ctrl"]);
-    },
+    }
 
-    focus: function() {
+    focus = () => {
         if (this.props.isTickCtrl) {
             this.refs["tick-ctrl"].focus();
             return true;
         }
-    },
+    }
 
-    focusInputPath: function(path) {
+    focusInputPath = (path) => {
         if (path.length === 1) {
             this.refs[path[0]].focus();
         }
-    },
+    }
 
-    blurInputPath: function(path) {
+    blurInputPath = (path) => {
         if (path.length === 1) {
             this.refs[path[0]].blur();
         }
-    },
+    }
 
-    getInputPaths: function() {
+    getInputPaths = () => {
         if (this.props.isTickCtrl) {
             return [["tick-ctrl"]];
         } else {
             return [];
         }
-    },
+    }
 
-    getDOMNodeForPath: function(inputPath) {
+    getDOMNodeForPath = (inputPath) => {
         if (inputPath.length === 1) {
             return ReactDOM.findDOMNode(this.refs[inputPath[0]]);
         }
-    },
+    }
 
-    getGrammarTypeForPath: function(inputPath) {
+    getGrammarTypeForPath = (inputPath) => {
         if (inputPath.length === 1 && inputPath[0] === "tick-ctrl") {
             return "number";
         }
-    },
+    }
 
-    setInputValue: function(inputPath, value, callback) {
+    setInputValue = (inputPath, value, callback) => {
         if (inputPath.length === 1 && inputPath[0] === "tick-ctrl") {
             this.onNumDivisionsChange(value, callback);
         }
-    },
+    }
 
-    _renderGraphie: function() {
+    _renderGraphie = () => {
         // Position variables
         var range = this.props.range;
         var width = range[1] - range[0];
@@ -405,9 +405,9 @@ var NumberLine = React.createClass({
                 {this._renderNumberLinePoint(props)}
             </Graphie>
         );
-    },
+    }
 
-    snapNumLinePosition: function(props, numLinePosition) {
+    snapNumLinePosition = (props, numLinePosition) => {
         var left = props.range[0];
         var right = props.range[1];
         var snapX = props.tickStep / props.snapDivisions;
@@ -416,10 +416,10 @@ var NumberLine = React.createClass({
         x = left + knumber.roundTo(x - left, snapX);
         assert(_.isFinite(x));
         return x;
-    },
+    }
 
-    _renderNumberLinePoint: function(props) {
-        var isOpen = _(["lt", "gt"]).contains(props.rel);
+    _renderNumberLinePoint = (props) => {
+        var isOpen = _.contains(["lt", "gt"],props.rel);
 
         // In static mode the point's fill and stroke is blue to signify that
         // it can't be interacted with.
@@ -476,20 +476,20 @@ var NumberLine = React.createClass({
                 xOnlyTooltip={true}
             />
         );
-    },
+    }
 
-    handleReverse: function() {
+    handleReverse = () => {
         var newRel = reverseRel[this.props.rel];
         this.props.onChange({rel: newRel});
-    },
+    }
 
-    handleToggleStrict: function() {
+    handleToggleStrict = () => {
         var newRel = toggleStrictRel[this.props.rel];
         this.props.onChange({rel: newRel});
-    },
+    }
 
-    _getInequalityEndpoint: function(props) {
-        var isGreater = _(["ge", "gt"]).contains(props.rel);
+    _getInequalityEndpoint = (props) => {
+        var isGreater = _.contains(["ge", "gt"],props.rel);
         var widthInPixels = 400;
         var range = props.range;
         var scale = (range[1] - range[0]) / widthInPixels;
@@ -498,9 +498,9 @@ var NumberLine = React.createClass({
         var right = range[1] + buffer;
         var end = isGreater ? [right, 0] : [left, 0];
         return end;
-    },
+    }
 
-    _renderInequality: function(props) {
+    _renderInequality = (props) => {
         if (props.isInequality) {
             var end = this._getInequalityEndpoint(props);
             var style = {
@@ -528,9 +528,9 @@ var NumberLine = React.createClass({
         } else {
             return null;
         }
-    },
+    }
 
-    _setupGraphie: function(graphie, options) {
+    _setupGraphie = (graphie, options) => {
         // Ensure a sane configuration to avoid infinite loops
         if (!this.isValid()) {
             return;
@@ -565,22 +565,22 @@ var NumberLine = React.createClass({
         var center = (range[0] + range[1]) / 2;
         graphie.line([center, 0], [right, 0], {arrows: "->"});
         graphie.line([center, 0], [left, 0], {arrows: "->"});
-    },
+    }
 
-    getUserInput: function() {
+    getUserInput = () => {
         return {
             numLinePosition: this.props.numLinePosition,
             rel: this.props.isInequality ? this.props.rel : "eq",
             numDivisions: this.props.numDivisions,
             divisionRange: this.props.divisionRange,
         };
-    },
+    }
 
-    simpleValidate: function(rubric) {
+    simpleValidate = (rubric) => {
         return NumberLine.validate(this.getUserInput(), rubric);
-    },
+    }
 
-    render: function() {
+    render() {
         var divisionRange = this.props.divisionRange;
         var divRangeString = divisionRange[0] + EN_DASH + divisionRange[1];
         var invalidNumDivisions =
@@ -599,7 +599,7 @@ var NumberLine = React.createClass({
                     type="button"
                     className="simple-button"
                     value={
-                        _(["le", "ge"]).contains(this.props.rel)
+                        _.contains(["le", "ge"],this.props.rel)
                             ? i18n._("Make circle open")
                             : i18n._("Make circle filled")
                     }
@@ -634,7 +634,7 @@ var NumberLine = React.createClass({
                         onFocus={this._handleTickCtrlFocus}
                         onBlur={this._handleTickCtrlBlur}
                         useArrowKeys={true}
-                        keypadElement={this.props.keypadElement}
+                        //keypadElement={this.props.keypadElement}
                     />
                 </label>
             );
@@ -665,8 +665,8 @@ var NumberLine = React.createClass({
                     inequalityControls}
             </div>
         );
-    },
-});
+    }
+}
 
 _.extend(NumberLine, {
     validate: function(state, rubric) {

@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-console, no-var, react/jsx-closing-bracket-location, react/jsx-indent-props, react/sort-comp, space-before-function-paren, space-infix-ops */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -21,8 +22,8 @@ var DEFAULT_HEIGHT = 400;
 var PairEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        name: React.PropTypes.string,
-        value: React.PropTypes.string,
+        name: PropTypes.string,
+        value: PropTypes.string,
     },
 
     getDefaultProps: function() {
@@ -68,10 +69,10 @@ var PairEditor = React.createClass({
 var PairsEditor = React.createClass({
     propTypes: {
         ...Changeable.propTypes,
-        pairs: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                name: React.PropTypes.string,
-                value: React.PropTypes.string,
+        pairs: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string,
+                value: PropTypes.string,
             })
         ).isRequired,
     },

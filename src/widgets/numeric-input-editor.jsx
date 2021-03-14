@@ -30,7 +30,7 @@ const answerFormButtons = [
         content: "\u2077\u2044\u2084",
     },
     {title: "Mixed numbers", value: "mixed", content: "1\u00BE"},
-    {title: "Numbers with \u03C0", value: "pi", content: "\u03C0"},
+    {title: "Numbers with \u03C0", value: "pi", content: "\u03C0"}
 ];
 
 const initAnswer = status => {
@@ -45,29 +45,28 @@ const initAnswer = status => {
     };
 };
 
-const NumericInputEditor = React.createClass({
-    propTypes: {
+class NumericInputEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             answers: [initAnswer("correct")],
             size: "normal",
             coefficient: false,
             labelText: "",
             multipleNumberInput: false,
-        };
-    },
+    }
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             lastStatus: "wrong",
             showOptions: _.map(this.props.answers, () => false),
         };
-    },
+    }
 
-    render: function() {
+    render() {
         var answers = this.props.answers;
 
         var unsimplifiedAnswers = i =>
@@ -79,7 +78,7 @@ const NumericInputEditor = React.createClass({
                     buttons={[
                         {value: "required", content: "ungraded"},
                         {value: "optional", content: "accepted"},
-                        {value: "enforced", content: "wrong"},
+                        {value: "enforced", content: "wrong"}
                     ]}
                     onChange={this.updateAnswer(i, "simplify")}
                 />
@@ -167,7 +166,7 @@ const NumericInputEditor = React.createClass({
                     allowEmpty={false}
                     buttons={[
                         {value: "normal", content: "Normal (80px)"},
-                        {value: "small", content: "Small (40px)"},
+                        {value: "small", content: "Small (40px)"}
                     ]}
                     onChange={this.change("size")}
                 />
@@ -220,7 +219,7 @@ const NumericInputEditor = React.createClass({
         var addAnswerButton = (
             <div>
                 <a
-                    href="javascript:void(0)"
+                    href="#"
                     className="simple-button orange"
                     onClick={() => this.addAnswer()}
                     onKeyDown={e => this.onSpace(e, this.addAnswer)}
@@ -342,7 +341,6 @@ const NumericInputEditor = React.createClass({
                                 : null}
                             <div className="value-divider" />
                             <a
-                                href="javascript:void(0)"
                                 className={"answer-status " + answer.status}
                                 onClick={() => this.onStatusChange(i)}
                                 onKeyDown={e =>
@@ -351,7 +349,7 @@ const NumericInputEditor = React.createClass({
                                 {answer.status}
                             </a>
                             <a
-                                href="javascript:void(0)"
+                                href="#"
                                 className="answer-trash"
                                 onClick={() => this.onTrashAnswer(i)}
                                 onKeyDown={e =>
@@ -360,7 +358,7 @@ const NumericInputEditor = React.createClass({
                                 <InlineIcon {...iconTrash} />
                             </a>
                             <a
-                                href="javascript:void(0)"
+                                href="#"
                                 className="options-toggle"
                                 onClick={() => this.onToggleOptions(i)}
                                 onKeyDown={e =>
@@ -406,35 +404,35 @@ const NumericInputEditor = React.createClass({
                 {labelText}
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    onToggleOptions: function(choiceIndex) {
+    onToggleOptions(choiceIndex) {
         var showOptions = this.state.showOptions.slice();
         showOptions[choiceIndex] = !showOptions[choiceIndex];
         this.setState({showOptions: showOptions});
-    },
+    }
 
-    onTrashAnswer: function(choiceIndex) {
+    onTrashAnswer(choiceIndex) {
         if (choiceIndex >= 0 && choiceIndex < this.props.answers.length) {
             var answers = this.props.answers.slice(0);
             answers.splice(choiceIndex, 1);
             this.props.onChange({answers: answers});
         }
-    },
+    }
 
-    onSpace: function(e, callback) {
+    onSpace(e, callback) {
         if (e.key === " ") {
             e.preventDefault(); // prevent page shifting
             var args = _.toArray(arguments).slice(2);
             callback.apply(this, args);
         }
-    },
+    }
 
-    onStatusChange: function(choiceIndex) {
+    onStatusChange(choiceIndex) {
         var statuses = ["wrong", "ungraded", "correct"];
         var answers = this.props.answers;
         var i = _.indexOf(statuses, answers[choiceIndex].status);
@@ -444,18 +442,18 @@ const NumericInputEditor = React.createClass({
             status: newStatus,
             simplify: newStatus === "correct" ? "required" : "accepted",
         });
-    },
+    }
 
-    onMultipleInputChange: function(event) {
+    onMultipleInputChange = (event) => {
         const newOption = event.target.value;
         if (newOption === "multiple-numeric-input") {
             this.props.onChange({multipleNumberInput: true});
         } else {
             this.props.onChange({multipleNumberInput: false});
         }
-    },
+    }
 
-    updateAnswer: function(choiceIndex, update) {
+    updateAnswer = (choiceIndex, update) => {
         if (!_.isObject(update)) {
             return _.partial(
                 (choiceIndex, key, value) => {
@@ -480,15 +478,15 @@ const NumericInputEditor = React.createClass({
 
         answers[choiceIndex] = _.extend({}, answers[choiceIndex], update);
         this.props.onChange({answers: answers});
-    },
+    }
 
-    addAnswer: function() {
+    addAnswer() {
         var lastAnswer = initAnswer(this.state.lastStatus);
         var answers = this.props.answers.concat(lastAnswer);
         this.props.onChange({answers: answers});
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings() {
         // Filter out all the empty answers
         var warnings = [];
         // TODO(emily): This doesn't actually work, because the value is either
@@ -508,11 +506,11 @@ const NumericInputEditor = React.createClass({
             }
         });
         return warnings;
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = NumericInputEditor;

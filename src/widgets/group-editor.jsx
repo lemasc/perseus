@@ -1,3 +1,4 @@
+const PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, react/forbid-prop-types, react/jsx-closing-bracket-location, react/sort-comp */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -10,18 +11,17 @@ const Changeable = require("../mixins/changeable.jsx");
 
 const Editor = require("../editor.jsx");
 
-const GroupEditor = React.createClass({
-    propTypes: {
+class GroupEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        content: React.PropTypes.string,
-        widgets: React.PropTypes.object,
-        images: React.PropTypes.object,
-        metadata: React.PropTypes.any,
+        content: PropTypes.string,
+        widgets: PropTypes.object,
+        images: PropTypes.object,
+        metadata: PropTypes.any,
         apiOptions: ApiOptions.propTypes,
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps = {
             content: "",
             widgets: {},
             images: {},
@@ -29,9 +29,8 @@ const GroupEditor = React.createClass({
             // `the GroupMetadataEditor`
             metadata: undefined,
         };
-    },
 
-    render: function() {
+    render() {
         return (
             <div className="perseus-group-editor">
                 <div>
@@ -51,9 +50,9 @@ const GroupEditor = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    _renderMetadataEditor: function() {
+    _renderMetadataEditor = () => {
         var GroupMetadataEditor = this.props.apiOptions.GroupMetadataEditor;
         return (
             <GroupMetadataEditor
@@ -61,21 +60,21 @@ const GroupEditor = React.createClass({
                 onChange={this.change("metadata")}
             />
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    getSaveWarnings: function() {
+    getSaveWarnings = () => {
         return this.refs.editor.getSaveWarnings();
-    },
+    }
 
-    serialize: function() {
+    serialize = () => {
         return _.extend({}, this.refs.editor.serialize(), {
             metadata: this.props.metadata,
         });
-    },
-});
+    }
+}
 
 module.exports = GroupEditor;

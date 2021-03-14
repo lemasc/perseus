@@ -4,8 +4,9 @@
 
 /* global i18n */
 
-const {StyleSheet, css} = require("aphrodite");
+const { StyleSheet, css } = require("aphrodite");
 const classNames = require("classnames");
+const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 const _ = require("underscore");
@@ -21,86 +22,84 @@ const captureScratchpadTouchStart = require("../../util.js")
 
 const Choice = require("./choice.jsx");
 
-const ChoiceNoneAbove = React.createClass({
-    propTypes: {
-        className: React.PropTypes.string,
-        content: React.PropTypes.node,
-        showContent: React.PropTypes.bool,
-    },
+class ChoiceNoneAbove extends React.Component {
+    static propTypes = {
+        className: PropTypes.string,
+        content: PropTypes.node,
+        showContent: PropTypes.bool,
+    }
 
-    getDefaultProps: function() {
-        return {
-            showContent: true,
-        };
-    },
+    static defaultProps = {
+        showContent: true,
+    }
 
-    render: function() {
+    render() {
         const choiceProps = _.extend({}, this.props, {
             className: classNames(this.props.className, "none-of-above"),
             content: this.props.showContent
                 ? this.props.content
                 : // We use a Renderer here because that is how
-                  // `this.props.content` is wrapped otherwise.
-                  // We pass in a key here so that we avoid a semi-spurious
-                  // react warning when we render this in the same place
-                  // as the previous choice content renderer.
-                  // Note this destroys state, but since all we're doing
-                  // is outputting "None of the above", that is okay.
-                  <Renderer
-                      key="noneOfTheAboveRenderer"
-                      content={i18n._("None of the above")}
-                  />,
+                // `this.props.content` is wrapped otherwise.
+                // We pass in a key here so that we avoid a semi-spurious
+                // react warning when we render this in the same place
+                // as the previous choice content renderer.
+                // Note this destroys state, but since all we're doing
+                // is outputting "None of the above", that is okay.
+                <Renderer
+                    key="noneOfTheAboveRenderer"
+                    content={i18n._("None of the above")}
+                />,
         });
 
         return <Choice {...choiceProps} />;
-    },
-});
+    }
+}
 
-const ChoicesType = React.PropTypes.arrayOf(
-    React.PropTypes.shape({
+const ChoicesType = PropTypes.arrayOf(
+    PropTypes.shape({
         // Indicates whether this choice is checked.
-        checked: React.PropTypes.bool,
+        checked: PropTypes.bool,
 
         // Indicates whether the user has "crossed out" this choice, meaning
         // that they don't think it's correct. This value does not affect
         // scoring or other behavior; it's just a note for the user's
         // reference.
-        crossedOut: React.PropTypes.bool,
+        crossedOut: PropTypes.bool,
 
-        content: React.PropTypes.node,
-        rationale: React.PropTypes.node,
-        hasRationale: React.PropTypes.bool,
-        showRationale: React.PropTypes.bool,
-        showCorrectness: React.PropTypes.bool,
-        correct: React.PropTypes.bool,
-        originalIndex: React.PropTypes.number,
-        isNoneOfTheAbove: React.PropTypes.bool,
+        content: PropTypes.node,
+        rationale: PropTypes.node,
+        hasRationale: PropTypes.bool,
+        showRationale: PropTypes.bool,
+        showCorrectness: PropTypes.bool,
+        correct: PropTypes.bool,
+        originalIndex: PropTypes.number,
+        isNoneOfTheAbove: PropTypes.bool,
     })
 );
 
 const radioBorderColor = styleConstants.radioBorderColor;
 
-const BaseRadio = React.createClass({
-    propTypes: {
-        apiOptions: React.PropTypes.shape({
-            readOnly: React.PropTypes.bool,
-            satStyling: React.PropTypes.bool,
-            isMobile: React.PropTypes.bool,
-            styling: React.PropTypes.shape({
-                radioStyleVersion: React.PropTypes.oneOf([
+class BaseRadio extends React.Component {
+    static propTypes = {
+        apiOptions: PropTypes.shape({
+            readOnly: PropTypes.bool,
+            satStyling: PropTypes.bool,
+            isMobile: PropTypes.bool,
+            styling: PropTypes.shape({
+                radioStyleVersion: PropTypes.oneOf([
                     "intermediate",
                     "final",
                 ]),
             }),
         }),
         choices: ChoicesType,
-        deselectEnabled: React.PropTypes.bool,
-        editMode: React.PropTypes.bool,
-        labelWrap: React.PropTypes.bool,
-        countChoices: React.PropTypes.bool,
-        numCorrect: React.PropTypes.number,
-        multipleSelect: React.PropTypes.bool,
-        reviewModeRubric: React.PropTypes.shape({
+        deselectEnabled: PropTypes.bool,
+        editMode: PropTypes.bool,
+        labelWrap: PropTypes.bool,
+        countChoices: PropTypes.bool,
+        numCorrect: PropTypes.number,
+        multipleSelect: PropTypes.bool,
+        reviewModeRubric: PropTypes.shape({
             choices: ChoicesType,
         }),
 
@@ -108,171 +107,167 @@ const BaseRadio = React.createClass({
         // an object with two keys: `checked` and `crossedOut`. Each contains
         // an array of boolean values, specifying the new checked and
         // crossed-out value of each choice.
-        onChange: React.PropTypes.func,
-    },
+        onChange: PropTypes.func,
+    }
 
-    statics: {
-        styles: StyleSheet.create({
-            instructions: {
-                display: "block",
-                color: styleConstants.gray17,
-                fontSize: 14,
-                lineHeight: 1.25,
-                fontStyle: "normal",
-                fontWeight: "bold",
-                marginBottom: 16,
+    styles = StyleSheet.create({
+        instructions: {
+            display: "block",
+            color: styleConstants.gray17,
+            fontSize: 14,
+            lineHeight: 1.25,
+            fontStyle: "normal",
+            fontWeight: "bold",
+            marginBottom: 16,
+        },
+
+        instructionsMobile: {
+            fontSize: 18,
+            [mediaQueries.smOrSmaller]: {
+                fontSize: 16,
             },
+            // TODO(emily): We want this to match choice text, which turns
+            // to 20px at min-width 1200px, but this media query is
+            // min-width 1280px because our media queries don't exactly
+            // match pure. Make those match up.
+            [mediaQueries.xl]: {
+                fontSize: 20,
+            }
+        },
 
-            instructionsMobile: {
-                fontSize: 18,
-                [mediaQueries.smOrSmaller]: {
-                    fontSize: 16,
-                },
-                // TODO(emily): We want this to match choice text, which turns
-                // to 20px at min-width 1200px, but this media query is
-                // min-width 1280px because our media queries don't exactly
-                // match pure. Make those match up.
-                [mediaQueries.xl]: {
-                    fontSize: 20,
-                },
-            },
+        radio: {
+            // Avoid centering
+            width: "100%",
+        },
 
-            radio: {
-                // Avoid centering
-                width: "100%",
-            },
-
-            responsiveRadioContainer: {
-                borderBottom: `1px solid ${radioBorderColor}`,
-                borderTop: `1px solid ${radioBorderColor}`,
-                width: "auto",
-                [mediaQueries.smOrSmaller]: {
-                    marginLeft: styleConstants.negativePhoneMargin,
-                    marginRight: styleConstants.negativePhoneMargin,
-                },
-            },
-
-            radioContainerFirstHighlighted: {
-                borderTop: `1px solid rgba(0, 0, 0, 0)`,
-            },
-
-            radioContainerLastHighlighted: {
-                borderBottom: `1px solid rgba(0, 0, 0, 0)`,
-            },
-
-            satRadio: {
-                background: "none",
-                marginLeft: 0,
-                userSelect: "none",
-            },
-
-            satRadioOption: {
-                margin: 0,
-                padding: 0,
-                borderBottom: `1px solid #ccc`,
-                ":first-child": {
-                    borderTop: `1px solid #ccc`,
-                },
-            },
-
-            satRadioOptionCorrect: {
-                borderBottomColor: styleConstants.satCorrectBorderColor,
-                ":first-child": {
-                    borderTopColor: styleConstants.satCorrectBorderColor,
-                },
-            },
-
-            satRadioOptionIncorrect: {
-                borderBottomColor: styleConstants.satIncorrectBorderColor,
-                ":first-child": {
-                    borderTopColor: styleConstants.satIncorrectBorderColor,
-                },
-            },
-
-            satRadioOptionNextCorrect: {
-                borderBottomColor: styleConstants.satCorrectBorderColor,
-            },
-
-            satRadioOptionNextIncorrect: {
-                borderBottomColor: styleConstants.satIncorrectBorderColor,
-            },
-
-            satReviewRadioOption: {
-                pointerEvents: "none",
-            },
-
-            item: {
-                marginLeft: 20,
-            },
-
-            inlineItem: {
-                display: "inline-block",
-                paddingLeft: 20,
-                verticalAlign: "middle",
-                // See http://stackoverflow.com/q/8120466 for explanation of
-                // why vertical align property is needed
-            },
-
-            responsiveItem: {
-                marginLeft: 0,
-                padding: 0,
-
-                ":not(:last-child)": {
-                    borderBottom: `1px solid ${radioBorderColor}`,
-                },
-            },
-
-            selectedItem: {
-                background: "white",
-            },
-
-            aboveBackdrop: {
-                position: "relative",
-                // HACK(emily): We want selected choices to show up above our
-                // exercise backdrop, but below the exercise footer and
-                // "feedback popover" that shows up. This z-index is carefully
-                // coordinated between here and webapp. :(
-                zIndex: 1062,
-            },
-
-            aboveBackdropMobile: {
-                boxShadow:
-                    "0 0 4px 0 rgba(0, 0, 0, 0.2)," +
-                    "0 0 2px 0 rgba(0, 0, 0, 0.1)",
-
-                ":not(:last-child)": {
-                    borderBottom: `1px solid rgba(0, 0, 0, 0)`,
-                },
-            },
-
-            nextHighlighted: {
-                ":not(:last-child)": {
-                    borderBottom: `1px solid rgba(0, 0, 0, 0)`,
-                },
-            },
-
-            responsiveContainer: {
-                overflow: "auto",
+        responsiveRadioContainer: {
+            borderBottom: `1px solid ${radioBorderColor}`,
+            borderTop: `1px solid ${radioBorderColor}`,
+            width: "auto",
+            [mediaQueries.smOrSmaller]: {
                 marginLeft: styleConstants.negativePhoneMargin,
                 marginRight: styleConstants.negativePhoneMargin,
-                paddingLeft: styleConstants.phoneMargin,
-                // paddingRight is handled by responsiveFieldset
-            },
+            }
+        },
 
-            responsiveFieldset: {
-                paddingRight: styleConstants.phoneMargin,
-            },
-        }),
-    },
+        radioContainerFirstHighlighted: {
+            borderTop: `1px solid rgba(0, 0, 0, 0)`,
+        },
 
-    getDefaultProps: function() {
-        return {
-            editMode: false,
-        };
-    },
+        radioContainerLastHighlighted: {
+            borderBottom: `1px solid rgba(0, 0, 0, 0)`,
+        },
 
-    getInitialState: function() {
-        return {
+        satRadio: {
+            background: "none",
+            marginLeft: 0,
+            userSelect: "none",
+        },
+
+        satRadioOption: {
+            margin: 0,
+            padding: 0,
+            borderBottom: `1px solid #ccc`,
+            ":first-child": {
+                borderTop: `1px solid #ccc`,
+            }
+        },
+
+        satRadioOptionCorrect: {
+            borderBottomColor: styleConstants.satCorrectBorderColor,
+            ":first-child": {
+                borderTopColor: styleConstants.satCorrectBorderColor,
+            }
+        },
+
+        satRadioOptionIncorrect: {
+            borderBottomColor: styleConstants.satIncorrectBorderColor,
+            ":first-child": {
+                borderTopColor: styleConstants.satIncorrectBorderColor,
+            }
+        },
+
+        satRadioOptionNextCorrect: {
+            borderBottomColor: styleConstants.satCorrectBorderColor,
+        },
+
+        satRadioOptionNextIncorrect: {
+            borderBottomColor: styleConstants.satIncorrectBorderColor,
+        },
+
+        satReviewRadioOption: {
+            pointerEvents: "none",
+        },
+
+        item: {
+            marginLeft: 20,
+        },
+
+        inlineItem: {
+            display: "inline-block",
+            paddingLeft: 20,
+            verticalAlign: "middle",
+            // See http://stackoverflow.com/q/8120466 for explanation of
+            // why vertical align property is needed
+        },
+
+        responsiveItem: {
+            marginLeft: 0,
+            padding: 0,
+
+            ":not(:last-child)": {
+                borderBottom: `1px solid ${radioBorderColor}`,
+            }
+        },
+
+        selectedItem: {
+            background: "white",
+        },
+
+        aboveBackdrop: {
+            position: "relative",
+            // HACK(emily): We want selected choices to show up above our
+            // exercise backdrop, but below the exercise footer and
+            // "feedback popover" that shows up. This z-index is carefully
+            // coordinated between here and webapp. :(
+            zIndex: 1062,
+        },
+
+        aboveBackdropMobile: {
+            boxShadow:
+                "0 0 4px 0 rgba(0, 0, 0, 0.2)," +
+                "0 0 2px 0 rgba(0, 0, 0, 0.1)",
+
+            ":not(:last-child)": {
+                borderBottom: `1px solid rgba(0, 0, 0, 0)`,
+            }
+        },
+
+        nextHighlighted: {
+            ":not(:last-child)": {
+                borderBottom: `1px solid rgba(0, 0, 0, 0)`,
+            }
+        },
+
+        responsiveContainer: {
+            overflow: "auto",
+            marginLeft: styleConstants.negativePhoneMargin,
+            marginRight: styleConstants.negativePhoneMargin,
+            paddingLeft: styleConstants.phoneMargin,
+            // paddingRight is handled by responsiveFieldset
+        },
+
+        responsiveFieldset: {
+            paddingRight: styleConstants.phoneMargin,
+        }
+    })
+    static defaultProps = {
+        editMode: false,
+    }
+
+    constructor(props) {
+        super(props)
+        this.state = {
             // TODO(mdr): This keeps the ID stable across re-renders on the
             //     same machine, but, at time of writing, the server's state
             //     isn't rehydrated to the client during SSR, so the server and
@@ -280,7 +275,7 @@ const BaseRadio = React.createClass({
             //     during SSR :(
             radioGroupName: _.uniqueId("perseus_radio_"),
         };
-    },
+    }
 
     // When a particular choice's `onChange` handler is called, indicating a
     // change in a single choice's values, we need to call our `onChange`
@@ -296,7 +291,7 @@ const BaseRadio = React.createClass({
     // `newValues` is an object with two keys: `checked` and `crossedOut`. Each
     // contains a boolean value specifying the new checked and crossed-out
     // value of this choice.
-    updateChoice: function(choiceIndex, newValues) {
+    updateChoice = (choiceIndex, newValues) => {
         // Get the baseline `checked` values. If we're checking a new answer
         // and multiple-select is not on, we should clear all choices to be
         // unchecked. Otherwise, we should copy the old checked values.
@@ -318,14 +313,14 @@ const BaseRadio = React.createClass({
             checked: newCheckedList,
             crossedOut: newCrossedOutList,
         });
-    },
+    }
 
-    focus: function(i) {
+    focus(i) {
         ReactDOM.findDOMNode(this.refs["radio" + (i || 0)]).focus();
         return true;
-    },
+    }
 
-    getInstructionsText: function() {
+    getInstructionsText() {
         if (this.props.multipleSelect) {
             if (this.props.countChoices) {
                 return i18n._("Choose %(numCorrect)s answers:", {
@@ -337,19 +332,18 @@ const BaseRadio = React.createClass({
         } else {
             return i18n._("Choose 1 answer:");
         }
-    },
+    }
 
-    deselectEnabled: function() {
+    deselectEnabled() {
         // We want to force enable deselect on mobile.
         return this.props.apiOptions.isMobile || this.props.deselectEnabled;
-    },
+    }
 
-    render: function() {
+    render() {
         const inputType = this.props.multipleSelect ? "checkbox" : "radio";
         const rubric = this.props.reviewModeRubric;
         const reviewMode = !!rubric;
-
-        const styles = BaseRadio.styles;
+        const styles = this.styles;
         const sat = this.props.apiOptions.satStyling;
 
         const isMobile = this.props.apiOptions.isMobile;
@@ -367,13 +361,13 @@ const BaseRadio = React.createClass({
                 // with their custom theming.
                 !sat && styles.responsiveRadioContainer,
                 !sat &&
-                    firstChoiceHighlighted &&
-                    isMobile &&
-                    styles.radioContainerFirstHighlighted,
+                firstChoiceHighlighted &&
+                isMobile &&
+                styles.radioContainerFirstHighlighted,
                 !sat &&
-                    lastChoiceHighlighted &&
-                    isMobile &&
-                    styles.radioContainerLastHighlighted,
+                lastChoiceHighlighted &&
+                isMobile &&
+                styles.radioContainerLastHighlighted,
                 sat && styles.satRadio
             )
         );
@@ -398,7 +392,7 @@ const BaseRadio = React.createClass({
                         {instructions}
                     </div>}
                 <ul className={className}>
-                    {this.props.choices.map(function(choice, i) {
+                    {this.props.choices.map(function (choice, i) {
                         let Element = Choice;
                         const elementProps = {
                             ref: `radio${i}`,
@@ -425,7 +419,7 @@ const BaseRadio = React.createClass({
                             deselectEnabled: this.deselectEnabled(),
                             onChange: newValues => {
                                 this.updateChoice(i, newValues);
-                            },
+                            }
                         };
 
                         if (choice.isNoneOfTheAbove) {
@@ -456,31 +450,31 @@ const BaseRadio = React.createClass({
                                 !sat && styles.responsiveItem,
                                 !sat && checked && styles.selectedItem,
                                 !sat &&
-                                    checked &&
-                                    choice.highlighted &&
-                                    styles.aboveBackdrop,
+                                checked &&
+                                choice.highlighted &&
+                                styles.aboveBackdrop,
                                 !sat &&
-                                    checked &&
-                                    choice.highlighted &&
-                                    this.props.apiOptions.isMobile &&
-                                    styles.aboveBackdropMobile,
+                                checked &&
+                                choice.highlighted &&
+                                this.props.apiOptions.isMobile &&
+                                styles.aboveBackdropMobile,
                                 !sat &&
-                                    nextChoiceHighlighted &&
-                                    this.props.apiOptions.isMobile &&
-                                    styles.nextHighlighted,
+                                nextChoiceHighlighted &&
+                                this.props.apiOptions.isMobile &&
+                                styles.nextHighlighted,
                                 sat && styles.satRadioOption,
                                 satShowCorrectness &&
-                                    !choice.correct &&
-                                    styles.satRadioOptionIncorrect,
+                                !choice.correct &&
+                                styles.satRadioOptionIncorrect,
                                 satShowCorrectness &&
-                                    choice.correct &&
-                                    styles.satRadioOptionCorrect,
+                                choice.correct &&
+                                styles.satRadioOptionCorrect,
                                 satShowCorrectnessNext &&
-                                    !nextChoice.correct &&
-                                    styles.satRadioOptionNextIncorrect,
+                                !nextChoice.correct &&
+                                styles.satRadioOptionNextIncorrect,
                                 satShowCorrectnessNext &&
-                                    nextChoice.correct &&
-                                    styles.satRadioOptionNextCorrect,
+                                nextChoice.correct &&
+                                styles.satRadioOptionNextCorrect,
                                 sat && rubric && styles.satReviewRadioOption
                             );
                         };
@@ -497,11 +491,11 @@ const BaseRadio = React.createClass({
                             ApiClassNames.RADIO.OPTION,
                             choice.checked && ApiClassNames.RADIO.SELECTED,
                             reviewMode &&
-                                rubric.choices[i].correct &&
-                                ApiClassNames.CORRECT,
+                            rubric.choices[i].correct &&
+                            ApiClassNames.CORRECT,
                             reviewMode &&
-                                !rubric.choices[i].correct &&
-                                ApiClassNames.INCORRECT
+                            !rubric.choices[i].correct &&
+                            ApiClassNames.INCORRECT
                         );
 
                         // In edit mode, the Choice renders a Div in order to
@@ -524,7 +518,7 @@ const BaseRadio = React.createClass({
                                         elem.getAttribute("data-is-radio-icon")
                                     ) {
                                         this.updateChoice(
-                                            i, {checked: !choice.checked});
+                                            i, { checked: !choice.checked });
                                         return;
                                     }
                                     elem = elem.parentNode;
@@ -565,7 +559,7 @@ const BaseRadio = React.createClass({
                 {fieldset}
             </div>
         );
-    },
-});
+    }
+}
 
 module.exports = BaseRadio;

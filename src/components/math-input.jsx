@@ -5,26 +5,38 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const _ = require("underscore");
 
-const TexButtons = require("./tex-buttons.jsx");
-
+//const TexButtons = require("./tex-buttons.jsx");
 // TODO(alex): Package MathQuill
 const MathQuill = window.MathQuill;
-const PT = React.PropTypes;
+const PropTypes = require('prop-types');
+const { buttonSetsType, TexButtons, buttonSets } = require( "../components/tex-buttons.jsx");
 
 // A WYSIWYG math input that calls `onChange(LaTeX-string)`
-const MathInput = React.createClass({
-    propTypes: {
-        value: PT.string,
-        onChange: PT.func.isRequired,
-        convertDotToTimes: PT.bool,
-        buttonsVisible: PT.oneOf(["always", "never", "focused"]),
-        buttonSets: TexButtons.buttonSetsType.isRequired,
-        labelText: React.PropTypes.string,
-        onFocus: PT.func,
-        onBlur: PT.func,
-    },
+class MathInput extends React.Component {
+    static propTypes = {
+        value: PropTypes.string,
+        onChange: PropTypes.func.isRequired,
+        convertDotToTimes: PropTypes.bool,
+        buttonsVisible: PropTypes.oneOf(["always", "never", "focused"]),
+        buttonSets: buttonSetsType.isRequired,
+        labelText: PropTypes.string,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+    }
 
-    render: function() {
+    static defaultProps = {
+        value: "",
+        convertDotToTimes: false,
+        buttonsVisible: "focused",
+    };
+
+    constructor(props) {
+        super(props);
+        this.state = {focused: false};
+        this.mathinput = React.createRef();
+    }
+    
+    render() {
         let className = classNames({
             "perseus-math-input": true,
 
@@ -55,7 +67,7 @@ const MathInput = React.createClass({
                 <div style={{display: "inline-block"}}>
                     <span
                         className={className}
-                        ref="mathinput"
+                        ref={this.mathinput}
                         aria-label={this.props.labelText}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
@@ -66,7 +78,7 @@ const MathInput = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     // handlers:
     // keep track of two related bits of state:
@@ -74,39 +86,39 @@ const MathInput = React.createClass({
     // * this.mouseDown - whether a mouse click is active that started in the
     //   buttons div
 
-    handleFocus: function() {
+    handleFocus = () => {
         this.setState({focused: true});
         // TODO(joel) fix properly - we should probably allow onFocus handlers
         // to this property, but we need to work correctly with them.
         // if (this.props.onFocus) {
         //     this.props.onFocus();
         // }
-    },
+    }
 
-    handleMouseDown: function(event) {
+    handleMouseDown = (event) => {
         const focused = ReactDOM.findDOMNode(this).contains(event.target);
         this.mouseDown = focused;
         if (!focused) {
             this.setState({focused: false});
         }
-    },
+    }
 
-    handleMouseUp: function() {
+    handleMouseUp = () => {
         // this mouse click started in the buttons div so we should focus the
         // input
         if (this.mouseDown) {
             this.focus();
         }
         this.mouseDown = false;
-    },
+    }
 
-    handleBlur: function() {
+    handleBlur = () => {
         if (!this.mouseDown) {
             this.setState({focused: false});
         }
-    },
+    }
 
-    _shouldShowButtons: function() {
+    _shouldShowButtons() {
         if (this.props.buttonsVisible === "always") {
             return true;
         } else if (this.props.buttonsVisible === "never") {
@@ -114,23 +126,11 @@ const MathInput = React.createClass({
         } else {
             return this.state.focused;
         }
-    },
+    }
 
-    getDefaultProps: function() {
-        return {
-            value: "",
-            convertDotToTimes: false,
-            buttonsVisible: "focused",
-        };
-    },
-
-    getInitialState: function() {
-        return {focused: false};
-    },
-
-    insert: function(value) {
+    insert = (value) => {
         const input = this.mathField();
-        if (_(value).isFunction()) {
+        if (_.isFunction(value)) {
             value(input);
         } else if (value[0] === "\\") {
             input.cmd(value).focus();
@@ -138,9 +138,9 @@ const MathInput = React.createClass({
             input.write(value).focus();
         }
         input.focus();
-    },
+    }
 
-    mathField: function(options) {
+    mathField = (options) => {
         // The MathQuill API is now "versioned" through its own "InterVer"
         // system.
         // See: https://github.com/mathquill/mathquill/pull/459
@@ -150,15 +150,15 @@ const MathInput = React.createClass({
         // seeing that node for the first time, then returns the associated
         // MathQuill object for that node. It is stable - will always return
         // the same object when called on the same DOM node.
-        return MQ.MathField(ReactDOM.findDOMNode(this.refs.mathinput), options);
-    },
+        return MQ.MathField(ReactDOM.findDOMNode(this.mathinput.current), options);
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         window.removeEventListener("mousedown", this.handleMouseDown);
         window.removeEventListener("mouseup", this.handleMouseUp);
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         window.addEventListener("mousedown", this.handleMouseDown);
         window.addEventListener("mouseup", this.handleMouseUp);
 
@@ -232,7 +232,7 @@ const MathInput = React.createClass({
                     // This handler is called when the user presses the enter
                     // key. Since this isn't an actual <input> element, we have
                     // to manually trigger the usually automatic form submit.
-                    $(ReactDOM.findDOMNode(this.refs.mathinput)).submit();
+                    $(ReactDOM.findDOMNode(this.mathinput.current)).submit();
                 },
                 upOutOf: mathField => {
                     // This handler is called when the user presses the up
@@ -240,8 +240,8 @@ const MathInput = React.createClass({
                     // up to (no numerator or exponent). For ease of use,
                     // interpret this as an attempt to create an exponent.
                     mathField.typedText("^");
-                },
-            },
+                }
+            }
         });
 
         // Ideally, we would be able to pass an initial value directly into
@@ -249,23 +249,23 @@ const MathInput = React.createClass({
         this.mathField().latex(this.props.value);
 
         initialized = true;
-    },
+    }
 
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         if (!_.isEqual(this.mathField().latex(), this.props.value)) {
             this.mathField().latex(this.props.value);
         }
-    },
+    }
 
-    focus: function() {
+    focus() {
         this.mathField().focus();
         this.setState({focused: true});
-    },
+    }
 
-    blur: function() {
+    blur() {
         this.mathField().blur();
         this.setState({focused: false});
-    },
-});
+    }
+}
 
 module.exports = MathInput;

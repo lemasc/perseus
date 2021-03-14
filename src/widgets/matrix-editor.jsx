@@ -1,3 +1,4 @@
+var PropTypes = require('prop-types');
 /* eslint-disable comma-dangle, no-var, object-curly-spacing, react/jsx-closing-bracket-location, react/sort-comp, space-before-function-paren */
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
@@ -22,9 +23,9 @@ var getMatrixSize = function(matrix) {
 
     // We need to find the widest row and tallest column to get the correct
     // matrix size.
-    _(matrix).each((matrixRow, row) => {
+    _.each(matrix,(matrixRow, row) => {
         var rowWidth = 0;
-        _(matrixRow).each((matrixCol, col) => {
+        _.each(matrixRow,(matrixCol, col) => {
             if (matrixCol != null && matrixCol.toString().length) {
                 rowWidth = col + 1;
             }
@@ -41,30 +42,28 @@ var getMatrixSize = function(matrix) {
     return matrixSize;
 };
 
-var MatrixEditor = React.createClass({
-    propTypes: {
+class MatrixEditor extends React.Component {
+    static propTypes = {
         ...Changeable.propTypes,
-        matrixBoardSize: React.PropTypes.arrayOf(React.PropTypes.number)
+        matrixBoardSize: PropTypes.arrayOf(PropTypes.number)
             .isRequired,
-        answers: React.PropTypes.arrayOf(
-            React.PropTypes.arrayOf(React.PropTypes.number)
+        answers: PropTypes.arrayOf(
+            PropTypes.arrayOf(PropTypes.number)
         ),
-        prefix: React.PropTypes.string,
-        suffix: React.PropTypes.string,
-        cursorPosition: React.PropTypes.arrayOf(React.PropTypes.number),
-    },
+        prefix: PropTypes.string,
+        suffix: PropTypes.string,
+        cursorPosition: PropTypes.arrayOf(PropTypes.number),
+    }
 
-    getDefaultProps: function() {
-        return {
+    static defaultProps =  {
             matrixBoardSize: [3, 3],
             answers: [[]],
             prefix: "",
             suffix: "",
             cursorPosition: [0, 0],
         };
-    },
 
-    render: function() {
+    render() {
         var matrixProps = _.extend(
             {
                 numericInput: true,
@@ -114,21 +113,21 @@ var MatrixEditor = React.createClass({
                 </div>
             </div>
         );
-    },
+    }
 
     change(...args) {
         return Changeable.change.apply(this, args);
-    },
+    }
 
-    onMatrixBoardSizeChange: function(range) {
+    onMatrixBoardSizeChange = (range) => {
         var matrixSize = getMatrixSize(this.props.answers);
         if (range[0] !== null && range[1] !== null) {
             range = [
                 Math.round(Math.min(Math.max(range[0], 1), MAX_BOARD_SIZE)),
                 Math.round(Math.min(Math.max(range[1], 1), MAX_BOARD_SIZE)),
             ];
-            var answers = _(Math.min(range[0], matrixSize[0])).times(row => {
-                return _(Math.min(range[1], matrixSize[1])).times(col => {
+            var answers = _.times(Math.min(range[0], matrixSize[0]),row => {
+                return _.times(Math.min(range[1], matrixSize[1]),col => {
                     return this.props.answers[row][col];
                 });
             });
@@ -137,11 +136,11 @@ var MatrixEditor = React.createClass({
                 answers: answers,
             });
         }
-    },
+    }
 
     serialize() {
         return EditorJsonify.serialize.call(this);
-    },
-});
+    }
+}
 
 module.exports = MatrixEditor;
