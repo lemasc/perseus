@@ -1,21 +1,16 @@
-_**As of January 2018 this repo is no longer under active development. It will, however, remain open source.**_
-
 # Perseus
 
-[![Build Status](https://travis-ci.org/Khan/perseus.svg?branch=master)](https://travis-ci.org/Khan/perseus)
-[![Join the chat at https://gitter.im/Khan/perseus](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Khan/perseus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Perseus is Khan Academy's new exercise question editor and renderer. It allows
-you to create and display interactive questions.
-
-![screenshot of Perseus](https://s3.amazonaws.com/uploads.hipchat.com/6574/26709/TfZBRXV0nmRH64g/upload.png)
+This is an unofficial fork of Perseus, Khan Academy's exercise question editor and renderer.
+The original respository has been archived as read-only since Jan 2018, so this project makes life again.
 
 ## Live demo
 
-Our test page isn't much yet, but you can check out a
-[live demo of it here](http://khan.github.io/perseus/)!
+Currently, the demo is still refers to the old official repo. You can check it
+[here](http://khan.github.io/perseus/). When this repo is stable, I will uploaded it later.
 
 ## Getting Started
+
+*For Windows, don't forgot to install WSL2!*
 
 To get the dev server running locally, try `make server PORT=9000`
 which will run the local perseus server on localhost:9000.
@@ -24,6 +19,13 @@ Then visit http://localhost:9000/.
 To package perseus for distribution, run `make build` and to package a debug-friendly build, run `make debug`.
 
 Both the `build` and the `server` make targets will run `npm install` but you can also run it yourself to install all node dependencies.
+
+## BUGS, WARNINGS, ERRORS!
+Making all codes from 4+ years ago to work isn't easy.
+Perseus still using many legacy functions such as deprecated lifecycles, mixins, string refs and also depends on too much dependencies.
+I'm trying my best to migrate all of it if I have time. If anyone would like to contribute to this project, feel free to contact me.
+
+# OLD readme.md details:
 
 ## External dependencies
 
