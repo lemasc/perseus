@@ -12,7 +12,7 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 var Renderer = require("../renderer.jsx");
 var Util = require("../util.js");
 
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+const {keypadElementPropType} = require("../../math-input").propTypes;
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
 const {
@@ -63,7 +63,7 @@ class Table extends React.Component {
         // The editor to use when editableHeaders is enabled
         Editor: PropTypes.func,
         headers: PropTypes.arrayOf(PropTypes.string),
-        //keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         trackInteraction: PropTypes.func.isRequired,
         linterContext: linterContextProps,
     }

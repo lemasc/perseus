@@ -267,7 +267,7 @@ class ExpressionEditor extends React.Component {
             .freeze();
     }
 
-    getSaveWarnings() {
+    getSaveWarnings = () => {
         var issues = [];
 
         if (this.props.answerForms.length === 0) {

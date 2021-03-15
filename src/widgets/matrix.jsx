@@ -16,8 +16,8 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
-//TODO_sz
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+
+const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var assert = require("../interactive2/interactive-util.js").assert;
 var stringArrayOfSize = require("../util.js").stringArrayOfSize;
@@ -117,7 +117,7 @@ class Matrix extends React.Component {
         ),
         apiOptions: ApiOptions.propTypes,
         cursorPosition: PropTypes.arrayOf(PropTypes.number),
-        //keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         matrixBoardSize: PropTypes.arrayOf(PropTypes.number)
             .isRequired,
         prefix: PropTypes.string,

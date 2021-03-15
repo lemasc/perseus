@@ -32,16 +32,8 @@ const {
 } = require("./gorgon/proptypes.js");
 import NotGorgon from "./not-gorgon.js"; // The i18n linter
 
-//TODO_SZ: Restore math-input
-//const {keypadElementPropType} = require("../math-input").propTypes;
+const {keypadElementPropType} = require("../math-input").propTypes;
 const PropTypes = require('prop-types');
-const keypadElementPropType = PropTypes.shape({
-    activate: PropTypes.func.isRequired,
-    dismiss: PropTypes.func.isRequired,
-    configure: PropTypes.func.isRequired,
-    setCursor: PropTypes.func.isRequired,
-    setKeyHandler: PropTypes.func.isRequired,
-});
 
 var {mapObject, mapObjectFromArray} = require("./interactive2/objective_.js");
 

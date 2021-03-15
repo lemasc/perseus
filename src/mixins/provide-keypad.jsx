@@ -18,7 +18,7 @@ const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 
-//const { Keypad } = require("../../math-input").components;
+const { Keypad } = require("../../math-input").components;
 
 const ProvideKeypad = {
     propTypes: {
@@ -45,7 +45,7 @@ const ProvideKeypad = {
             // on-demand in the future.
             this._keypadContainer = document.createElement('div');
             document.body.appendChild(this._keypadContainer);
-/*
+
             ReactDOM.render(
                 <Keypad
                     onElementMounted={(element) => {
@@ -59,12 +59,7 @@ const ProvideKeypad = {
                     style={this.props.keypadStyle}
                 />,
                 this._keypadContainer
-            );*/
-            //TODO_sz
-            ReactDOM.render(
-                <div className="mock-keypad"
-                    style={this.props.keypadStyle}
-                />, this._keypadContainer);
+            );
         }
     },
 

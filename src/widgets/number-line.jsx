@@ -15,7 +15,7 @@ var MathOutput = require("../components/math-output.jsx");
 const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var Graphie = require("../components/graphie.jsx");
 var MovablePoint = Graphie.MovablePoint;
@@ -211,7 +211,7 @@ class NumberLine extends React.Component {
         onChange: PropTypes.func.isRequired,
 
         apiOptions: ApiOptions.propTypes,
-        //keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         static: PropTypes.bool,
         showTooltips: PropTypes.bool,
         trackInteraction: PropTypes.func.isRequired,

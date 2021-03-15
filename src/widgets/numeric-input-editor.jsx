@@ -486,7 +486,7 @@ class NumericInputEditor extends React.Component {
         this.props.onChange({answers: answers});
     }
 
-    getSaveWarnings() {
+    getSaveWarnings = () => {
         // Filter out all the empty answers
         var warnings = [];
         // TODO(emily): This doesn't actually work, because the value is either

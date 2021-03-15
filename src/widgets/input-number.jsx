@@ -12,8 +12,8 @@ const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 var ParseTex = require("../tex-wrangler.js").parseTex;
 var PossibleAnswers = require("../components/possible-answers.jsx");
 const KhanAnswerTypes = require("../util/answer-types.js");
-//TODO_SZ: got math-input work
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+
+const {keypadElementPropType} = require("../../math-input").propTypes;
 const {
     linterContextProps,
     linterContextDefault,
@@ -96,7 +96,7 @@ class InputNumber extends React.Component {
     static propTypes = {
         answerType: PropTypes.oneOf(Object.keys(answerTypes)),
         currentValue: PropTypes.string,
-        //keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         reviewModeRubric: PropTypes.object,
         widgetId: PropTypes.string.isRequired,
         linterContext: linterContextProps,

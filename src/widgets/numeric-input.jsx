@@ -18,8 +18,8 @@ var ApiClassNames = require("../perseus-api.jsx").ClassNames;
 var ApiOptions = require("../perseus-api.jsx").Options;
 const KhanAnswerTypes = require("../util/answer-types.js");
 const KhanMath = require("../util/math.js");
-//TODO_SZ: math-input
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+
+const {keypadElementPropType} = require("../../math-input").propTypes;
 const {
     linterContextProps,
     linterContextDefault,
@@ -73,7 +73,7 @@ class NumericInput extends React.Component {
                     .isRequired,
             })
         ),
-        //keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         labelText: PropTypes.string,
         reviewModeRubric: PropTypes.object,
         trackInteraction: PropTypes.func.isRequired,

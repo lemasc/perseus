@@ -11,17 +11,15 @@ const PropTypes = require('prop-types');
 
 const React = require("react");
 
-/*
+
 const {components, consts, propTypes} = require("../../math-input");
 const {KeypadInput} = components;
 const {KeypadTypes} = consts;
-const {keypadElementPropType} = propTypes;*/
-
-//TODO: get anyway to restore this to works; idk;
+const {keypadElementPropType} = propTypes;
 
 class SimpleKeypadInput extends React.Component {
     static propTypes = {
-      //  keypadElement: keypadElementPropType,
+        keypadElement: keypadElementPropType,
         onFocus: PropTypes.func,
         value: PropTypes.oneOfType([
             PropTypes.string,
@@ -30,17 +28,22 @@ class SimpleKeypadInput extends React.Component {
     }
 
     focus() {
+        console.log("Focus");
         this.refs.input.focus();
-       // this.keypadElement.activate();
+        this.keypadElement.activate();
     }
 
     blur() {
         this.refs.input.blur();
-      //  this.keypadElement.dismiss();
+        this.keypadElement.dismiss();
     }
 
     getValue() {
         return this.props.value;
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
     }
 
     render() {
@@ -49,12 +52,6 @@ class SimpleKeypadInput extends React.Component {
         // Intercept the `value` prop so as to map `null` to the empty string,
         // as the `KeypadInput` does not support `null` values.
         const {keypadElement, onFocus, value, ...rest} = this.props;
-        return <input
-                    value={value == null ? "" : "" + value}
-                    onFocus={ onFocus ? onFocus() : () => {}}
-                    onChange={console.log}
-                    {...rest} />
-/*
         return (
             <KeypadInput
                 ref="input"
@@ -66,7 +63,7 @@ class SimpleKeypadInput extends React.Component {
                                 keypadType: KeypadTypes.FRACTION,
                             },
                             () => {
-                                if (this.isMounted()) {
+                                if (this._isMounted) {
                                     onFocus && onFocus();
                                 }
                             }
@@ -78,7 +75,7 @@ class SimpleKeypadInput extends React.Component {
                 value={value == null ? "" : "" + value}
                 {...rest}
             />
-        );*/
+        );
     }
 }
 

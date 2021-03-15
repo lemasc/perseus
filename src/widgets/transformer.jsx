@@ -16,8 +16,8 @@ var TeX = require("react-components/tex.jsx");
 const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
-//todo_sz
-//const {keypadElementPropType} = require("../../math-input").propTypes;
+
+const {keypadElementPropType} = require("../../math-input").propTypes;
 
 var ROTATE_SNAP_DEGREES = 15;
 var DEGREE_SIGN = "\u00B0";

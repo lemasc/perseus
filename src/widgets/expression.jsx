@@ -19,13 +19,13 @@ const InlineIcon = require("../components/inline-icon.jsx");
 var InputWithExamples = require("../components/input-with-examples.jsx");
 var MathInput = require("../components/math-input.jsx");
 var { buttonSetsType } = require("../components/tex-buttons.jsx");
-//TODO_SZ
-/*const {KeypadInput} = require("../../math-input").components;
+
+const {KeypadInput} = require("../../math-input").components;
 const {
     keypadConfigurationPropType,
     keypadElementPropType,
 } = require("../../math-input").propTypes;
-const {KeypadTypes} = require("../../math-input").consts;*/
+const {KeypadTypes} = require("../../math-input").consts;
 const {
     linterContextProps,
     linterContextDefault,
@@ -93,8 +93,8 @@ class Expression extends React.Component {
         buttonSets: buttonSetsType,
         buttonsVisible: PropTypes.oneOf(["always", "never", "focused"]),
         functions: PropTypes.arrayOf(PropTypes.string),
-        //keypadConfiguration: keypadConfigurationPropType,
-        //keypadElement: keypadElementPropType,
+        keypadConfiguration: keypadConfigurationPropType,
+        keypadElement: keypadElementPropType,
         times: PropTypes.bool,
         trackInteraction: PropTypes.func.isRequired,
         value: PropTypes.string,
@@ -134,7 +134,9 @@ class Expression extends React.Component {
         }
         return KAS.parse(insertBraces(value), options);
     }
-
+    componentDidMount() {
+        this._isMounted = true;
+    }
     render() {
         if (this.props.apiOptions.customKeypad) {
             return (
@@ -147,7 +149,7 @@ class Expression extends React.Component {
                         this.props.keypadElement.configure(
                             this.props.keypadConfiguration,
                             () => {
-                                if (this.isMounted()) {
+                                if (this._isMounted) {
                                     this._handleFocus();
                                 }
                             }
@@ -242,10 +244,12 @@ class Expression extends React.Component {
     }
 
     _handleFocus = () => {
+        this.props.keypadElement.activate();
         this.props.onFocus([]);
     }
 
     _handleBlur = () => {
+        this.props.keypadElement.dismiss();
         this.props.onBlur([]);
     }
 
@@ -462,8 +466,7 @@ _.extend(Expression, {
 const keypadConfigurationForProps = props => {
     // Always use the Expression keypad, regardless of the button sets that have
     // been enabled.
-    //const keypadType = KeypadTypes.EXPRESSION;
-    const keypadType = "EXPRESSION";
+    const keypadType = KeypadTypes.EXPRESSION;
     
     // Extract any and all variables and constants from the answer forms.
     const uniqueExtraVariables = {};
