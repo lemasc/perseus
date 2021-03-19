@@ -90,7 +90,7 @@ class PreviewFrame extends React.Component {
 
     _updateParentWithHeight() {
         let lowest = 0;
-        ["#content-container", ".preview-measure"].forEach(selector => {
+        ["#perseus-container", ".preview-measure"].forEach(selector => {
             Array.from(document.querySelectorAll(selector)).forEach(element => {
                 lowest = Math.max(
                     lowest,
@@ -98,8 +98,7 @@ class PreviewFrame extends React.Component {
                 );
             });
         });
-
-        const bottomMargin = 30;
+        var bottomMargin = 30;
 
         window.parent.postMessage(
             {

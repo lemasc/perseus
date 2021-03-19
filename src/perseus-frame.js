@@ -23,6 +23,7 @@ if (!window.Khan) {
 }
 
 const Perseus = (window.Perseus = require("./perseus.js"));
+const React = (window.React = require("react"));
 const ReactDOM = (window.ReactDOM = require("react-dom"));
 
 const PreviewFrame = require("./preview-frame.jsx");
@@ -48,13 +49,14 @@ const afterMathJaxLoad = () => {
                 styles.borderWidth = constants.perseusFrameBorderWidth;
                 styles.borderColor = "black";
                 styles.borderStyle = "solid";
+                styles.minWidge = "0";
             }
 
             ReactDOM.render(
                 <div id="measured" style={styles}>
                     <PreviewFrame isMobile={isMobile} />
                 </div>,
-                document.getElementById("content-container")
+                document.getElementById("perseus-container")
             );
         })
         .then(

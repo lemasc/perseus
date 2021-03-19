@@ -1,0 +1,20 @@
+:root {
+  --serif-font: "Sarabun" KaTeX_Main, Times, "Times New Roman", serif;
+  --font: "Sarabun", "Proxima Nova", "Helvetica", "Corbel", sans-serif;
+  --header-font: "Kanit", "Sarabun", "Proxima Nova", "Helvetica", "Corbel",
+  sans-serif;
+}
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  margin: 0;
+  color: #444;
+  line-height: 1.4;
+  /* extend background to cover #page-container on horizontal scroll */
+  min-width: 0px;
+}
+
+.pod-title,
+.perseus-widget-editor-title-id {
+  font-family: var(--header-font);
+}

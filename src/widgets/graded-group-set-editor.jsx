@@ -29,7 +29,7 @@ class GradedGroupSetEditor extends React.Component {
         return Changeable.change.apply(this, args);
     }
 
-    getSaveWarnings() {
+    getSaveWarnings = () => {
         return [].concat(
             ...this._editors.map(editor => editor.getSaveWarnings())
         );

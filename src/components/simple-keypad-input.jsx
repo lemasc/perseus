@@ -21,6 +21,8 @@ class SimpleKeypadInput extends React.Component {
     static propTypes = {
         keypadElement: keypadElementPropType,
         onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+        onChange: PropTypes.func,
         value: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number,
@@ -28,14 +30,15 @@ class SimpleKeypadInput extends React.Component {
     }
 
     focus() {
-        console.log("Focus");
-        this.refs.input.focus();
-        this.keypadElement.activate();
+        //this.props.onFocus();
+        //this.refs.input.focus();
+        this.props.keypadElement.activate();
     }
 
     blur() {
-        this.refs.input.blur();
-        this.keypadElement.dismiss();
+        //this.refs.input.blur();
+        this.props.onBlur();
+        this.props.keypadElement.dismiss();
     }
 
     getValue() {
@@ -51,29 +54,34 @@ class SimpleKeypadInput extends React.Component {
         // before continuing with the default focus logic for Perseus inputs.
         // Intercept the `value` prop so as to map `null` to the empty string,
         // as the `KeypadInput` does not support `null` values.
-        const {keypadElement, onFocus, value, ...rest} = this.props;
         return (
             <KeypadInput
                 ref="input"
-                keypadElement={keypadElement}
+                keypadElement={this.props.keypadElement}
                 onFocus={() => {
-                    if (keypadElement) {
-                        keypadElement.configure(
+                    console.log("FO");
+                    if (this.props.keypadElement) {
+                        console.log("k");
+                        this.props.keypadElement.configure(
                             {
                                 keypadType: KeypadTypes.FRACTION,
                             },
                             () => {
                                 if (this._isMounted) {
-                                    onFocus && onFocus();
+                                    this.props.onFocus && this.props.onFocus();
                                 }
                             }
                         );
                     } else {
-                        onFocus && onFocus();
+                        this.props.onFocus && this.props.onFocus();
                     }
                 }}
-                value={value == null ? "" : "" + value}
-                {...rest}
+                onBlur={() => {
+                    this.props.keypadElement.dismiss();
+                    this.props.onBlur && this.props.onBlur();
+                }}
+                onChange={() => {this.props.onChange && this.props.onChange()}}
+                value={this.props.value == null ? "" : "" + this.props.value}
             />
         );
     }

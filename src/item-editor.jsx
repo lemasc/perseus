@@ -22,7 +22,6 @@ class ItemEditor extends React.Component {
     static propTypes = {
         apiOptions: ApiOptions.propTypes,
         deviceType: PropTypes.string,
-        frameSource: PropTypes.string.isRequired,
         gradeMessage: PropTypes.string,
         imageUploader: PropTypes.func,
         wasAnswered: PropTypes.bool,
@@ -69,7 +68,6 @@ class ItemEditor extends React.Component {
                                 <IframeContentRenderer
                                     ref="frame"
                                     key={this.props.deviceType}
-                                    content={this.props.frameSource}
                                     datasetKey="mobile"
                                     datasetValue={isMobile}
                                     seamless={true}

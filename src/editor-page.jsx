@@ -42,9 +42,6 @@ class EditorPage extends React.Component {
 
         developerMode: PropTypes.bool,
 
-        // Source HTML for the iframe to render
-        frameSource: PropTypes.string.isRequired,
-
         hints: PropTypes.any, // related to the question
 
         // A function which takes a file object (guaranteed to be an image) and
@@ -269,7 +266,6 @@ class EditorPage extends React.Component {
                         onCheckAnswer={this.handleCheckAnswer}
                         deviceType={this.props.previewDevice}
                         apiOptions={deviceBasedApiOptions}
-                        frameSource={this.props.frameSource}
                     />}
 
                 {(!this.props.developerMode || !this.props.jsonMode) &&
@@ -280,7 +276,6 @@ class EditorPage extends React.Component {
                         onChange={this.handleChange}
                         deviceType={this.props.previewDevice}
                         apiOptions={deviceBasedApiOptions}
-                        frameSource={this.props.frameSource}
                         highlightLint={this.state.highlightLint}
                     />}
             </div>

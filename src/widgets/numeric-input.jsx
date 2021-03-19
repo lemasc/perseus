@@ -232,7 +232,7 @@ class NumericInput extends React.Component {
                             <SimpleKeypadInput
                                 ref="input"
                                 value={this.props.currentMultipleValues[i]}
-                                //keypadElement={this.props.keypadElement}
+                                keypadElement={this.props.keypadElement}
                                 onChange={
                                     e => this.handleMultipleInputChange(i, e)}
                                 onFocus={this._handleFocus}
@@ -268,7 +268,7 @@ class NumericInput extends React.Component {
                     <SimpleKeypadInput
                         ref="input"
                         value={this.props.currentValue}
-                        //keypadElement={this.props.keypadElement}
+                        keypadElement={this.props.keypadElement}
                         onChange={this.handleChange}
                         onFocus={this._handleFocus}
                         onBlur={this._handleBlur}
@@ -371,6 +371,7 @@ class NumericInput extends React.Component {
     }
 
     _handleFocus = () => {
+       // this.input.focus();
         this.props.onFocus([]);
         // HACK(kevinb): We want to dismiss the feedback popover that webapp
         // displays as soon as a user clicks in in the input field so we call

@@ -49,7 +49,7 @@ class EditorDemo extends React.Component {
     componentDidMount = () => {
         // Hacks to make debugging nicer
         window.editorPage = this.editor.current.refs.editor;
-        window.itemRenderer = window.editorPage.renderer;
+        //window.itemRenderer = window.editorPage.renderer;
     }
 
     serialize = () => {
@@ -136,52 +136,7 @@ class EditorDemo extends React.Component {
             onPreviewDeviceChange: deviceType => {
                 this.setState({deviceType});
             },
-            previewDevice: deviceType,
-            /* eslint-disable max-len */
-            frameSource: `<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
-
-                    <link rel="stylesheet" type="text/css" href="stylesheets/local-only/khan-site.css" />
-                    <link rel="stylesheet" type="text/css" href="stylesheets/local-only/khan-exercise.css" />
-                    <link rel="stylesheet" type="text/css" href="lib/katex/katex.css" />
-                    <link rel="stylesheet" type="text/css" href="lib/font-awesome.min.css">
-                    <link rel="stylesheet" type="text/css" href="lib/mathquill/mathquill.css" />
-                    <link rel="stylesheet" type="text/css" href="stylesheets/perseus-admin-package/devices.min.css" />
-
-                    <link rel="stylesheet/less" type="text/css" href="stylesheets/exercise-content-package/perseus.less" />
-                    <link rel="stylesheet/less" type="text/css" href="stylesheets/perseus-admin-package/editor.less" />
-                    <style>
-                        body {
-                            min-width: 0 !important;
-                            /* overrides body { min-width: 1000px; } in khan-site.css */
-
-                            overflow: hidden;
-                        }
-                    </style>
-
-                    <script>less = {env: 'development', logLevel: 1};</script>
-                    <script src="lib/less.js"></script>
-                </head>
-                <body>
-                    <div id="content-container">
-                    </div>
-                    <script src="lib/babel-polyfills.min.js"></script>
-                    <script src="lib/jquery.js"></script>
-                    <script src="lib/underscore.js"></script>
-                    <script src="lib/react-with-addons.js"></script>
-                    <script src="lib/mathjax/2.1/MathJax.js?config=KAthJax-730d56e87e9c926b91584f6030314815&amp;delayStartupUntil=configured"></script>
-                    <script src="lib/katex/katex.js"></script>
-                    <script src="lib/mathquill/mathquill-basic.js"></script>
-                    <script src="lib/kas.js"></script>
-                    <script src="lib/i18n.js"></script>
-                    <script src="lib/jquery.qtip.js"></script>
-                    <script src="build/frame-perseus.js"></script>
-                </body>
-            </html>`,
-            /* eslint-enable max-len */
+            previewDevice: deviceType
         };
     }
 

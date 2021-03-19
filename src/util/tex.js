@@ -1,6 +1,7 @@
 /* globals katex:false, MathJax:false, Exercises:false */
 
 const KhanMath = require("./math.js");
+const katex = require("katex");
 
 function findChildOrAdd(elem, className) {
     const $child = $(elem).find("." + className);

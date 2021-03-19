@@ -62,7 +62,6 @@ class ArticleEditor extends React.Component {
     static propTypes = {
         apiOptions: PropTypes.shape({}),
         contentPaths: PropTypes.arrayOf(PropTypes.string),
-        frameSource: PropTypes.string.isRequired,
         imageUploader: PropTypes.func,
         json: PropTypes.oneOfType([
             rendererProps,
@@ -255,7 +254,7 @@ class ArticleEditor extends React.Component {
                 <div className="perseus-editor-left-cell">
                     <a
                         href="#"
-                        className="simple-button orange"
+                        className="simple-button green"
                         onClick={() => {
                             this._handleAddSectionAfter(
                                 this._sections().length - 1
@@ -292,7 +291,6 @@ class ArticleEditor extends React.Component {
                 <IframeContentRenderer
                     ref={"frame-" + i}
                     key={this.props.screen}
-                    content={this.props.frameSource}
                     datasetKey="mobile"
                     datasetValue={isMobile}
                     seamless={nochrome}

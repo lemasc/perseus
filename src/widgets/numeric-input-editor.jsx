@@ -220,7 +220,7 @@ class NumericInputEditor extends React.Component {
             <div>
                 <a
                     href="#"
-                    className="simple-button orange"
+                    className="simple-button green"
                     onClick={() => this.addAnswer()}
                     onKeyDown={e => this.onSpace(e, this.addAnswer)}
                 >

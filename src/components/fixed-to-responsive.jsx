@@ -54,6 +54,7 @@ class FixedToResponsive extends React.Component {
         // after the initial render (because initial render may be
         // server-side).
         // TODO(david): Don't do this for each image. Do this once per page.
+        this._isMounded = true;
         if (window.innerHeight < MIN_VIEWPORT_HEIGHT) {
             // There is a weird issue when this gets rendered in an Android
             // webview where window.innerHeight might be initially very small,
@@ -65,7 +66,7 @@ class FixedToResponsive extends React.Component {
     }
 
     _cacheViewportSize() {
-        if (this.isMounted()) {
+        if (this._isMounted) {
             this.setState({
                 viewportHeight: Math.max(
                     MIN_VIEWPORT_HEIGHT,

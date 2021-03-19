@@ -28,7 +28,7 @@ class StatefulEditorPage extends React.Component {
         super(props);
         this.state = _.extend(_.omit(this.props, "componentClass"), {
             onChange: this.handleChange,
-            ref: "editor",
+            ref: (ref) => this.editor = ref,
         });
     }
 
@@ -46,17 +46,16 @@ class StatefulEditorPage extends React.Component {
             "imageUploader",
             "developerMode",
             "problemNum",
-            "previewDevice",
-            "frameSource"
+            "previewDevice"
         )
     }
 
     getSaveWarnings() {
-        return this.refs.editor.getSaveWarnings();
+        return this.editor.getSaveWarnings();
     }
 
     serialize() {
-        return this.refs.editor.serialize();
+        return this.editor.serialize();
     }
 
     handleChange = (newState, cb) => {
@@ -64,7 +63,7 @@ class StatefulEditorPage extends React.Component {
     }
 
     scorePreview() {
-        return this.refs.editor.scorePreview();
+        return this.editor.scorePreview();
     }
 }
 

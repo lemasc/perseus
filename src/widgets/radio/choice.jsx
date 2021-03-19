@@ -310,7 +310,7 @@ class Choice extends React.Component {
         this.setState({ isInputActive: false });
     }
 
-    inputRef(ref) {
+    inputRef = (ref) => {
         this._input = ref;
     }
 

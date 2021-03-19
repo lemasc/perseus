@@ -76,7 +76,7 @@ class GradedGroupEditor extends React.Component {
                     <button
                         type="button"
                         style={{marginTop: 10}}
-                        className="add-hint simple-button orange"
+                        className="add-hint simple-button green"
                         onClick={this.handleAddHint}
                     >
                         <InlineIcon {...iconPlus} /> Add a hint
@@ -117,7 +117,7 @@ class GradedGroupEditor extends React.Component {
         );
     }
 
-    getSaveWarnings() {
+    getSaveWarnings = () => {
         return this.refs.editor.getSaveWarnings();
     }
 

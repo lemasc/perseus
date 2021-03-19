@@ -124,7 +124,7 @@ class InputNumber extends React.Component {
                 <SimpleKeypadInput
                     ref="input"
                     value={this.props.currentValue}
-                    //keypadElement={this.props.keypadElement}
+                    keypadElement={this.props.keypadElement}
                     onChange={this.handleChange}
                     onFocus={this._handleFocus}
                     onBlur={this._handleBlur}

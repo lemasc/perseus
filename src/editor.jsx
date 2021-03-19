@@ -223,7 +223,7 @@ class WidgetEditor extends React.Component {
                         <input
                             type="button"
                             onClick={this._toggleStatic}
-                            className="simple-button--small"
+                            className="btn btn-small text-sm btn-outline-primary"
                             value={
                                 widgetInfo.static
                                     ? "Unset as static"
@@ -242,8 +242,7 @@ class WidgetEditor extends React.Component {
                                 </option>
                             )}
                         </select>}
-                    <a
-                        href="#"
+                    <button
                         className={
                             "remove-widget " +
                             "simple-button simple-button--small orange"
@@ -254,7 +253,7 @@ class WidgetEditor extends React.Component {
                         }}
                     >
                         <InlineIcon {...iconTrash} />
-                    </a>
+                    </button>
                 </div>
                 <div
                     className={
@@ -280,7 +279,7 @@ class WidgetEditor extends React.Component {
         return issuesFunc ? issuesFunc() : [];
     }
 
-    serialize() {
+    serialize = () => {
         // TODO(alex): Make this properly handle the case where we load json
         // with a more recent widget version than this instance of Perseus
         // knows how to handle.

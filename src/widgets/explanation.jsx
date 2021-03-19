@@ -66,7 +66,7 @@ class Explanation extends React.Component {
 
         let linkContainer;
 
-        const href = readOnly ? null : "javascript:void(0)";
+        const href = readOnly ? null : "#";
         const onClick = readOnly ? null : this._onClick;
 
         if (isMobile) {

@@ -233,7 +233,7 @@ class ExpressionEditor extends React.Component {
 
                 <div>
                     <button
-                        className="simple-button orange"
+                        className="simple-button green"
                         style={{fontSize: 13}}
                         onClick={this.newAnswer}
                         type="button"

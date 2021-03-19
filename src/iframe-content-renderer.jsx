@@ -156,11 +156,14 @@ class IframeContentRenderer extends React.Component {
             // loaded properly, where the javascript inside the iframe is
             // not executed, we push the content window write to the end
             // of the event queue.
-            setTimeout(() => {
+          /*  setTimeout(() => {
                 this._frame.contentWindow.document.open();
                 this._frame.contentWindow.document.write(this.props.content);
                 this._frame.contentWindow.document.close();
-            });
+            });*/
+            setTimeout(() => {
+                this._frame.src = "preview.html"
+            })
         };
 
         this.container.current.appendChild(this._frame);

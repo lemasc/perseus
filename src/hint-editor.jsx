@@ -130,7 +130,6 @@ class CombinedHintEditor extends React.Component {
     static propTypes = {
         apiOptions: ApiOptions.propTypes,
         deviceType: PropTypes.string.isRequired,
-        frameSource: PropTypes.string.isRequired,
         imageUploader: PropTypes.func,
         highlightLint: PropTypes.bool,
     }
@@ -196,7 +195,6 @@ class CombinedHintEditor extends React.Component {
                     >
                         <IframeContentRenderer
                             ref="frame"
-                            content={this.props.frameSource}
                             datasetKey="mobile"
                             datasetValue={isMobile}
                             seamless={true}
@@ -234,7 +232,6 @@ class CombinedHintsEditor extends React.Component {
     static propTypes = {
         apiOptions: ApiOptions.propTypes,
         deviceType: PropTypes.string.isRequired,
-        frameSource: PropTypes.string.isRequired,
         imageUploader: PropTypes.func,
         highlightLint: PropTypes.bool,
     }
@@ -262,7 +259,6 @@ class CombinedHintsEditor extends React.Component {
                         onMove={this.handleHintMove.bind(this, i)}
                         deviceType={this.props.deviceType}
                         apiOptions={this.props.apiOptions}
-                        frameSource={this.props.frameSource}
                         highlightLint={this.props.highlightLint}
                     />
                 );
@@ -278,7 +274,7 @@ class CombinedHintsEditor extends React.Component {
                     <div className="add-hint-container perseus-editor-left-cell">
                         <button
                             type="button"
-                            className="add-hint simple-button orange"
+                            className="add-hint simple-button green"
                             onClick={this.addHint}
                         >
                             <InlineIcon {...iconPlus} /> Add a hint

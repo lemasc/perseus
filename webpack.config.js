@@ -6,6 +6,10 @@ const forFrame = process.env.PERSEUS_FRAME === "true";
 const slim = !process.env.NOT_SLIM && !includeEditor && !forFrame;
 const prod = process.env.NODE_ENV === "production";
 
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 const externalVals = {
     // We inject React libs, underscore, and jQuery into the page in
     // development. These are the paths on `window` (i.e. `"_"` is `window._`
@@ -41,7 +45,7 @@ const externalVals = {
     "react-components/tooltip.jsx": false,*/
 };
 
-const externals = function(context, request, callback) {
+const externals = function (context, request, callback) {
     // Generate appropriate externals requests for the different libraries we
     // depend on.
     // Docs: http://webpack.github.io/docs/configuration.html#externals
@@ -58,7 +62,7 @@ const externals = function(context, request, callback) {
             // In dev, pull react*, underscore, and jquery out of globals based
             // on the paths in `externalVals`, and make sure that we don't try
             // to require them using `requirejs`.
-            callback(null, {"this": externalVals[request]}, "this");
+            callback(null, { "this": externalVals[request] }, "this");
         }
     } else {
         callback();
@@ -67,9 +71,9 @@ const externals = function(context, request, callback) {
 
 function getEntryPoints() {
     if (includeEditor) {
-        return {"editor-perseus": "./src/editor-perseus.js"};
+        return { "editor-perseus": "./src/editor-perseus.js" };
     } else if (forFrame) {
-        return {"frame-perseus": "./src/perseus-frame.js"};
+        return { "frame-perseus": "./src/perseus-frame.js" };
     } else {
         const name = slim ? "perseus-slim" : "perseus";
         return {
@@ -79,9 +83,23 @@ function getEntryPoints() {
 }
 
 const plugins = [
+    new HtmlWebpackPlugin({
+        excludeChunks: ["frame-perseus"],
+        template: "index.html",
+    }),
+    new HtmlWebpackPlugin({
+        alwaysWriteToDisk: true,
+        template: "index.html",
+        filename: "preview.html",
+        chunks: ["frame-perseus"]
+    }),
     new webpack.DefinePlugin({
         'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
     }),
+    new MiniCssExtractPlugin({ filename: "./css/[name].css" }),
+    new HtmlWebpackHarddiskPlugin({
+        outputPath: __dirname
+    })
 ];
 
 if (!slim) {
@@ -121,13 +139,12 @@ module.exports = {
                 ],
                 // https://github.com/webpack/webpack/issues/119
                 loader: path.join(__dirname, "node/jsx-loader.js"),
-            }, 
-            {
-                test: /\.less$/,
-                use: ["css-loader", "less-loader"],
             },
             {
-                test: /\.jison$/, loader: "jison-loader",
+                test: /\.css$/i,
+                include: path.resolve(__dirname, 'stylesheets'),
+                use: [MiniCssExtractPlugin.loader,
+                { loader: "css-loader", options: { url: false } }],
             },
         ],
     },

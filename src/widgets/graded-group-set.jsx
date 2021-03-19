@@ -85,7 +85,9 @@ class GradedGroupSet extends React.Component {
 
     // Mobile API
     getInputPaths = () => {
-        return this._childGroup.getInputPaths();
+        if(this._childGroup) {
+            return this._childGroup.getInputPaths();
+        }
     }
 
     setInputValue = (path, newValue, cb) => {

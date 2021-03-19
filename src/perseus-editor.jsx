@@ -1,4 +1,3 @@
-const PropTypes = require('prop-types');
 /*
 This is essentially a more advanced `textarea`, using Draft.js
 https://facebook.github.io/draft-js/
@@ -39,6 +38,7 @@ const {
 } = require("draft-js");
 const Widgets = require("./widgets.js");
 const DraftUtils = require("./draft-utils.js");
+const PropTypes = require('prop-types');
 
 // This controls the minimum time between when updates for the parent
 // component are generated.  The best time for this number sort of depends
@@ -201,13 +201,19 @@ class PerseusEditor extends React.Component {
         widgetEnabled: PropTypes.bool,
     }
 
-    getDefaultProps = () => ({
+    static defaultProps = {
         onChange: () => {},
         content: "",
         initialWidgets: {},
         widgetEnabled: true,
         placeholder: "Type here",
-    })
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = this.getInitialState();
+        console.log("EDT");
+    }
 
     getInitialState() {
         const {content, initialWidgets, widgetEnabled} = this.props;
@@ -728,6 +734,7 @@ class PerseusEditor extends React.Component {
     pastContentState = null
     lastIdleCallback = null
     _handleChange(newState) {
+        console.log(newState);
         const state = {...this.state, ...newState};
         const widgets = state.widgets;
         let editorState = state.editorState;

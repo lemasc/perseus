@@ -119,7 +119,7 @@ class DropdownEditor extends React.Component {
                 <div className="add-choice-container">
                     <a
                         href="#"
-                        className="simple-button orange"
+                        className="simple-button green"
                         onClick={this.addChoice}
                     >
                         <InlineIcon {...iconPlus} /> Add a choice{" "}
