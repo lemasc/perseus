@@ -18,7 +18,7 @@ const {baseUnitPx} = require("../styles/constants.js");
 var Changeable = require("../mixins/changeable.jsx");
 const mediaQueries = require("../styles/media-queries.js");
 var Renderer = require("../renderer.jsx");
-var SvgImage = require("../components/svg-image.jsx");
+var {SvgImage} = require("../components/svg-image.jsx");
 const {
     linterContextProps,
     linterContextDefault,
@@ -113,8 +113,7 @@ class ImageWidget extends React.Component {
             caption: "",
             linterContext: linterContextDefault,
     }
-
-    render = () => {
+    render() {
         var image;
         var alt;
         var {apiOptions} = this.props;
@@ -163,7 +162,6 @@ class ImageWidget extends React.Component {
                 />
             );
         }
-
         if (this.props.alt) {
             alt = (
                 <span className="perseus-sr-only">

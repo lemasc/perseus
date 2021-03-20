@@ -13,7 +13,7 @@ var Changeable = require("../mixins/changeable.jsx");
 var InfoTip = require("../components/info-tip.jsx");
 var PropCheckBox = require("../components/prop-check-box.jsx");
 var SortableArea = require("react-components/sortable.jsx");
-var TeX = require("react-components/tex.jsx"); // OldExpression only
+var TeX = require("../components/tex.jsx"); // OldExpression only
 var { TexButtons, buttonSets, buttonSetsType } = require("../components/tex-buttons.jsx");
 
 var Expression = require("./expression.jsx").Expression;

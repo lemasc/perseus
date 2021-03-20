@@ -21,7 +21,6 @@ const React = require('react');
 const ReactDOM = require("react-dom");
 const createReactClass = require("create-react-class");
 const PropTypes = require("prop-types");
-import Button from "@khanacademy/wonder-blocks-button";
 const StyleSheet = require("aphrodite").StyleSheet;
 
 
@@ -78,7 +77,7 @@ const ButtonGroup = createReactClass({
         });
         
         const buttons = this.props.buttons.map((button, i) => {
-            return <Button title={button.title}
+            return <button title={button.title}
                 type="button"
                 id={"" + i}
                 style={style.buttonStyle}
@@ -89,7 +88,7 @@ const ButtonGroup = createReactClass({
                 onClick={this.toggleSelect.bind(this, button.value)}
             >
                 {button.content || "" + button.value}
-            </Button>;
+            </button>;
         });
 
         const outerStyle = {

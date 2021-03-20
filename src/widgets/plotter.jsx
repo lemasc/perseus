@@ -109,7 +109,7 @@ class Plotter extends React.Component {
         );
     }
 
-    componentDidUpdaten(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.shouldSetupGraphie) {
             this.setupGraphie(prevState);
         }

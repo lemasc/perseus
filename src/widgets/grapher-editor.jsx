@@ -115,7 +115,7 @@ class GrapherEditor extends React.Component {
                         onChange={this.handleAvailableTypesChange}
                     />
                 </div>
-                {graph}
+                {graph}<br/>
             </div>
         );
     }

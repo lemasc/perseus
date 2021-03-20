@@ -142,9 +142,20 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                include: path.resolve(__dirname, 'stylesheets'),
+                include: [
+                    path.resolve(__dirname, 'stylesheets'),
+                    path.resolve(__dirname,"node_modules","katex","dist")
+                ],
                 use: [MiniCssExtractPlugin.loader,
-                { loader: "css-loader", options: { url: false } }],
+                { loader: "css-loader"}],
+            },
+            {
+                test: /\.(woff|woff2|ttf|otf|eot|svg)$/,
+                use: [
+                    {
+                        loader: "file-loader",
+                    },
+                ],
             },
         ],
     },

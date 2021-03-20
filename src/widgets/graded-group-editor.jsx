@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
-        fontSize: 18,
+        fontSize: 16,
     },
 
     hintsTitle: {

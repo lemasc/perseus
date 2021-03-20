@@ -14,6 +14,7 @@ const InlineIcon = require("../components/inline-icon.jsx");
 const Renderer = require("../renderer.jsx");
 const GradedGroupAnswerBar = require("./graded-group-answer-bar.jsx");
 const {
+    gray68,
     gray76,
     phoneMargin,
     negativePhoneMargin,
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 12,
-        color: gray76,
+        color: gray68,
         textTransform: "uppercase",
         marginBottom: 11,
         letterSpacing: 0.8,

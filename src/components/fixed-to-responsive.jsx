@@ -32,16 +32,15 @@ class FixedToResponsive extends React.Component {
         allowFullBleed: PropTypes.bool,
     }
 
-    getDefaultProps() {
-        return {
+    static defaultProps = {
             className: "",
             constrainHeight: false,
             allowFullBleed: false,
         };
-    }
 
-    getInitialState() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state ={
             viewportHeight: null,
             viewportWidth: null,
         };

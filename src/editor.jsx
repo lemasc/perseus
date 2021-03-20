@@ -3,13 +3,12 @@ const PropTypes = require('prop-types');
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
-/* globals katex */
-
 var React = require("react");
 var ReactDOM = require("react-dom");
 var ReactCreateFragment = require("react-addons-create-fragment");
 var $ = require("jquery");
 var _ = require("underscore");
+var katex = require("katex")
 
 var ApiOptions = require("./perseus-api.jsx").Options;
 var DragTarget = require("react-components/drag-target.jsx");

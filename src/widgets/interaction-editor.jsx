@@ -17,7 +17,7 @@ const ElementContainer = require("./interaction/element-container.jsx");
 const GraphSettings = require("../components/graph-settings.jsx");
 const MathInput = require("../components/math-input.jsx");
 const NumberInput = require("../components/number-input.jsx");
-const TeX = require("react-components/tex.jsx");
+const TeX = require("../components/tex.jsx");
 const TextInput = require("../components/text-input.jsx");
 
 const KhanColors = require("../util/colors.js");

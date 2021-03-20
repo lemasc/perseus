@@ -29,6 +29,7 @@ const defaultBackgroundImage = {
 // We're somewhat generous in our AWS URL matching
 // ("ka-<something>.s3.amazonaws.com") so that we don't have to update Perseus
 // every time we add a new proxied AWS bucket.
+/*
 const INTERNALLY_HOSTED_DOMAINS =
     "(" +
     "ka-.*.s3.amazonaws.com|" +
@@ -39,7 +40,7 @@ const INTERNALLY_HOSTED_DOMAINS =
 const INTERNALLY_HOSTED_URL_RE = new RegExp(
     "^(https?|web\\+graphie)://[^/]*" + INTERNALLY_HOSTED_DOMAINS
 );
-
+*/
 /**
  * Alignment option for captions, relative to specified coordinates.
  */
@@ -66,6 +67,7 @@ class ImageEditor extends React.Component {
             var url = this.props.backgroundImage.url;
             this.onUrlChange(url, true);
         });
+        this._isMounted = true;
     }
 
     static defaultProps = {
@@ -244,7 +246,7 @@ class ImageEditor extends React.Component {
         //
         // Errors if you switch items before the `Image` from `onUrlChange`
         // loads.
-        if (!this.isMounted()) {
+        if (!this._isMounted) {
             return;
         }
 
@@ -268,7 +270,7 @@ class ImageEditor extends React.Component {
     // noisily load the image in response to the author changing it
     onUrlChange = (url, silent) => {
         // All article content must be KA-owned!
-        if (!INTERNALLY_HOSTED_URL_RE.test(url)) {
+     /*   if (!INTERNALLY_HOSTED_URL_RE.test(url)) {
             this.setState({
                 backgroundImageError:
                     "Images must be from sites hosted by Khan Academy. " +
@@ -279,7 +281,7 @@ class ImageEditor extends React.Component {
         } else {
             this.setState({backgroundImageError: ""});
         }
-
+*/
         // We update our background image prop after the image loads below. To
         // avoid weirdness when we change to a very slow URL, then a much
         // faster URL, we keep track of the URL we're trying to change to.

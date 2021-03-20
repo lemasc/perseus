@@ -61,7 +61,7 @@ class RendererDemo extends React.Component {
         window.removeEventListener("resize", this._handleResize);
     }
 
-    onScore() {
+    onScore = () => {
         console.log(this.refs.itemRenderer.scoreInput()); // eslint-disable-line no-console
     }
 
@@ -75,6 +75,7 @@ class RendererDemo extends React.Component {
                 this.refs.itemRenderer.deselectIncorrectSelectedChoices();
             }
         );
+        console.log(this.refs.itemRenderer.scoreInput());
     }
 
     takeHint = () => {

@@ -1,6 +1,7 @@
 /**
  * Main entry point
  */
+import "katex/dist/katex.min.css";
 const version = require("./version.json");
 
 const Widgets = require("./widgets.js");

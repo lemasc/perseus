@@ -358,7 +358,7 @@ h2,
 h3,
 h4 {
   color: #111;
-  font-family: 'Proxima Nova Semibold', 'Helvetica', 'Corbel', sans-serif;
+  font-weight: 700;
 }
 h1 {
   font-size: 25px;

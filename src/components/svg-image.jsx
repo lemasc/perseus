@@ -161,16 +161,15 @@ function getUrlHash(url) {
 }
 
 function defaultPreloader() {
-    return React.DOM.span({
-        style: {
-            background: "url(/images/spinner.gif) no-repeat",
-            backgroundPosition: "center",
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            minWidth: "20px",
-        }
-    });
+    return <span style={{
+        background: "url(/images/spinner.gif) no-repeat",
+        backgroundPosition: "center",
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        minWidth: "20px",
+    }}>
+    </span>
 }
 
 const getRealImageUrl = (url) => {
@@ -675,4 +674,4 @@ class SvgImage extends React.Component {
     }
 }
 
-module.exports = {SvgImage, getRealImageUrl};
+module.exports = { SvgImage, getRealImageUrl };

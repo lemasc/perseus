@@ -133,7 +133,7 @@ class PlotterEditor extends React.Component {
         return (
             <div className="perseus-widget-plotter-editor">
                 <div>
-                    Chart type:{" "}
+                    Chart type:{" "}<br />
                     {_.map(
                         [BAR, LINE, PIC, HISTOGRAM, DOTPLOT],
                         function(type) {
@@ -156,26 +156,31 @@ class PlotterEditor extends React.Component {
                     )}
                 </div>
                 <div>
-                    Labels:{" "}
+                    Labels:{" "}<br />
+                    <div className="perseus-widget-row" style={{width:"100%",marginTop: "0px"}}>
                     {_.map(
                         ["x", "y"],
                         function(axis, i) {
                             return (
+                                <div className={(i == 0) ? "perseus-widget-left-col" : "perseus-widget-right-col"}>
                                 <label key={axis}>
-                                    {axis + ":"}
+                                    {axis + ": "}
                                     <input
                                         type="text"
                                         onChange={_.partial(
                                             this.changeLabel,
                                             i
                                         )}
+                                        style={{width: "8rem"}}
                                         defaultValue={this.props.labels[i]}
                                     />
                                 </label>
+                                </div>
                             );
                         },
                         this
                     )}
+                    </div>
                 </div>
 
                 {setFromScale &&
@@ -344,11 +349,13 @@ class PlotterEditor extends React.Component {
                         </p>
                     </InfoTip>
                 </div>
+                <div style={{"marginLeft":"-40px"}}>
                 <Plotter
                     {...props}
                     starting={this.props[this.state.editing]}
                     onChange={this.handlePlotterChange}
                 />
+                </div>
             </div>
         );
     }

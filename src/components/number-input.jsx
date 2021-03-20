@@ -74,7 +74,7 @@ class NumberInput extends React.Component {
 
         return (
             <input
-                //{...this.props}
+                {...this.props}
                 className={classes}
                 type="text"
                 ref={this.input}

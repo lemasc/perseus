@@ -7,12 +7,13 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
 var createClass = require("create-react-class");
+var createFragment = require("react-addons-create-fragment");
 
 var Graph = require("../components/graph.jsx");
 const InlineIcon = require("../components/inline-icon.jsx");
 var NumberInput = require("../components/number-input.jsx");
 var MathOutput = require("../components/math-output.jsx");
-var TeX = require("react-components/tex.jsx");
+var TeX = require("../components/tex.jsx");
 const SimpleKeypadInput = require("../components/simple-keypad-input.jsx");
 
 var ApiOptions = require("../perseus-api.jsx").Options;
@@ -476,10 +477,10 @@ var Transformations = {
         },
         toTeX: function(transform) {
             // I18N: As in the command, "Translation by <3, 1>"
-            return $_(
+            return createFragment($_(
                 {vector: texFromVector(transform.vector)},
                 "Translation by %(vector)s"
-            );
+            ));
         },
         Input: createClass({
             getInitialState: function() {
@@ -536,7 +537,7 @@ var Transformations = {
                 ];
                 return (
                     <div>
-                        {$_({vector: vector}, "Translation by %(vector)s")}
+                        {createFragment($_({vector: vector}, "Translation by %(vector)s"))}
                     </div>
                 );
             },
@@ -607,13 +608,13 @@ var Transformations = {
             };
         },
         toTeX: function(transform) {
-            return $_(
+            return createFragment($_(
                 {
                     degrees: texFromAngleDeg(transform.angleDeg),
                     point: texFromPoint(transform.center),
                 },
                 "Rotation by %(degrees)s about %(point)s"
-            );
+            ));
         },
         Input: createClass({
             getInitialState: function() {
@@ -690,10 +691,10 @@ var Transformations = {
                     DEGREE_SIGN,
                 ];
                 // I18N: %(point)s must come before %(degrees)s in this phrase
-                var text = $_(
+                var text = createFragment($_(
                     {point, degrees},
                     "Rotation about %(point)s by %(degrees)s"
-                );
+                ));
 
                 return (
                     <div>
@@ -767,13 +768,13 @@ var Transformations = {
         toTeX: function(transform) {
             var point1 = transform.line[0];
             var point2 = transform.line[1];
-            return $_(
+            return createFragment($_(
                 {
                     point1: texFromPoint(point1),
                     point2: texFromPoint(point2),
                 },
                 "Reflection over the line from %(point1)s to %(point2)s"
-            );
+            ));
         },
         Input: createClass({
             getInitialState: function() {
@@ -843,11 +844,11 @@ var Transformations = {
                 ];
                 return (
                     <div>
-                        {$_(
+                        {createFragment($_(
                             {point1, point2},
                             "Reflection over the line from " +
                                 "%(point1)s to %(point2)s"
-                        )}
+                        ))}
                     </div>
                 );
             },
@@ -932,13 +933,13 @@ var Transformations = {
         },
         toTeX: function(transform) {
             var scaleString = stringFromFraction(transform.scale);
-            return $_(
+            return createFragment($_(
                 {
                     scale: scaleString,
                     point: texFromPoint(transform.center),
                 },
                 "Dilation of scale %(scale)s about %(point)s"
-            );
+            ));
         },
         Input: createClass({
             getInitialState: function() {
@@ -1015,10 +1016,10 @@ var Transformations = {
                 );
                 return (
                     <div>
-                        {$_(
+                        {createFragment($_(
                             {point, scale},
                             "Dilation about %(point)s by %(scale)s"
-                        )}
+                        ))}
                     </div>
                 );
             },

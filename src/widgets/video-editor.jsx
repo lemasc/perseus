@@ -12,20 +12,6 @@ const EditorJsonify = require("../mixins/editor-jsonify.jsx");
 const InfoTip = require("../components/info-tip.jsx");
 const BlurInput = require("react-components/blur-input.jsx");
 
-const KA_VIDEO_URL = /khanacademy\.org\/.*\/v\/(.*)$/;
-
-/**
- * Turns Khan Academy URLs into the KA slugs, if possible. Any other URLs are
- * returned unchanged.
- */
-function getSlugFromUrl(url) {
-    var match = KA_VIDEO_URL.exec(url);
-    if (match) {
-        return match[1];
-    }
-    return url;
-}
-
 /**
  * This is the main editor for this widget, to specify all the options.
  */
@@ -37,11 +23,36 @@ class VideoEditor extends React.Component {
     }
 
     static defaultProps = {
-            location: ""
+        location: ""
     }
 
+    /**
+     * Add built-in support to Youtube embed videos.
+     */
+     formatUrl(url) {
+        try {
+            let video = new URL(url);
+            if((/youtu\.be/).test(video.hostname)) {
+                // Youtube short link; grab the id immediately
+                return video.pathname.slice(1);
+            }
+            if((/youtube\.com/).test(video.hostname)) {
+                // Youtube normal link
+                if(video.searchParams.has("v")) {
+                    return video.searchParams.get("v");
+                }
+            }
+            return url;
+        }
+        catch (e) {
+            console.error(e);
+            return url;
+
+        }
+    }
+    
     _handleUrlChange = (url) => {
-        this.props.onChange({location: getSlugFromUrl(url)});
+        this.props.onChange({ location: this.formatUrl(url) });
     }
 
     change(...args) {
@@ -56,16 +67,15 @@ class VideoEditor extends React.Component {
         return (
             <div>
                 <label>
-                    URL or KA Video Slug:{" "}
+                    URL or YT Video ID:{" "}
                     <BlurInput
                         name="location"
                         value={this.props.location}
-                        style={{width: 290}}
                         onChange={this._handleUrlChange}
                     />
                     <InfoTip>
-                        You can paste any URL here. KA video URLs will be
-                        converted to just the slug.
+                        You can paste any URL here. Youtube video URLs will be
+                        converted to the proper format automatically.
                     </InfoTip>
                 </label>
             </div>

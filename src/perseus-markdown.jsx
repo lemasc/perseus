@@ -6,7 +6,7 @@
 var _ = require("underscore");
 
 var SimpleMarkdown = require("simple-markdown");
-var TeX = require("react-components/tex.jsx");
+var TeX = require("./components/tex.jsx");
 var Util = require("./util.js");
 const Lint = require("./components/lint.jsx");
 

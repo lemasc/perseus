@@ -50,9 +50,6 @@ window.addEventListener("message", event => {
 
 class IframeContentRenderer extends React.Component {
     static propTypes = {
-        // The HTML content to render to the iframe
-        content: PropTypes.string.isRequired,
-
         // The data-* suffix for passing information to the iframe's JS
         datasetKey: PropTypes.any,
 
@@ -156,11 +153,8 @@ class IframeContentRenderer extends React.Component {
             // loaded properly, where the javascript inside the iframe is
             // not executed, we push the content window write to the end
             // of the event queue.
-          /*  setTimeout(() => {
-                this._frame.contentWindow.document.open();
-                this._frame.contentWindow.document.write(this.props.content);
-                this._frame.contentWindow.document.close();
-            });*/
+
+            // Use webpack.config.js to modify this output file
             setTimeout(() => {
                 this._frame.src = "preview.html"
             })

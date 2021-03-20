@@ -203,7 +203,6 @@ class Definition extends React.Component {
 
         let link;
 
-        const href = readOnly ? null : "javascript:void(0)";
         const onClick = readOnly ? null : this._onClick;
         const onMouseOver = this._onMouseOver;
         const onMouseOut = this._onMouseOut;
@@ -350,13 +349,18 @@ const styles = StyleSheet.create({
         borderRight: "none",
         borderTop: "none",
         textDecoration: "none",
-        backgroundColor: "transparent"
+        backgroundColor: "transparent",
+        fontFamily: "inherit"
     },
 
     mobileDefinitionLink: {
         color: styleConstants.kaGreen,
         borderBottom: `dashed 1px ${styleConstants.kaGreen}`,
         textDecoration: "none",
+        borderLeft: 0,
+        borderRight: 0,
+        borderTop: 0,
+        backgroundColor: "transparent",
 
         // TODO(benkomalo): these should be pulled in from common typography
         // shared files so we have a single place where the type hierarchy is

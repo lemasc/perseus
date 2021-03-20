@@ -204,9 +204,9 @@ class EditorPage extends React.Component {
 
         return (
             <div id="perseus" className={className}>
-                <div style={{marginBottom: 10}}>
+                <div style={{marginBottom: 10}} className="perseus-editor-row">
                     {this.props.developerMode &&
-                        <span>
+                        <span className="perseus-editor-left-cell">
                             <label>
                                 {" "}Developer JSON Mode:{" "}
                                 <input

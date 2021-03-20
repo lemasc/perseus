@@ -74,6 +74,7 @@ class Lint extends React.Component {
         // of the tooltip at this point, so we're arbitrarily choosing a
         // point at which to flip the tooltip's position.
         this.setState({tooltipAbove: rect.top > 100});
+        console.log(this.state);
     }
 
     // Render the <a> element that holds the indicator icon and the tooltip

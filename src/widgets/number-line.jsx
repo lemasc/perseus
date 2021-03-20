@@ -7,6 +7,7 @@ const PropTypes = require('prop-types');
 var React = require("react");
 var ReactDOM = require("react-dom");
 var _ = require("underscore");
+var createFragment = require("react-addons-create-fragment");
 
 var Changeable = require("../mixins/changeable.jsx");
 
@@ -653,11 +654,11 @@ class NumberLine extends React.Component {
                       </div>
                     : this.props.isTickCtrl && invalidNumDivisions
                       ? <div className="perseus-error">
-                            {$_(
+                            {createFragment($_(
                                 {divRangeString: divRangeString},
                                 "Please make sure the number of divisions is " +
                                     "in the range %(divRangeString)s."
-                            )}
+                            ))}
                         </div>
                       : this._renderGraphie()}
                 {!this.props.static &&

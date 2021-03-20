@@ -12,7 +12,7 @@ const babelrc = JSON.parse(fs.readFileSync(
     path.join(__dirname, "..", ".babelrc")
 ));
 
-module.exports = function(source) {
+module.exports = function (source) {
     this.cacheable && this.cacheable();
 
     const sourceFilename = loaderUtils.getRemainingRequest(this);
@@ -23,7 +23,7 @@ module.exports = function(source) {
     const options = _.extend({}, babelrc, {
         sourceMaps: query.sourceMap,
     });
-    const transform = babel.transform(source, options);
+    const transform = babel.transformSync(source, options);
 
     // NOTE(charlie): If we remove these additional transforms, we can use the
     // standard babel-loader.
@@ -35,10 +35,7 @@ module.exports = function(source) {
         // __EDITOR__ being false.
         // TODO(emily): Figure out how to do dead code elimination that doesn't
         // mess with the code as much as this does.
-        transform.code = UglifyJS.minify(transform.code, {
-            // transform.code is a string, not a filename
-            fromString: true,
-
+        let result = UglifyJS.minify(transform.code, {
             // Keep comments in the output, and beautify it to undo the
             // minification from the compress step.
             output: {
@@ -73,11 +70,11 @@ module.exports = function(source) {
                 hoist_vars: false,
                 if_return: false,
                 join_vars: false,
-                cascade: false,
                 side_effects: false,
-                warnings: false,
-            },
-        }).code;
+            }
+        });
+        if (result.error) throw result.error;
+        transform.code = result.code
     }
 
     if (transform.map) {

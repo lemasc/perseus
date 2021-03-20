@@ -42,7 +42,7 @@ class HintEditor extends React.Component {
         showTitle: PropTypes.bool,
     }
 
-    handleChange(e) {
+    handleChange = (e) => {
         this.props.onChange({replace: e.target.checked});
     }
 
@@ -98,7 +98,7 @@ class HintEditor extends React.Component {
                             onClick={this.props.onRemove}
                         >
                             <InlineIcon {...iconTrash} />
-                            Remove this hint{" "}
+                             Remove this hint{" "}
                         </button>}
                 </div>
             </div>

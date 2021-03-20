@@ -4,7 +4,7 @@
 // @flow
 
 const React = require("react");
-const TeX = require("react-components/tex.jsx");
+const TeX = require("../../components/tex.jsx");
 
 const ButtonGroup = require("react-components/button-group.jsx");
 const {ChangeableProps, change} = require("../../mixins/changeable.jsx");

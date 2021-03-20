@@ -14,7 +14,7 @@ var {maybeUnescape} = require("./jipt-hack.jsx");
 var PerseusMarkdown = require("./perseus-markdown.jsx");
 var QuestionParagraph = require("./question-paragraph.jsx");
 var SvgImage = require("./components/svg-image.jsx");
-var TeX = require("react-components/tex.jsx");
+var TeX = require("./components/tex.jsx");
 var WidgetContainer = require("./widget-container.jsx");
 var Widgets = require("./widgets.js");
 

@@ -73,6 +73,8 @@ class GradedGroupSet extends React.Component {
         this.state = {
             currentGroup: 0,
         };
+        console.log(props);
+        console.log(this.state)
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -85,9 +87,7 @@ class GradedGroupSet extends React.Component {
 
     // Mobile API
     getInputPaths = () => {
-        if(this._childGroup) {
-            return this._childGroup.getInputPaths();
-        }
+        return this._childGroup.getInputPaths();
     }
 
     setInputValue = (path, newValue, cb) => {

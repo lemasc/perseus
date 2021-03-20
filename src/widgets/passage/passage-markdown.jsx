@@ -7,6 +7,7 @@ var PropTypes = require('prop-types');
 var React = require("react");
 var SimpleMarkdown = require("simple-markdown");
 var _ = require("underscore");
+var createFragment = require("react-addons-create-fragment");
 
 var START_REF_PREFIX = "start-ref-";
 var END_REF_PREFIX = "end-ref-";
@@ -246,10 +247,10 @@ var rules = {
                     </span>
                 </span>,
                 <span key="alt-text" className="perseus-sr-only">
-                    {$_(
+                    {createFragment($_(
                         {number: node.content},
                         "[Marker for question %(number)s]"
-                    )}
+                    ))}
                 </span>,
                 node.space ? "\u00A0" : null,
             ];
@@ -277,7 +278,7 @@ var rules = {
                     </span>
                 </span>,
                 <span key="alt-text" className="perseus-sr-only">
-                    {$_({number: node.content}, "[Circle marker %(number)s]")}
+                    {createFragment($_({number: node.content}, "[Circle marker %(number)s]"))}
                 </span>,
                 node.space ? "\u00A0" : null,
             ];
@@ -305,7 +306,7 @@ var rules = {
                     [{node.content}]
                 </span>,
                 <span key="alt-text" className="perseus-sr-only">
-                    {$_({number: node.content}, "[Sentence %(number)s]")}
+                    {createFragment($_({number: node.content}, "[Sentence %(number)s]"))}
                 </span>,
                 node.space ? "\u00A0" : null,
             ];

@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const React = require("react");
 const _ = require("underscore");
 
-const TeX = require("react-components/tex.jsx");
+const TeX = require("./tex.jsx");
 
 const prettyBig = {fontSize: "150%"};
 const slightlyBig = {fontSize: "120%"};

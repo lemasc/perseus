@@ -6,6 +6,7 @@ var PropTypes = require('prop-types');
 /* globals $_ */
 var React = require("react");
 var _ = require("underscore");
+var createFragment = require("react-addons-create-fragment");
 
 var Changeable = require("../mixins/changeable.jsx");
 var PerseusMarkdown = require("../perseus-markdown.jsx");
@@ -52,22 +53,22 @@ class PassageRef extends React.Component {
         var lineRange = this.state.lineRange;
         var lineRangeOutput;
         if (!lineRange) {
-            lineRangeOutput = $_(
+            lineRangeOutput = createFragment($_(
                 {lineRange: `?${EN_DASH}?`},
                 "lines %(lineRange)s"
-            );
+            ));
         } else if (lineRange[0] === lineRange[1]) {
-            lineRangeOutput = $_(
+            lineRangeOutput = createFragment($_(
                 {lineNumber: lineRange[0]},
                 "line %(lineNumber)s"
-            );
+            ));
         } else {
-            lineRangeOutput = $_(
+            lineRangeOutput = createFragment($_(
                 {
                     lineRange: lineRange[0] + EN_DASH + lineRange[1],
                 },
                 "lines %(lineRange)s"
-            );
+            ));
         }
 
         var summaryOutput;

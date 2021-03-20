@@ -12,7 +12,6 @@ module.exports = {
         path: path.resolve(__dirname, 'build/'),
         publicPath: "/",
         filename: "[name].js",
-        chunkFilename: "[name].chunk.js"
     },
     devServer: {
         historyApiFallback:{
@@ -22,7 +21,11 @@ module.exports = {
         liveReload: false,
         port: 3000,
         compress: true,
-        contentBase: __dirname
+        contentBase: [
+            path.join(__dirname),
+            path.join(__dirname, "node_modules/mathquill/build/"),
+            path.join(__dirname, "node_modules/katex/dist")
+        ],
     },
     plugins: require('./webpack.config.js').plugins,
     module: require('./webpack.config.js').module,

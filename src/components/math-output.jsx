@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const React = require("react");
 const ReactDOM = require("react-dom");
 const _ = require("underscore");
-const TeX = require("react-components/tex.jsx");
+const TeX = require("./tex.jsx");
 const ApiClassNames = require("../perseus-api.jsx").ClassNames;
 const ModifyTex = require("../tex-wrangler.js").modifyTex;
 

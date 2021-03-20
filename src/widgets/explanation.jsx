@@ -57,7 +57,6 @@ class Explanation extends React.Component {
     }
 
     render() {
-        const {Link} = this.props.apiOptions.baseElements;
         const {readOnly, isMobile} = this.props.apiOptions;
 
         const linkAnchor = this.state.expanded
@@ -66,19 +65,17 @@ class Explanation extends React.Component {
 
         let linkContainer;
 
-        const href = readOnly ? null : "#";
         const onClick = readOnly ? null : this._onClick;
 
         if (isMobile) {
             linkContainer = (
                 <div className={css(styles.linkContainer)}>
-                    <a
+                    <span
                         className={css(styles.mobileExplanationLink)}
-                        href={href}
                         onClick={onClick}
                     >
                         {linkAnchor}
-                    </a>
+                    </span>
                     {this.state.expanded &&
                         <svg className={css(styles.disclosureArrow)}>
                             <polygon
@@ -95,13 +92,12 @@ class Explanation extends React.Component {
         } else {
             linkContainer = (
                 <div className={css(styles.linkContainer)}>
-                    <Link
+                    <span
                         className={css(styles.explanationLink)}
-                        href={href}
                         onClick={onClick}
                     >
                         {`[${linkAnchor}]`}
-                    </Link>
+                    </span>
                 </div>
             );
         }
@@ -164,7 +160,9 @@ const styles = StyleSheet.create({
 
     explanationLink: {
         fontStyle: "italic",
+        textDecoration: "underline",
         color: "#007d96",
+        cursor: "pointer",
 
         [mediaQueries.xl]: {
             fontSize: 20,
@@ -184,6 +182,7 @@ const styles = StyleSheet.create({
         color: styleConstants.kaGreen,
         borderBottom: `dashed 1px ${styleConstants.kaGreen}`,
         textDecoration: "none",
+        cursor: "pointer",
 
         // TODO(benkomalo): these should be pulled in from common typography
         // shared files so we have a single place where the type hierarchy is

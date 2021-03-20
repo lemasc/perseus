@@ -17,10 +17,9 @@ var FixedToResponsive = require("../components/fixed-to-responsive.jsx");
 var DEFAULT_WIDTH = 1280;
 var DEFAULT_HEIGHT = 720;
 
-var KA_EMBED =
-    "https://{hostname}/embed_video?slug={slug}" + "&internal_video_only=1";
+var YT_EMBED =
+    "https://www.youtube.com/embed/{slug}" + "?modestbranding=1&rel=0";
 var IS_URL = /^https?:\/\//;
-var IS_KA_SITE = /khanacademy\.org/;
 
 /**
  * Video renderer.
@@ -55,13 +54,7 @@ class Video extends React.Component {
         if (IS_URL.test(location)) {
             url = location;
         } else {
-            url = KA_EMBED.replace("{slug}", location);
-            var currentHostname = document.location.hostname;
-            var embedHostname = "www.khanacademy.org";
-            if (IS_KA_SITE.test(currentHostname)) {
-                embedHostname = currentHostname;
-            }
-            url = url.replace("{hostname}", embedHostname);
+            url = YT_EMBED.replace("{slug}", location);
         }
 
         return (

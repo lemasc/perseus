@@ -2,7 +2,7 @@
 /* TODO(csilvers): fix these lint errors (http://eslint.org/docs/rules): */
 /* To fix, remove an entry above, run ka-lint, and fix errors. */
 
-const {StyleSheet, css} = require("aphrodite");
+const { StyleSheet, css } = require("aphrodite");
 const classNames = require("classnames");
 const PropTypes = require('prop-types');
 const React = require("react");
@@ -14,7 +14,7 @@ const ApiOptions = require("../perseus-api.jsx").Options;
 const InlineIcon = require("../components/inline-icon.jsx");
 const styleConstants = require("../styles/constants.js");
 
-const {iconDropdownArrow} = require("../icon-paths.js");
+const { iconDropdownArrow } = require("../icon-paths.js");
 
 const dropdownArrowSize = 24;
 
@@ -29,63 +29,98 @@ class Dropdown extends React.Component {
     }
 
     static defaultProps = {
-            choices: [],
-            selected: 0,
-            placeholder: "",
-            apiOptions: ApiOptions.defaults,
-        };
+        choices: [],
+        selected: 0,
+        placeholder: "",
+        apiOptions: ApiOptions.defaults,
+    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            visible: false
+        }
+    }
 
+    componentDidMount() {
+        if(this.props.apiOptions.isMobile) {
+            document.addEventListener("touchstart", this.clickTarget)
+        }
+        document.addEventListener("click", this.clickTarget)
+    }
+    componentWillUnmount() {
+        document.removeEventListener("click", this.clickTarget);
+        if(this.props.apiOptions.isMobile) {
+            document.removeEventListener("touchstart", this.clickTarget);
+        }
+    }
+    clickTarget = (e) => {
+        if (!e.target.closest(".perseus-widget-dropdown") && this.state.visible) {
+                this.toggleDropDown();
+        }
+    }
+    toggleDropDown = () => {
+        this.setState({ visible: !this.state.visible })
+    }
+    setValue = (e) => {
+        this._handleChange(parseInt(e.target.dataset.value));
+        this.toggleDropDown();
+    }
+    calculateWidth(choices) {
+        choices.push(this.props.placeholder); //Placeholder also need to calculate
+        let maxwidth = choices.reduce((i, d,) => {
+            const $test = $("<span>").text(d).appendTo("body");
+            const width = $test.width();
+            $test.remove();
+            return Math.max(i, width);
+        }, 0);
+        return maxwidth + dropdownArrowSize + 10;
+    }
     render() {
         var choices = this.props.choices.slice();
-
-        var selectClasses = classNames({
-            "perseus-widget-dropdown": true,
-        });
-
+        let items;
+        if (this.state.visible) {
+            items = <div className={css(styles.options)}>
+                {choices.map((choice, i) => {
+                    return (
+                        <span className={css(styles.item, (this.props.selected == i + 1 && styles.itemSelected))} onClick={this.setValue} key={"" + (i + 1)} data-value={i + 1}>
+                            {choice}
+                        </span>
+                    );
+                })}
+            </div>;
+        }
         return (
-            <div>
-                <select
-                    onChange={this._handleChangeEvent}
-                    onClick={e => {
-                        e.stopPropagation();
-                        e.target.focus();
-                    }}
-                    onTouchStart={e => {
-                        e.stopPropagation();
-                        e.target.focus();
-                    }}
-                    className={
-                        selectClasses +
-                        // This makes it so that mobile's fastclick doesn't
-                        // interfere & call `.focus` when we're inside of a
-                        // zoomable table.
-                        " nofastclick " +
-                        css(styles.dropdown) +
-                        " " +
-                        ApiClassNames.INTERACTIVE
-                    }
-                    disabled={this.props.apiOptions.readOnly}
-                    value={this.props.selected}
-                >
-                    <option value={0} disabled>
-                        {this.props.placeholder}
-                    </option>
-                    {choices.map((choice, i) => {
-                        return (
-                            <option key={"" + (i + 1)} value={i + 1}>
-                                {choice}
-                            </option>
-                        );
-                    })}
-                </select>
-                <InlineIcon
-                    {...iconDropdownArrow}
-                    style={{
-                        marginLeft: `-${dropdownArrowSize}px`,
-                        height: dropdownArrowSize,
-                        width: dropdownArrowSize,
-                    }}
-                />
+            <div className={"perseus-widget-dropdown " + ApiClassNames.INTERACTIVE}>
+                <div className={css(styles.toggle)}>
+                    <button
+                        onClick={e => {
+                            if(!this.props.apiOptions.isMobile) {
+                                this.toggleDropDown();
+                            }
+                        }}
+                        onTouchStart={e => {
+                            this.toggleDropDown();
+                        }}
+                        className={
+                            css(styles.dropdown, styles.button)
+                        }
+                        style={{
+                            width: this.calculateWidth(choices)
+                        }}
+                        disabled={this.props.apiOptions.readOnly}
+                    >
+                        {this.props.selected == 0 ? this.props.placeholder : choices[this.props.selected - 1]}
+                    </button>
+                    <InlineIcon
+                        {...iconDropdownArrow}
+                        style={{
+                            marginLeft: `-${dropdownArrowSize}px`,
+                            height: dropdownArrowSize,
+                            width: dropdownArrowSize,
+                        }}
+                    />
+                </div>
+                {items}
             </div>
         );
     }
@@ -95,17 +130,14 @@ class Dropdown extends React.Component {
         return true;
     }
 
-    _handleChangeEvent = (e) => {
-        this._handleChange(parseInt(e.target.value));
-    }
-
     _handleChange = (selected) => {
+        console.log(selected);
         this.props.trackInteraction();
-        this.props.onChange({selected: selected});
+        this.props.onChange({ selected: selected });
     }
 
     getUserInput = () => {
-        return {value: this.props.selected};
+        return { value: this.props.selected };
     }
 
     simpleValidate = (rubric) => {
@@ -114,7 +146,7 @@ class Dropdown extends React.Component {
 }
 
 _.extend(Dropdown, {
-    validate: function(state, rubric) {
+    validate: function (state, rubric) {
         var selected = state.value;
         if (selected === 0) {
             return {
@@ -142,13 +174,16 @@ var propTransform = editorProps => {
 
 const styles = StyleSheet.create({
     dropdown: {
-        appearance: "none",
-        backgroundColor: "transparent",
+        padding: `9px ${dropdownArrowSize + 1}px 9px 9px`,
+        backgroundColor: "white",
         border: `1px solid ${styleConstants.gray76}`,
         borderRadius: 4,
+    },
+    button: {
         boxShadow: "none",
         fontFamily: styleConstants.baseFontFamily,
-        padding: `9px ${dropdownArrowSize + 1}px 9px 9px`,
+        cursor: "pointer",
+        height: "37px",
 
         ":focus": {
             outline: "none",
@@ -168,6 +203,31 @@ const styles = StyleSheet.create({
             color: styleConstants.gray68,
         },
     },
+    toggle: {
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    options: {
+        display: "flex",
+        flexDirection: "column",
+        border: `1px solid ${styleConstants.gray76}`,
+        borderRadius: 4,
+    },
+    item: {
+        background: "white",
+        height: "19px",
+        cursor: "pointer",
+        padding: `9px ${dropdownArrowSize + 1}px 9px 9px`,
+        ":hover": {
+            backgroundColor: styleConstants.gray90
+        }
+    },
+    itemSelected: {
+        backgroundColor: styleConstants.kaGreen,
+        color: "white"
+    }
 });
 
 module.exports = {

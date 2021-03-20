@@ -1,3 +1,9 @@
+/* 
+* Fonts Settings
+* I realize that adding custom fonts should not modify the core CSS.
+* Instead, overwrite the defaults here.
+*/
+
 :root {
   --serif-font: "Sarabun" KaTeX_Main, Times, "Times New Roman", serif;
   --font: "Sarabun", "Proxima Nova", "Helvetica", "Corbel", sans-serif;

@@ -36,8 +36,9 @@ class ImageLoader extends React.Component {
         src: PropTypes.string,
     }
 
-    getInitialState(props) {
-        return {status: this.props.src ? Status.LOADING : Status.PENDING};
+    constructor(props) {
+        super(props)
+        this.state = {status: props.src ? Status.LOADING : Status.PENDING};
     }
 
     componentDidMount() {
@@ -85,7 +86,7 @@ class ImageLoader extends React.Component {
         }
     }
 
-    handleLoad(event) {
+    handleLoad = (event) => {
         this.destroyLoader();
         this.setState({status: Status.LOADED});
 
@@ -94,7 +95,7 @@ class ImageLoader extends React.Component {
         }
     }
 
-    handleError(error) {
+    handleError = (error) => {
         this.destroyLoader();
         this.setState({status: Status.FAILED});
 
@@ -103,7 +104,7 @@ class ImageLoader extends React.Component {
         }
     }
 
-    renderImg() {
+    renderImg = () => {
         const {src, imgProps} = this.props;
         const props = {src};
 
